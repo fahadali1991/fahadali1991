@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>توثيق المبادرات</title>
+</head>
+<body>
+    <h1>توثيق المبادرات</h1>
+    <form id="myForm">
+        <label>اسم المنشأة:</label>
+        <input type="text" name="organization" required><br>
+        <label>اسم الفريق:</label>
+        <input type="text" name="team" required><br>
+        <label>رفع الشواهد:</label>
+        <input type="file" name="certificates" multiple required><br>
+        <button type="submit">إرسال</button>
+    </form>
+    <a id="downloadLink" href="https://drive.google.com/your-template-link" style="display:none;">
+        تنزيل القالب
+    </a>
+
+    <script>
+        document.getElementById("myForm").addEventListener("submit", function(e) {
+            e.preventDefault();
+            // هنا يمكنك إضافة كود لرفع الملفات إلى الخادم (مثل Firebase)
+            document.getElementById("downloadLink").style.display = "block";
+        });
+    </script>
+</body>
+</html>
