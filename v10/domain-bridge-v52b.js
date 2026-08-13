@@ -1,0 +1,1 @@
+document.addEventListener('change',e=>{if(e.target.id==='domainSelect'){let h=document.getElementById('domainEdit');if(!h){h=document.createElement('input');h.type='hidden';h.id='domainEdit';e.target.after(h)}h.value=e.target.value}});
