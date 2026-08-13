@@ -9,6 +9,7 @@ const syncMeta=()=>{if(!state)return;const w=document.getElementById('workTitle'
 function showLanding(){state=null;questionIndex=0;entryIntent='smart';render(landing())}
 function showUnderstanding(){render(understanding(state))}
 function showQuestion(){render(questions(state,questionIndex))}
+function currentQuestion(){return state?questionsFor(state)[questionIndex]:null}
 
 app.addEventListener('click',e=>{
   const entry=e.target.closest('[data-entry]');
@@ -18,7 +19,13 @@ app.addEventListener('click',e=>{
   const sub=e.target.closest('[data-subtype]');
   if(sub&&state){syncMeta();setSubtype(state,sub.dataset.subtype);showUnderstanding();return}
   const ans=e.target.closest('[data-answer]');
-  if(ans&&state){const id=ans.dataset.answer,v=ans.dataset.value,a=state.answers[id]||[];state.answers[id]=a.includes(v)?a.filter(x=>x!==v):[...a,v];ans.classList.toggle('on');return}
+  if(ans&&state){
+    const q=currentQuestion(),id=ans.dataset.answer,v=ans.dataset.value,a=state.answers[id]||[];
+    if(a.includes(v)){state.answers[id]=a.filter(x=>x!==v);showQuestion();return}
+    const max=q?.max??q?.opts?.length??99;
+    if(a.length>=max){alert(`اختر بحد أقصى ${max} خيارات فقط؛ اختر الأهم والأقرب لما حدث.`);return}
+    state.answers[id]=[...a,v];showQuestion();return;
+  }
   const btn=e.target.closest('[data-action]');if(!btn)return;
   switch(btn.dataset.action){
     case 'home':showLanding();break;
@@ -26,7 +33,11 @@ app.addEventListener('click',e=>{
     case 'accept-hint':acceptHint(state);showUnderstanding();break;
     case 'accept-detected':acceptDetected(state);showUnderstanding();break;
     case 'questions':syncMeta();questionIndex=0;showQuestion();break;
-    case 'next-question':questionIndex++;if(questionIndex>=questionsFor(state).length)render(ready(state));else showQuestion();break;
+    case 'next-question':{
+      const q=currentQuestion(),selected=state.answers[q?.id]||[],min=q?.min??0;
+      if(selected.length<min){alert(min===1?'اختر خيارًا واحدًا على الأقل قبل المتابعة.':`اختر ${min} خيارات على الأقل قبل المتابعة.`);return}
+      questionIndex++;if(questionIndex>=questionsFor(state).length)render(ready(state));else showQuestion();break;
+    }
     case 'understanding':showUnderstanding();break;
   }
 });
