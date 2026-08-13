@@ -13,11 +13,14 @@ export function smartTitle(state){
   if(state.metadata.titleManual&&state.metadata.workTitle)return clean(state.metadata.workTitle);
   const type=state.classification.type,sub=state.classification.subtype||'',base=state.metadata.workTitle||sub||type;
   const grades=state.grades||[],A=displayAudiences(state),topic=state.topic||'';
+  const goal=vals(state,'goal')[0]||vals(state,'purpose')[0]||vals(state,'action')[0]||'';
   let title=base;
-  if(type==='برنامج / فعالية'&&topic&&!title.includes(topic))title=`${sub||'برنامج'} ${topic}`;
-  if(type==='تطوير مهني'&&topic&&!title.includes(topic))title=`${sub||'نشاط تطوير مهني'} في ${topic}`;
-  if(type==='تحليل نتائج'&&topic&&!title.includes(topic))title=`${sub||'تحليل نتائج'} في ${topic}`;
-  if(type==='خطة'&&topic&&!title.includes(topic))title=`${sub||'خطة'} لـ${topic}`;
+  if(type==='برنامج / فعالية')title=topic?`${sub||'برنامج'} ${topic}`:goal?`${sub||'برنامج'} ${goal}`:base;
+  if(type==='تطوير مهني')title=topic?`${sub||'نشاط تطوير مهني'} في ${topic}`:goal?`${sub||'نشاط تطوير مهني'} لـ${goal}`:base;
+  if(type==='تحليل نتائج')title=topic?`${sub||'تحليل نتائج'} في ${topic}`:goal?`${sub||'تحليل نتائج'} بهدف ${goal}`:base;
+  if(type==='خطة')title=topic?`${sub||'خطة'} لـ${topic}`:goal?`${sub||'خطة'} لـ${goal}`:base;
+  if(type==='اجتماع / متابعة إدارية'&&goal)title=`${sub||'اجتماع'} بشأن ${goal}`;
+  if(type==='إجراء متابعة'&&goal)title=`${sub||'إجراء متابعة'} لـ${goal}`;
   const target=grades.length?grades.join(' و'):A.length===1?A[0]:'';
   if(target&&!title.includes(target))title=`${title} لدى ${target}`;
   return clean(title);
