@@ -1,85 +1,38 @@
 import {joinAr} from './engine.js';
-
-const vals=(state,id)=>state.answers[id]||[];
 const clean=s=>String(s||'').replace(/\s+/g,' ').trim();
-const listText=(a,f='')=>joinAr(a)||f;
-
-export function displayAudiences(state){
-  const a=(state.audiences||[]).map(x=>x==='فئة أخرى'?(state.metadata.otherAudience||'فئة أخرى'):x);
-  return a.filter(Boolean);
+export function displayAudiences(state){return (state.audiences||[]).map(x=>x==='فئة أخرى'?(state.metadata.otherAudience||'فئة أخرى'):x).filter(Boolean)}
+export function selectedGoals(state){const a=state.answers?.goals||[],o=clean(state.metadata?.otherGoal||'');return o?[...a,o]:a}
+export function suggestedGoals(state){
+ const t=state.classification.type,topic=state.topic||'';let g=[];
+ if(t==='برنامج / فعالية')g=['تنمية المعرفة والفهم المرتبطين بموضوع البرنامج','تنمية المهارات التطبيقية لدى المستفيدين','رفع مستوى المشاركة والتفاعل','تعزيز السلوك أو الاتجاه الإيجابي المرتبط بموضوع العمل','إثراء خبرات المستفيدين من خلال ممارسات تطبيقية','دعم الفروق الفردية بين المستفيدين','رفع مستوى الدافعية نحو التعلم والمشاركة','تحويل المعرفة إلى ممارسة أو منتج قابل للملاحظة'];
+ else if(t==='اجتماع / متابعة إدارية')g=['مراجعة الوضع الحالي وتحديد الأولويات','تنظيم الأدوار والمسؤوليات بين الأطراف المعنية','اتخاذ قرارات واضحة قابلة للتنفيذ','معالجة التحديات المرتبطة بموضوع الاجتماع','رفع مستوى التنسيق بين المشاركين','تحديد الإجراءات المطلوبة للمرحلة القادمة','توحيد فهم المشاركين تجاه موضوع الاجتماع','تحسين كفاءة التنفيذ'];
+ else if(t==='تحليل نتائج')g=['تحديد جوانب القوة في نتائج الطلاب','تحديد المهارات أو الجوانب منخفضة الإتقان','الكشف عن الطلاب الذين يحتاجون إلى دعم إضافي','بناء قرارات تعليمية تستند إلى البيانات','تحديد التدخلات العلاجية المناسبة','تحديد فرص الإثراء للطلاب المتفوقين','تحسين الممارسات التعليمية في ضوء النتائج','رفع دقة التخطيط للتحسين بناءً على نتائج التقويم'];
+ else if(t==='خطة')g=['معالجة الاحتياج الذي بُنيت عليه الخطة','تحسين مستوى الأداء في المجال المستهدف','تنظيم إجراءات التنفيذ بصورة واضحة','تحديد المسؤوليات والأدوار المرتبطة بالخطة','رفع كفاءة تنفيذ الأعمال المرتبطة بالخطة','توجيه الجهود نحو أولويات محددة','تحسين جودة الممارسات المرتبطة بالمجال المستهدف','بناء استجابة منظمة قابلة للتنفيذ والقياس'];
+ else if(t==='إجراء متابعة')g=['رفع دقة متابعة الحالات المستهدفة','سرعة اكتشاف الحالات التي تحتاج إلى تدخل','تنظيم بيانات المتابعة وتحديثها','تحسين الاستجابة للحالات المرصودة','توحيد إجراءات المتابعة بين الأطراف المعنية','تقليل تكرار الحالات محل المتابعة','توفير معلومات واضحة تساعد على اتخاذ القرار','رفع مستوى الالتزام بالإجراء المستهدف'];
+ else g=['تنمية المعرفة المهنية المرتبطة بموضوع البرنامج','تطوير الممارسات التعليمية لدى المستفيدين','رفع الكفاءة المهنية في المجال المستهدف','نقل المعرفة المهنية إلى تطبيق عملي','تعزيز تبادل الخبرات بين المعلمين','دعم توظيف ممارسات حديثة في التعليم','تحسين جودة التخطيط والتنفيذ داخل الصف','ربط التطوير المهني باحتياجات العمل الفعلية'];
+ if(topic.includes('القراءة'))g=['تنمية مهارات القراءة والفهم القرائي','رفع مستوى الإتقان في المهارات القرائية المستهدفة','تعزيز دافعية المستفيدين نحو القراءة',...g];
+ if(topic.includes('الخط'))g=['تنمية مهارات الكتابة والخط','رفع مستوى الإتقان في المهارات الكتابية المستهدفة','تحسين جودة الأداء الكتابي لدى المستفيدين',...g];
+ return [...new Set(g)].slice(0,9);
 }
-
 export function smartTitle(state){
-  if(state.metadata.titleManual&&state.metadata.workTitle)return clean(state.metadata.workTitle);
-  const type=state.classification.type,sub=state.classification.subtype||'',base=state.metadata.workTitle||sub||type;
-  const grades=state.grades||[],A=displayAudiences(state),topic=state.topic||'';
-  const goal=vals(state,'goal')[0]||vals(state,'purpose')[0]||vals(state,'action')[0]||'';
-  let title=base;
-  if(type==='برنامج / فعالية')title=topic?`${sub||'برنامج'} ${topic}`:goal?`${sub||'برنامج'} ${goal}`:base;
-  if(type==='تطوير مهني')title=topic?`${sub||'نشاط تطوير مهني'} في ${topic}`:goal?`${sub||'نشاط تطوير مهني'} لـ${goal}`:base;
-  if(type==='تحليل نتائج')title=topic?`${sub||'تحليل نتائج'} في ${topic}`:goal?`${sub||'تحليل نتائج'} بهدف ${goal}`:base;
-  if(type==='خطة')title=topic?`${sub||'خطة'} لـ${topic}`:goal?`${sub||'خطة'} لـ${goal}`:base;
-  if(type==='اجتماع / متابعة إدارية'&&goal)title=`${sub||'اجتماع'} بشأن ${goal}`;
-  if(type==='إجراء متابعة'&&goal)title=`${sub||'إجراء متابعة'} لـ${goal}`;
-  const target=grades.length?grades.join(' و'):A.length===1?A[0]:'';
-  if(target&&!title.includes(target))title=`${title} لدى ${target}`;
-  return clean(title);
+ if(state.metadata.titleManual&&state.metadata.workTitle)return clean(state.metadata.workTitle);
+ const type=state.classification.type,sub=state.classification.subtype||'',base=state.metadata.workTitle||sub||type,grades=state.grades||[],A=displayAudiences(state),topic=state.topic||'',goal=selectedGoals(state)[0]||'';let title=base;
+ if(type==='برنامج / فعالية')title=topic?`${sub||'برنامج'} ${topic}`:goal?`${sub||'برنامج'} ${goal}`:base;
+ else if(type==='تطوير مهني')title=topic?`${sub||'نشاط تطوير مهني'} في ${topic}`:goal?`${sub||'نشاط تطوير مهني'} لـ${goal}`:base;
+ else if(type==='تحليل نتائج')title=topic?`${sub||'تحليل نتائج'} في ${topic}`:goal?`${sub||'تحليل نتائج'} بهدف ${goal}`:base;
+ else if(type==='خطة')title=topic?`${sub||'خطة'} لـ${topic}`:goal?`${sub||'خطة'} لـ${goal}`:base;
+ else if(type==='اجتماع / متابعة إدارية'&&goal)title=`${sub||'اجتماع'} بشأن ${goal}`;
+ else if(type==='إجراء متابعة'&&goal)title=`${sub||'إجراء متابعة'} لـ${goal}`;
+ const target=grades.length?grades.join(' و'):A.length===1?A[0]:'';if(target&&!title.includes(target))title=`${title} لدى ${target}`;return clean(title)
 }
-
-export function goalsFor(state){
-  const t=state.classification.type;
-  if(t==='اجتماع / متابعة إدارية')return vals(state,'purpose');
-  if(t==='تحليل نتائج')return vals(state,'action').length?vals(state,'action'):['تحليل النتائج وتحديد أولويات التحسين'];
-  if(t==='إجراء متابعة')return vals(state,'goal');
-  return vals(state,'goal').length?vals(state,'goal'):vals(state,'reason');
-}
-
 export function executionDescription(state){
-  const t=state.classification.type,name=smartTitle(state),A=listText(displayAudiences(state),'الفئة المستفيدة');
-  const parts=[];
-
-  if(t==='برنامج / فعالية'){
-    const reason=listText(vals(state,'reason'),'احتياج تربوي مرتبط بموضوع العمل');
-    const method=listText(vals(state,'method'),'أساليب مناسبة لطبيعة النشاط');
-    const participation=listText(vals(state,'participation'),'مشاركة المستفيدين أثناء التنفيذ');
-    const product=listText(vals(state,'product'),'مخرجات مباشرة مرتبطة بالتنفيذ');
-    parts.push(`نُفذ ${name} لخدمة ${A} استجابةً إلى ${reason}. وتم تنفيذ العمل من خلال ${method}، مع توجيه الأنشطة نحو مشاركة المستفيدين بصورة عملية.`);
-    if(vals(state,'participation').length)parts.push(`وخلال التنفيذ لوحظ ${participation}.`);
-    parts.push(`وأسفر التنفيذ عن ${product}، بما يوثق ما تحقق مباشرة أثناء العمل دون افتراض نتائج لم يتم قياسها.`);
-  }
-  else if(t==='اجتماع / متابعة إدارية'){
-    parts.push(`عُقد ${name} لمناقشة ${listText(vals(state,'work'),'المحاور المرتبطة بموضوع الاجتماع')}، وتمت مراجعة ما يرتبط بالموضوع وترتيب الأولويات بين الأطراف ذات العلاقة.`);
-    parts.push(`وانتهى الاجتماع إلى ${listText(vals(state,'product'),'قرارات ومخرجات تنظيمية محددة')}، بما يحول النقاش إلى إجراءات ومسؤوليات واضحة.`);
-  }
-  else if(t==='تحليل نتائج'){
-    parts.push(`أُجري ${name} بالاعتماد على ${listText(vals(state,'basis'),'البيانات والنتائج المتاحة')} لدى ${A}، بهدف فهم مستوى الأداء وتحديد الجوانب التي تستدعي التدخل.`);
-    parts.push(`وأظهر التحليل ${listText(vals(state,'finding'),'مؤشرات مرتبطة بمستوى الأداء')}. ${vals(state,'cause').length?`كما برزت أسباب محتملة من بينها ${listText(vals(state,'cause'))}. `:''}وبناءً على ذلك تم ${listText(vals(state,'action'),'تحديد إجراءات التحسين المناسبة')}.`);
-  }
-  else if(t==='خطة'){
-    parts.push(`أُعدت ${name} استنادًا إلى ${listText(vals(state,'basis'),'احتياج أو بيانات محددة')} لدى ${A}، وتم تنظيمها لتترجم الأولويات إلى إجراءات قابلة للتنفيذ.`);
-    parts.push(`وتشمل إجراءات التنفيذ ${listText(vals(state,'method'),'إجراءات محددة مرتبطة بالمسؤوليات والزمن')}، بما يدعم وضوح الأدوار وترتيب العمل بصورة منظمة.`);
-  }
-  else if(t==='إجراء متابعة'){
-    parts.push(`نُفذ ${name} لخدمة ${A} من خلال ${listText(vals(state,'method'),'وسائل متابعة منظمة')}، بهدف توفير رصد واضح يمكن الرجوع إليه عند الحاجة.`);
-    if(vals(state,'action').length)parts.push(`وبناءً على ما ظهر أثناء المتابعة تم اتخاذ إجراءات شملت ${listText(vals(state,'action'))}.`);
-    if(vals(state,'outcome').length)parts.push(`وأظهر الرصد الحالي ${listText(vals(state,'outcome'))}.`);
-  }
-  else if(t==='تطوير مهني'){
-    parts.push(`نُفذ ${name} لخدمة ${A} استجابةً إلى ${listText(vals(state,'reason'),'احتياج مهني مرتبط بالممارسة التعليمية')}. وتم التنفيذ من خلال ${listText(vals(state,'method'),'أساليب تدريب وتبادل خبرات مناسبة')}.`);
-    parts.push(`وأسفر النشاط عن ${listText(vals(state,'product'),'مخرجات مهنية قابلة للتطبيق')}، بما يدعم الاستفادة العملية من محتوى النشاط.`);
-  }
-
-  return clean(parts.join(' '));
+ const title=smartTitle(state),A=joinAr(displayAudiences(state))||'الفئة المستفيدة',goals=selectedGoals(state),goalText=joinAr(goals),raw=clean(state.raw||''),place=clean(state.metadata.place||''),duration=clean(state.metadata.duration||''),t=state.classification.type;
+ const where=[place?`في ${place}`:'',duration?`خلال مدة ${duration}`:''].filter(Boolean).join('، '),w=where?` ${where}`:'',p=goalText?` وركز العمل على ${goalText}`:'';
+ if(t==='اجتماع / متابعة إدارية')return clean(`عُقد ${title}${w} بمشاركة ${A}.${p}. واستند الاجتماع إلى الموضوع الذي أوضحه المنفذ: ${raw}. وتمت مناقشة الجوانب المرتبطة بالموضوع وترتيب الأولويات وتوضيح المسؤوليات، وصولًا إلى مخرجات وقرارات تنظيمية مرتبطة بما تم تناوله خلال الاجتماع.`);
+ if(t==='تحليل نتائج')return clean(`أُجري ${title} لخدمة ${A}${w}.${p}. واعتمد التحليل على البيانات والسياق الذي أوضحه المنفذ: ${raw}. وتمت قراءة النتائج بهدف تحديد الجوانب التي تستدعي التحسين وبناء استجابة تعليمية أكثر دقة، مع تحويل ما ظهر في النتائج إلى مخرجات وإجراءات قابلة للتوثيق.`);
+ if(t==='خطة')return clean(`أُعدت ${title} لخدمة ${A}${w}.${p}. واستند إعداد الخطة إلى الاحتياج والسياق الذي أوضحه المنفذ: ${raw}. وتم تنظيم العمل بما يربط الأهداف المختارة بإجراءات تنفيذية واضحة ويوجه الجهود نحو المجال المستهدف بصورة منظمة وقابلة للتطبيق.`);
+ if(t==='إجراء متابعة')return clean(`نُفذ ${title} لخدمة ${A}${w}.${p}. وانطلقت المتابعة من الحالة التي وصفها المنفذ: ${raw}. وتم تنظيم الرصد والإجراءات المرتبطة بالحالة بصورة تساعد على توثيق ما تم واتخاذ الإجراء المناسب وفق المعلومات المتاحة.`);
+ if(t==='تطوير مهني')return clean(`نُفذ ${title} لخدمة ${A}${w}.${p}. واستند النشاط إلى السياق المهني الذي أوضحه المنفذ: ${raw}. وتم توجيه التنفيذ نحو ربط المعرفة بالممارسة وإتاحة فرص للاستفادة التطبيقية وإنتاج مخرجات مهنية مرتبطة بموضوع التطوير.`);
+ return clean(`نُفذ ${title} لخدمة ${A}${w}.${p}. وقد بُني التنفيذ على ما أوضحه المنفذ: ${raw}. وتم تنظيم العمل بصورة عملية تراعي مشاركة المستفيدين وربط الأنشطة بالأهداف المختارة، بما أتاح تنفيذ المهام المرتبطة بموضوع العمل وإظهار مخرجات مباشرة يمكن توثيقها.`)
 }
-
-export function evidenceItems(state){
-  switch(state.classification.type){
-    case 'برنامج / فعالية':return ['صور التنفيذ','كشف أو سجل المستفيدين','نماذج من الأعمال أو المنتجات إن وجدت'];
-    case 'اجتماع / متابعة إدارية':return ['محضر الاجتماع','كشف الحضور','القرارات أو التكليفات الناتجة'];
-    case 'تحليل نتائج':return ['كشف أو تقرير النتائج','نموذج تحليل النتائج','الإجراء العلاجي أو الإثرائي إن وجد'];
-    case 'خطة':return ['نسخة الخطة','جدول الإجراءات والمسؤوليات','الشواهد المرتبطة بالتنفيذ عند توفرها'];
-    case 'إجراء متابعة':return ['سجل أو كشف المتابعة','أداة الرصد المستخدمة','ما يثبت الإجراء المتخذ عند وجوده'];
-    case 'تطوير مهني':return ['شهادة أو محضر النشاط بحسب الحالة','كشف الحضور عند انطباقه','مادة أو منتج مهني مرتبط بالنشاط'];
-    default:return ['مستند التنفيذ الأساسي','كشف المستفيدين أو الحضور','مرفقات داعمة للعمل'];
-  }
-}
+export function evidenceItems(state){switch(state.classification.type){case'برنامج / فعالية':return['صور التنفيذ','كشف أو سجل المستفيدين','نماذج من الأعمال أو المنتجات إن وجدت'];case'اجتماع / متابعة إدارية':return['محضر الاجتماع','كشف الحضور','القرارات أو التكليفات الناتجة'];case'تحليل نتائج':return['كشف أو تقرير النتائج','نموذج تحليل النتائج','الإجراء العلاجي أو الإثرائي إن وجد'];case'خطة':return['نسخة الخطة','جدول الإجراءات والمسؤوليات','الشواهد المرتبطة بالتنفيذ عند توفرها'];case'إجراء متابعة':return['سجل أو كشف المتابعة','أداة الرصد المستخدمة','ما يثبت الإجراء المتخذ عند وجوده'];case'تطوير مهني':return['شهادة أو محضر النشاط بحسب الحالة','كشف الحضور عند انطباقه','مادة أو منتج مهني مرتبط بالنشاط'];default:return['مستند التنفيذ الأساسي','كشف المستفيدين أو الحضور','مرفقات داعمة للعمل']}}
