@@ -1,5 +1,6 @@
 import {ENTRY} from './config.js';
-import {esc,joinAr,questionsFor,familyOptions,subtypeOptions,evidenceFor,potentialLinks,composeNarrative} from './engine.js';
+import {esc,joinAr,questionsFor,familyOptions,subtypeOptions,evidenceFor,potentialLinks} from './engine.js';
+import {composeQualityNarrative} from './output-quality.js';
 
 export function landing(){
   return `<section class="card"><div class="kicker">V10 Stable Core · نسخة تطوير مستقرة</div><h1>ماذا تريد أن تنجز؟</h1><p class="lead">صف ما حدث بطريقتك، أو ابدأ مباشرة من نوع العمل.</p><button class="smartEntry" data-entry="smart"><span>✨</span><span><b>صف لي ما حدث</b><small>المحرك يحدد النوع ويكشف التعارضات قبل المتابعة</small></span><span>←</span></button><div class="dividerText"><span>أو ابدأ مباشرة</span></div><div class="entryGrid">${['report','minutes','analysis','plan','program','pd','follow'].map(k=>`<button class="entryTile" data-entry="${k}"><span>${ENTRY[k].icon}</span><b>${ENTRY[k].label}</b></button>`).join('')}</div></section>`;
@@ -24,6 +25,6 @@ export function questions(state,index=0){
 }
 
 export function ready(state){
-  const paras=composeNarrative(state),wc=paras.join(' ').split(/\s+/).filter(Boolean).length;
+  const paras=composeQualityNarrative(state),wc=paras.join(' ').split(/\s+/).filter(Boolean).length;
   return `<section class="card"><div class="muted">العنوان المهني</div><div class="title">${esc(state.metadata.workTitle)}</div><div class="metaSummary"><span>المستفيدون: ${esc(joinAr(state.audiences))}</span>${state.grades.length?`<span>الصفوف: ${esc(joinAr(state.grades))}</span>`:''}${state.metadata.executorName?`<span>المنفذ: ${esc(state.metadata.executorName)}</span>`:''}${state.metadata.count?`<span>العدد: ${esc(state.metadata.count)}</span>`:''}</div><div class="counter">النص المولد: نحو ${wc} كلمة</div></section><section class="card"><h2>التقرير المهني</h2><div class="narrative">${paras.map(p=>`<p>${esc(p)}</p>`).join('')}</div></section><section class="card"><h2>الشاهد الأنسب</h2><div class="evidence"><strong>ابدأ بهذا:</strong> ${esc(evidenceFor(state))}</div><details><summary>الارتباطات المحتملة</summary>${potentialLinks(state).map(x=>`<div class="fact">${esc(x)}</div>`).join('')}<div class="warn compact">هذه ارتباطات محتملة وليست حكمًا بتحقق مؤشر.</div></details></section><div class="toolbar"><button class="btn" data-action="understanding">تعديل البيانات</button><button class="btn" data-action="home">بداية جديدة</button></div>`;
 }
