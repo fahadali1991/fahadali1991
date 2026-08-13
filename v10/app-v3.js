@@ -42,7 +42,7 @@ app.addEventListener('click',e=>{
   case'edit-description':description(false);break;
   case'go-evidence':evidence(true);break;
   case'toggle-other-evidence':sync();state.metadata.otherEvidenceEnabled=!state.metadata.otherEvidenceEnabled;if(!state.metadata.otherEvidenceEnabled)state.metadata.otherEvidence='';evidence(false);break;
-  case'finalize':sync();screen='final';render(finalDocument(state),true);break;
+  case'finalize':sync();if(screen==='description'){evidence(true);break}screen='final';render(finalDocument(state),true);break;
  }
 });
 home();
