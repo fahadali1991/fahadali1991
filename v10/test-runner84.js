@@ -1,0 +1,7 @@
+import {understand84} from './engine84.js?v=84';
+import {TEST_BANK84,bankStats84} from './test-bank84.js?v=84';
+const rows=TEST_BANK84.map((x,i)=>{const r=understand84(x.text),actual=r.primary||'',ok=actual===x.expected;return{n:i+1,text:x.text,expected:x.expected||'غير محسوم',actual:actual||'غير محسوم',confidence:r.confidence,ok,ranked:r.ranked.slice(0,3)}});
+const pass=rows.filter(x=>x.ok).length,fail=rows.length-pass,pct=Math.round(pass/rows.length*100),stats=bankStats84();
+window.V84_TEST_RESULT={pass,fail,total:rows.length,pct,rows,stats};
+const esc=s=>String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+document.getElementById('app').innerHTML=`<section class="card"><div class="muted">V84 Regression Bank</div><h1>اختبار محرك الفهم</h1><div class="helperBox"><b>${pass}/${rows.length} ناجحة — ${pct}%</b><p>الفشل: ${fail}. الحالات غير المحسومة مقصودة عندما تكون الدلالة ضعيفة.</p></div><div class="chips"><button class="chip on">الكل ${rows.length}</button><button class="chip">نجح ${pass}</button><button class="chip">فشل ${fail}</button></div><div style="margin-top:18px">${rows.map(r=>`<article class="helperBox" style="border-color:${r.ok?'#bfd7cc':'#e3bcbc'}"><b>${r.ok?'✓':'✕'} #${r.n} — ${esc(r.actual)}</b><p>${esc(r.text)}</p><small>المتوقع: ${esc(r.expected)} — الثقة: ${r.confidence}%</small>${!r.ok?`<p class="questionHelp">الترتيب: ${r.ranked.map(z=>`${esc(z.type)} ${z.score}`).join(' | ')}</p>`:''}</article>`).join('')}</div></section>`;
