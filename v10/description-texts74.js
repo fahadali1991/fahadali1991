@@ -1,0 +1,26 @@
+import {joinAr} from './engine.js';
+import {displayAudiences,smartTitle} from './output-quality-v5.js';
+import {guideSupportSentence74,strongGuideLinks74} from './guide-link74.js?v=74';
+const c=s=>String(s||'').replace(/\s+/g,' ').trim();
+const ctx=s=>({a:joinAr(displayAudiences(s))||'الفئة المستفيدة',t:s.classification?.type||'',topic:s.topic||'موضوع العمل',title:smartTitle(s),fd:s.metadata?.familyDetails||{}});
+const d=(fd,k)=>c(fd?.[k]||'');
+function programCore(s,level='medium'){const x=ctx(s),fd=x.fd,reason=d(fd,'reason'),method=d(fd,'method'),part=d(fd,'participation');const a=[];
+ a.push(`نُفذ ${x.title} لصالح ${x.a}.`);
+ if(reason)a.push(`وجاء التنفيذ استجابةً لـ${reason}.`);
+ if(method)a.push(`واعتمد التنفيذ على ${method}.`);
+ if(level!=='short'&&part)a.push(`وخلال التنفيذ لوحظ ${part}.`);
+ return a.join(' ')}
+function genericCore(s,level='medium'){const x=ctx(s),fd=x.fd,a=[];
+ if(x.t==='تحليل نتائج'){a.push(`تم تنفيذ ${x.title} للفئة ${x.a}.`);if(d(fd,'basis'))a.push(`استند التحليل إلى ${d(fd,'basis')}.`);if(d(fd,'finding'))a.push(`وأظهر التحليل ${d(fd,'finding')}.`);if(d(fd,'action'))a.push(`وبناءً على ذلك تم ${d(fd,'action')}.`)}
+ else if(x.t==='اجتماع / متابعة إدارية'){a.push(`عُقد ${x.title} بمشاركة ${x.a}.`);if(d(fd,'purpose'))a.push(`وتركز الاجتماع على ${d(fd,'purpose')}.`);if(d(fd,'work'))a.push(`ونوقش خلاله ${d(fd,'work')}.`);if(level!=='short'&&d(fd,'product'))a.push(`وتم الاتفاق على ${d(fd,'product')}.`)}
+ else if(x.t==='خطة'){a.push(`أُعدت ${x.title} لخدمة ${x.a}.`);if(d(fd,'basis'))a.push(`وبُنيت على ${d(fd,'basis')}.`);if(d(fd,'method'))a.push(`وتضمنت إجراءات تشمل ${d(fd,'method')}.`)}
+ else if(x.t==='تطوير مهني'){a.push(`تم تنفيذ ${x.title} بما يخدم ${x.a}.`);if(d(fd,'need'))a.push(`وجاءت استجابةً لـ${d(fd,'need')}.`);if(d(fd,'method'))a.push(`وتضمن التنفيذ ${d(fd,'method')}.`)}
+ else {a.push(`تم تنفيذ ${x.title} لصالح ${x.a}.`);const vals=Object.values(fd).map(c).filter(Boolean).slice(0,level==='short'?1:3);vals.forEach(v=>a.push(`${v}.`))}
+ return a.join(' ')}
+export function shortText74(s){return c(s.classification?.type==='برنامج / فعالية'?programCore(s,'short'):genericCore(s,'short'))}
+export function mediumText74(s){const core=s.classification?.type==='برنامج / فعالية'?programCore(s,'medium'):genericCore(s,'medium'),guide=guideSupportSentence74(s,1);return c(`${core}${guide?` ${guide}`:''}`)}
+export function longText74(s){const core=s.classification?.type==='برنامج / فعالية'?programCore(s,'long'):genericCore(s,'long'),guide=guideSupportSentence74(s,2);return c(`${core}${guide?` ${guide}`:''}`)}
+export function bulletText74(s){const x=ctx(s),fd=x.fd,a=[];a.push(`تم تنفيذ ${x.title} لصالح ${x.a}.`);
+ if(x.t==='برنامج / فعالية'){if(d(fd,'reason'))a.push(`سبب التنفيذ: ${d(fd,'reason')}.`);if(d(fd,'method'))a.push(`طريقة التنفيذ: ${d(fd,'method')}.`);if(d(fd,'participation'))a.push(`ملاحظة أثناء التنفيذ: ${d(fd,'participation')}.`)}
+ else Object.entries(fd).filter(([k,v])=>!['follow','product'].includes(k)&&c(v)).slice(0,4).forEach(([,v])=>a.push(`${c(v)}.`));
+ strongGuideLinks74(s).slice(0,2).forEach(z=>a.push(`دعم الممارسات المرتبطة بالمؤشر (${z.code}) في مجال ${z.domainName}.`));return a.slice(0,7)}
