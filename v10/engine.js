@@ -37,7 +37,9 @@ function scoreTypes(n){
   if(has(n,'تكليف','محضر','توصيات','قرار'))add('اجتماع / متابعة إدارية',2);
   if(has(n,'غياب','حضور','تاخير','تاخر','متاخر','انضباط','مواظبه','بصمه'))add('إجراء متابعة',7);
   if(has(n,'نتائج','درجات','اختبار','تحليل','متعثر','علاجي','علاج','اثراء'))add('تحليل نتائج',6);
-  if(has(n,'مجتمع مهني','مجتمع تعلم','ورشه','تدريب','تطوير مهني'))add('تطوير مهني',8);
+  // لا تعتبر كلمة "تدريب" وحدها تطويرًا مهنيًا؛ فقد تكون "تدريبًا عمليًا" للطلاب داخل برنامج.
+  if(has(n,'مجتمع مهني','مجتمع تعلم','ورشه','تطوير مهني','نمو مهني','احتياج تدريبي'))add('تطوير مهني',8);
+  if(has(n,'تدريب')&&has(n,'معلمين','معلمات','المعلمين','المعلمات','منسوبي','الكادر','مهني'))add('تطوير مهني',8);
   if(has(n,'برنامج','فعاليه','نشاط','مبادره','مسابقه','حمله'))add('برنامج / فعالية',7);
   if(has(n,'خطة','خطه'))add('خطة',6);
   if(has(n,'خطة','خطه')&&has(n,'اعداد','اعددنا','بناء','بنينا','نحتاج','وضع'))add('خطة',4);
@@ -81,8 +83,17 @@ export function titleSuggestions(state){
   return uniq(a.map(x=>x.replace(/\s+/g,' ').trim())).slice(0,3);
 }
 
+function explicitTypeFromRaw(raw){
+  const n=norm(raw);
+  if(/^(?:تم )?(?:نفذت|نفذنا|نفذ|تنفيذ) (?:برنامجا?|فعاليه|نشاط|مبادره|مسابقه|حمله)\b/u.test(n))return'برنامج / فعالية';
+  if(/^(?:تم )?(?:حضرت|حضرنا|نفذت|نفذنا|قدمت|قدمنا|تنفيذ) (?:برنامج تدريبي|دوره|ورشه|مجتمع تعلم مهني)\b/u.test(n))return'تطوير مهني';
+  return'';
+}
+
 export function analyze(raw,entryIntent='smart'){
-  const f=extractFacts(raw),scores=scoreTypes(f.n),ranked=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
+  const f=extractFacts(raw),scores=scoreTypes(f.n),explicit=explicitTypeFromRaw(raw);
+  if(explicit)scores[explicit]=99;
+  const ranked=Object.entries(scores).sort((a,b)=>b[1]-a[1]);
   const detected=ranked[0]?.[0]||'برنامج / فعالية';
   const hinted=INTENT_TO_TYPE[entryIntent]||'';
   const conflict=Boolean(hinted&&detected!==hinted&&((scores[detected]||0)-(scores[hinted]||0)>=3));
@@ -90,7 +101,7 @@ export function analyze(raw,entryIntent='smart'){
   const state={
     raw,normalized:f.n,topic:f.topic,audiences:f.audiences.length?f.audiences:(type==='تطوير مهني'?['المعلمون']:['الطلاب']),stage:f.stage,grades:f.grades,
     entryIntent,answers:{},metadata:{executorName:'',count:'',workTitle:''},
-    classification:{type,subtype:subtypeFor(type,f.n),domain:FAMILIES[type]?.domain||'عمل مدرسي',detected,hinted,conflict,confidence:ranked[0]?.[1]||0},
+    classification:{type,subtype:subtypeFor(type,f.n),domain:FAMILIES[type]?.domain||'عمل مدرسي',detected,hinted,conflict,confidence:ranked[0]?.[1]||0,explicit:Boolean(explicit)},
     titleIndex:0
   };
   const titles=titleSuggestions(state);state.titleSuggestions=titles;state.metadata.workTitle=titles[0]||state.classification.subtype||type;
