@@ -3,7 +3,7 @@ import {landing,entryForm} from './renderers-v5.js';
 import {goalsPage65 as goalsPage57} from './goals65.js?v=65';
 import {understanding55} from './understanding55.js';
 import {familyDetailsPage} from './family-details68.js?v=69';
-import {titlePage55} from './title-page55.js';
+import {titlePage71 as titlePage55} from './title-page71.js?v=71';
 import {descriptionChoicesPage,descriptionEditorPage} from './description-ui-v5.js';
 import {descriptionVariants} from './description-variants-v5.js';
 import {spellingPage,applySuggestion} from './spelling67compat.js?v=67';
