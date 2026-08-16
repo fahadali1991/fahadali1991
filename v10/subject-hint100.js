@@ -1,0 +1,4 @@
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+function hint(){try{return sessionStorage.getItem('v100_subjectHint')||''}catch{return''}}
+function apply(root=document){const block=$('.subjectBlock94',root);if(!block||block.dataset.hint100)return;if($('[data-subject94].on',block)){block.dataset.hint100='existing';return}const h=hint();if(!h)return;const b=$$('[data-subject94]',block).find(x=>(x.dataset.subject94||'')===h);if(!b)return;block.dataset.hint100='1';b.click();const note=document.createElement('div');note.className='subjectHint100';note.textContent='✓ فهمت هذه المادة من وصفك — يمكنك تغييرها بلمسة.';block.querySelector('.subjectHead94')?.insertAdjacentElement('afterend',note)}
+export function installSubjectHint100(root=document){new MutationObserver(()=>requestAnimationFrame(()=>apply(root))).observe(root,{childList:true,subtree:true});apply(root)}
