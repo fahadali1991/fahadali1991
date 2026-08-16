@@ -8,6 +8,6 @@ export function autoPrimaryDomain76(s){const p=autoGuideLinks76(s)[0];return p?N
 export function guideLinks76(s){const all=autoGuideLinks76(s),d=selectedDomains76(s,autoPrimaryDomain76(s));if(!d.primary)return all.slice(0,5);const primary=all.filter(x=>Number(x.domain)===d.primary);const related=d.related?all.filter(x=>Number(x.domain)===d.related):[];return [...primary.slice(0,3),...related.slice(0,2)].slice(0,5)}
 export function strongGuideLinks76(s){return guideLinks76(s).filter(x=>x.strength==='قوي').slice(0,3)}
 export function primaryGuideLink76(s){return strongGuideLinks76(s)[0]||guideLinks76(s)[0]||null}
-export function guideSupportSentence76(s,limit=1){const links=strongGuideLinks76(s).slice(0,limit);if(!links.length)return'';if(links.length===1){const x=links[0];return `كما يسهم العمل في دعم الممارسات المرتبطة بـ${String(x.text||'').replace(/\.$/,'')} ضمن مجال ${x.domainName}${limit>1?` (رمز المؤشر: ${x.code})`:''}.`;}return `كما يسهم العمل في دعم ممارسات مرتبطة بمجال ${[...new Set(links.map(x=>x.domainName))].join(' ومجال ')}.`}
+export function guideSupportSentence76(s,limit=1){const links=strongGuideLinks76(s).slice(0,limit);if(!links.length)return'';if(links.length===1){const x=links[0];return `كما يسهم العمل في دعم الممارسات المرتبطة بـ${String(x.text||'').replace(/\.$/,'')} ضمن مجال ${x.domainName}.`;}return `كما يسهم العمل في دعم ممارسات مرتبطة بمجال ${[...new Set(links.map(x=>x.domainName))].join(' ومجال ')}.`}
 export function selectedGuideDomains76(s){return selectedDomains76(s,autoPrimaryDomain76(s))}
 export {GUIDE_DOMAINS};
