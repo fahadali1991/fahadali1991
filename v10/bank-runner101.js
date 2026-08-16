@@ -1,0 +1,8 @@
+import {BANK101_ALL} from './bank101-all.js?v=101';
+import {preview100} from './intelligence100.js?v=100';
+const norm=s=>String(s??'').replace(/\s+/g,' ').trim();
+function actual(raw){const g=preview100(raw);return{family:g.family?.type||'',subtype:g.subtype||'',subject:g.subject?.name||'',topic:g.topic||'',audience:(g.audiences||[]).join('، '),grade:(g.grades||[])[0]||'',stage:g.stage||'',schoolDomain:g.schoolDomain?.name||''}}
+function compatible(expected,got){const e=norm(expected),a=norm(got);if(!e)return true;if(e.includes('/'))return e.split('/').some(x=>a.includes(norm(x)));return a===e||a.includes(e)||e.includes(a)}
+export function runBank101(){const rows=BANK101_ALL.map(c=>{const got=actual(c.input),checks=[];for(const [k,v] of Object.entries(c.expect||{})){if(k in got)checks.push({key:k,ok:compatible(v,got[k]),want:v,got:got[k]})}const failed=checks.filter(x=>!x.ok);return{id:c.id,register:c.register,input:c.input,ok:failed.length===0,failed,got,expect:c.expect}});const byRegister={};for(const r of rows){const k=r.register||'unknown';byRegister[k]??={total:0,passed:0,failed:0};byRegister[k].total++;r.ok?byRegister[k].passed++:byRegister[k].failed++}return{total:rows.length,passed:rows.filter(x=>x.ok).length,failed:rows.filter(x=>!x.ok).length,byRegister,rows}}
+export function summarizeBank101(){const r=runBank101();return{total:r.total,passed:r.passed,failed:r.failed,passRate:Math.round((r.passed/r.total)*1000)/10,byRegister:r.byRegister,topFailures:r.rows.filter(x=>!x.ok).slice(0,20).map(x=>({id:x.id,input:x.input,failed:x.failed}))}}
+if(globalThis.__RUN_BANK101__)console.log(summarizeBank101());
