@@ -1,0 +1,1 @@
+document.addEventListener('click',e=>{const b=e.target.closest('.titleChoice94');if(!b)return;const title=(b.dataset.titleChoice55||b.querySelector('b')?.textContent||'').trim();if(!title)return;b.dataset.titleAccept=title;delete b.dataset.titleChoice55;},true);
