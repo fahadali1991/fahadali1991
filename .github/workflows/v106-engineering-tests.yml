@@ -3,8 +3,7 @@ on:
   push:
     branches: [v106-engineering-foundation, main]
     paths:
-      - 'v10/*106.js'
-      - 'v10/skill-resolver105.js'
+      - 'v10/**'
       - '.github/workflows/v106-engineering-tests.yml'
   workflow_dispatch:
 jobs:
@@ -21,6 +20,6 @@ jobs:
         run: node --experimental-default-type=module v10/run-context85-tests.js
       - name: Foundation must not use sessionStorage
         run: |
-          if grep -R "sessionStorage" v10/canonical-context106.js v10/question-router106.js v10/generators106.js; then
+          if grep -R "sessionStorage" v10/canonical-context106.js v10/question-router106.js v10/generators106.js v10/skill-resolver106.js; then
             echo "V106 foundation must use canonical state only"; exit 1
           fi
