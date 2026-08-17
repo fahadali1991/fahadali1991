@@ -1,1 +1,1 @@
-export {familyDetailsPage105 as familyDetailsPage} from './family-details105.js?v=105';
+export {familyDetailsPage106 as familyDetailsPage} from './family-details106.js?v=106';
