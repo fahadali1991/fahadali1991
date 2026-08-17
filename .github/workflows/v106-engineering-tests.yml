@@ -1,0 +1,26 @@
+name: V106 Engineering Foundation
+on:
+  push:
+    branches: [v106-engineering-foundation, main]
+    paths:
+      - 'v10/*106.js'
+      - 'v10/skill-resolver105.js'
+      - '.github/workflows/v106-engineering-tests.yml'
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: V106 canonical state, router and generator tests
+        run: node --experimental-default-type=module v10/engineering106-tests.js
+      - name: Existing V85 regression tests
+        run: node --experimental-default-type=module v10/run-context85-tests.js
+      - name: Foundation must not use sessionStorage
+        run: |
+          if grep -R "sessionStorage" v10/canonical-context106.js v10/question-router106.js v10/generators106.js; then
+            echo "V106 foundation must use canonical state only"; exit 1
+          fi
