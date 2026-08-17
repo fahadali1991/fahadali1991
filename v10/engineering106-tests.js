@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {buildCanonicalContext106} from './canonical-context106.js';
 import {routeNextQuestion106,routeSequence106} from './question-router106.js';
 import {titleCandidates106,goalCandidates106,narrative106} from './generators106.js';
-import {resolveSkill105} from './skill-resolver105.js';
+import {resolveSkill106} from './skill-resolver106.js';
 
 const matrix=questions=>({questions});
 const q=id=>({id,q:id,opts:[`${id}-1`,`${id}-2`],max:1,kind:'UserChoice'});
@@ -23,9 +23,9 @@ test('maintenance requires status',()=>{const s=baseState('صيانة وتجهي
 test('measurement appears only after outcome claim',()=>{const s=baseState('برنامج / فعالية');Object.assign(s.metadata.familyDetails,{reason:'تنمية مهارة',goal:'رفع الأداء',method:'تدريب',participation:'تحسن في دقة الحل'});const m=matrix([q('reason'),q('goal'),q('method'),q('participation')]);assert.equal(routeNextQuestion106(s,m).question.id,'measurement')});
 test('neutral observation does not force measurement',()=>{const s=baseState('برنامج / فعالية');Object.assign(s.metadata.familyDetails,{reason:'تنمية مهارة',goal:'رفع الأداء',method:'تدريب',participation:'مشاركة واسعة'});const m=matrix([q('reason'),q('goal'),q('method'),q('participation')]);assert.equal(routeNextQuestion106(s,m).done,true)});
 
-test('fraction topic does not equal precise skill',()=>{const s=baseState('خطة','خطة علاجية في الكسور');s.metadata.subjectHint101='الرياضيات';s.topic='الكسور';const r=resolveSkill105(s);assert.equal(r.branch,'الكسور والنسب');assert.equal(r.skillKnown,false);assert.equal(r.needsSkillQuestion,true)});
-test('explicit denominator skill resolves precisely',()=>{const s=baseState('خطة','ضعف في توحيد المقامات عند جمع الكسور');s.metadata.subjectHint101='الرياضيات';s.topic='الكسور';assert.equal(resolveSkill105(s).skill,'توحيد المقامات')});
-test('arabic reading remains ambiguous without precise skill',()=>{const s=baseState('برنامج / فعالية','برنامج لتحسين القراءة');s.metadata.subjectHint101='اللغة العربية';s.topic='القراءة';const r=resolveSkill105(s);assert.equal(r.branch,'القراءة');assert.equal(r.skillKnown,false)});
+test('fraction topic does not equal precise skill',()=>{const s=baseState('خطة','خطة علاجية في الكسور');s.metadata.subjectHint101='الرياضيات';s.topic='الكسور';const r=resolveSkill106(s);assert.equal(r.branch,'الكسور والنسب');assert.equal(r.skillKnown,false);assert.equal(r.needsSkillQuestion,true)});
+test('explicit denominator skill resolves precisely',()=>{const s=baseState('خطة','ضعف في توحيد المقامات عند جمع الكسور');s.metadata.subjectHint101='الرياضيات';s.topic='الكسور';assert.equal(resolveSkill106(s).skill,'توحيد المقامات')});
+test('arabic reading remains ambiguous without precise skill',()=>{const s=baseState('برنامج / فعالية','برنامج لتحسين القراءة');s.metadata.subjectHint101='اللغة العربية';s.topic='القراءة';const r=resolveSkill106(s);assert.equal(r.branch,'القراءة');assert.equal(r.skillKnown,false)});
 
 test('title uses canonical precise skill',()=>{const s=baseState('خطة');s.classification.subtype='خطة علاجية';s.metadata.subjectHint101='الرياضيات';s.topic='الكسور';s.metadata.familyDetails.skillFocus='توحيد المقامات';assert.ok(titleCandidates106(s)[0].includes('توحيد المقامات'))});
 test('goals use same canonical skill',()=>{const s=baseState('برنامج / فعالية');s.metadata.familyDetails.skillFocus='الفهم القرائي';assert.ok(goalCandidates106(s)[0].includes('الفهم القرائي'))});
