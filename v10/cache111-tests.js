@@ -1,15 +1,18 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 const read=p=>fs.readFileSync(p,'utf8');
-const checks=[
- ['home106.html','v10/app103.js?v=111'],
- ['v10/app103.js','./app89.js?v=111'],
- ['v10/app89.js','./app88.js?v=111'],
+const home=read('home106.html'),app103=read('v10/app103.js'),app89=read('v10/app89.js'),app88=read('v10/app88.js');
+const token=home.match(/v10\/app103\.js\?v=([^"']+)/)?.[1];
+assert.ok(token,'home106.html must version the production app entry');
+assert.ok(app103.includes(`./app89.js?v=${token}`),`app103.js must carry production token ${token} to app89.js`);
+assert.ok(app89.includes(`./app88.js?v=${token}`),`app89.js must carry production token ${token} to app88.js`);
+for(const [file,needle] of [
  ['v10/app88.js','./family-details68.js?v=111'],
  ['v10/app88.js','./final76.js?v=111'],
  ['v10/family-details68.js','./family-details109.js?v=111'],
  ['v10/final76.js','./pdf-renderer107.js?v=111'],
  ['v10/pdf-renderer107.js','./pdf-model107.js?v=111']
-];
-for(const [file,needle] of checks)assert.ok(read(file).includes(needle),`${file} must load ${needle}`);
-console.log(`V111 cache chain PASS: ${checks.length}/${checks.length} production module edges point to V111.`);
+])assert.ok(read(file).includes(needle),`${file} must preserve validated V111 edge ${needle}`);
+assert.ok(app88.includes(`./description-ui88.js?v=${token}`),'description UI cache token must follow current production token');
+assert.ok(app88.includes(`./description-variants88.js?v=${token}`),'description variants cache token must follow current production token');
+console.log(`Production cache chain PASS: entry token ${token} propagates through the live shell while validated V111 internal edges remain intact.`);
