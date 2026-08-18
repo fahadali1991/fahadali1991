@@ -11,6 +11,8 @@ const familyOf=s=>String(s?.classification?.type||'').trim();
 const cloneState=s=>s;
 export async function setCurrent109(id){return put(META,{id:'current',value:id||'',updatedAt:Date.now()})}
 export async function currentId109(){return (await get(META,'current'))?.value||''}
+export async function requestResume109(id){if(!id)return del(META,'resume');return put(META,{id:'resume',value:id,updatedAt:Date.now()})}
+export async function consumeResumeRequest109(){const rec=await get(META,'resume');if(rec)await del(META,'resume');return rec?.value||''}
 export async function saveDraft109(state,{id,screen='understanding'}={}){state.metadata=state.metadata||{};const docId=id||state.metadata.documentId109||repositoryId109();state.metadata.documentId109=docId;const old=await get(DRAFTS,docId);const now=Date.now();const rec={id:docId,state:cloneState(state),screen,title:titleOf(state),family:familyOf(state),createdAt:old?.createdAt||now,updatedAt:now,schemaVersion:109,status:'draft'};await put(DRAFTS,rec);await setCurrent109(docId);return rec}
 export async function loadDraft109(id){const key=id||await currentId109();return key?get(DRAFTS,key):null}
 export async function listDrafts109(){return(await all(DRAFTS)).sort((a,b)=>b.updatedAt-a.updatedAt)}
