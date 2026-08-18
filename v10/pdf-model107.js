@@ -9,8 +9,8 @@ function goals(s){return (s?.answers?.goals||s?.metadata?.selectedGoals||[]).map
 function familyMetaRows111(s){const f=s?.metadata?.familyMeta111||{},family=s?.classification?.type||'',d=details(s),rows=[];const add=(k,v)=>{if(text(v))rows.push([k,text(v)])};
  if(family==='اجتماع / متابعة إدارية'){add('رئيس الاجتماع',f.meetingChair);add('معد المحضر',f.minutesWriter);add('وقت البداية',f.startTime);add('وقت النهاية',f.endTime);add('الحضور',f.attendees)}
  else if(family==='تحليل نتائج'){add('المادة',d.subject94||s?.metadata?.subjectHint101);add('نوع الاختبار',f.assessmentType);add('الفترة',f.period);add('عدد الطلاب/المختبرين',f.testedCount)}
- else if(family==='خطة'){add('المسؤول',split(d.owner).join('، '));add('بداية الخطة',f.startDate);add('نهاية الخطة',f.endDate);add('فريق التنفيذ',f.team)}
- else if(family==='إجراء متابعة'){add('المسؤول',split(d.owner).join('، '));add('فترة المتابعة',f.period);add('الحالات/العدد',f.casesCount);add('وسيلة المتابعة',split(d.method).join('، '))}
+ else if(family==='خطة'){add('المسؤول',split(d.owner).join('، '));add('بداية الخطة',f.startDate);add('نهاية الخطة',f.endDate);add('فريق التنفيذ',split(f.team).join('، ')||f.team)}
+ else if(family==='إجراء متابعة'){add('المسؤول',s?.metadata?.executorName);add('فترة المتابعة',f.period);add('الحالات/العدد',f.casesCount);add('وسيلة المتابعة',split(d.method).join('، '))}
  else if(family==='تطوير مهني'){add('الجهة',f.provider);add('الساعات',f.hours);add('نمط التنفيذ',f.deliveryMode);add('الشهادة أو مقدم النشاط',f.certificateOrPresenter)}
  return rows}
 function metadata(c,s){const base=[['التاريخ',c.execution.date.value],['المدة',c.execution.duration.value],['المرحلة',c.education.stage.value],['الصف',c.education.grades.join('، ')],['الفئة المستهدفة',c.education.audiences.join('، ')],['المكان',c.execution.place.value],['المنفذ',c.execution.executor.value]].filter(([,v])=>text(v));const seen=new Set(base.map(([k])=>k));for(const row of familyMetaRows111(s)){if(!seen.has(row[0])){base.push(row);seen.add(row[0])}}return base}
