@@ -30,6 +30,9 @@ const pdMeta=Object.fromEntries(pdfModel107(pd).sections.find(x=>x.def.id==='met
 assert.equal(pdMeta['الجهة'],'المعهد الوطني للتطوير المهني التعليمي');assert.equal(pdMeta['الساعات'],'6');assert.equal(pdMeta['نمط التنفيذ'],'عن بُعد مباشر');assert.equal(pdMeta['الشهادة أو مقدم النشاط'],'شهادة حضور');
 
 const plan=base('خطة');plan.metadata.familyDetails.owner='معلم المادة';plan.metadata.familyMeta111={startDate:'2026-08-20',endDate:'2026-09-20',team:'معلم المادة|||الموجه الطلابي'};
-const planMeta=Object.fromEntries(pdfModel107(plan).sections.find(x=>x.def.id==='meta').data);assert.equal(planMeta['المسؤول'],'معلم المادة');assert.equal(planMeta['بداية الخطة'],'2026-08-20');assert.equal(planMeta['نهاية الخطة'],'2026-09-20');assert.equal(planMeta['فريق التنفيذ'],'معلم المادة|||الموجه الطلابي');
+const planMeta=Object.fromEntries(pdfModel107(plan).sections.find(x=>x.def.id==='meta').data);assert.equal(planMeta['المسؤول'],'معلم المادة');assert.equal(planMeta['بداية الخطة'],'2026-08-20');assert.equal(planMeta['نهاية الخطة'],'2026-09-20');assert.equal(planMeta['فريق التنفيذ'],'معلم المادة، الموجه الطلابي');
+
+const follow=base('إجراء متابعة');follow.metadata.familyDetails.method='سجل متابعة أسبوعي';follow.metadata.familyMeta111={period:'أربعة أسابيع',casesCount:'12'};
+const followMeta=Object.fromEntries(pdfModel107(follow).sections.find(x=>x.def.id==='meta').data);assert.equal(followMeta['المسؤول'],'فهد');assert.equal(followMeta['فترة المتابعة'],'أربعة أسابيع');assert.equal(followMeta['الحالات/العدد'],'12');assert.equal(followMeta['وسيلة المتابعة'],'سجل متابعة أسبوعي');
 
 console.log('V111 family metadata PASS: adaptive one-at-a-time routing and PDF metadata delivery verified.');
