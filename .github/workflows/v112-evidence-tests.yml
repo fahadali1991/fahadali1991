@@ -5,12 +5,26 @@ on:
     paths:
       - 'v10/evidence-reference112.js'
       - 'v10/evidence-reference112-tests.js'
+      - 'v10/evidence-screen112-tests.js'
+      - 'v10/evidence85.js'
+      - 'v10/styles112.css'
+      - 'v10/app88.js'
+      - 'v10/app89.js'
+      - 'v10/app103.js'
+      - 'home106.html'
       - '.github/workflows/v112-evidence-tests.yml'
   pull_request:
     branches: [main]
     paths:
       - 'v10/evidence-reference112.js'
       - 'v10/evidence-reference112-tests.js'
+      - 'v10/evidence-screen112-tests.js'
+      - 'v10/evidence85.js'
+      - 'v10/styles112.css'
+      - 'v10/app88.js'
+      - 'v10/app89.js'
+      - 'v10/app103.js'
+      - 'home106.html'
       - '.github/workflows/v112-evidence-tests.yml'
   workflow_dispatch:
 jobs:
@@ -23,5 +37,7 @@ jobs:
           node-version: '22'
       - name: V112 source-aware evidence routing
         run: node --experimental-default-type=module v10/evidence-reference112-tests.js
+      - name: V112 evidence screen integration
+        run: node --experimental-default-type=module v10/evidence-screen112-tests.js
       - name: V112 syntax
-        run: node --check v10/evidence-reference112.js && node --check v10/evidence-reference112-tests.js
+        run: node --check v10/evidence-reference112.js && node --check v10/evidence-reference112-tests.js && node --check v10/evidence-screen112-tests.js && node --check v10/evidence85.js && node --check v10/app88.js && node --check v10/app89.js && node --check v10/app103.js
