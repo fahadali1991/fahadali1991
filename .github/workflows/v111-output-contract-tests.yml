@@ -5,6 +5,10 @@ on:
     paths:
       - 'v10/output-contract111.js'
       - 'v10/output-contract111-tests.js'
+      - 'v10/family-meta111.js'
+      - 'v10/family-meta111-tests.js'
+      - 'v10/family-details109.js'
+      - 'v10/pdf-model107.js'
       - 'v10/source-contract109.js'
       - 'V10_OUTPUT_REVERSE_ENGINEERING.md'
       - '.github/workflows/v111-output-contract-tests.yml'
@@ -13,6 +17,10 @@ on:
     paths:
       - 'v10/output-contract111.js'
       - 'v10/output-contract111-tests.js'
+      - 'v10/family-meta111.js'
+      - 'v10/family-meta111-tests.js'
+      - 'v10/family-details109.js'
+      - 'v10/pdf-model107.js'
       - 'v10/source-contract109.js'
       - 'V10_OUTPUT_REVERSE_ENGINEERING.md'
       - '.github/workflows/v111-output-contract-tests.yml'
@@ -27,5 +35,7 @@ jobs:
           node-version: '22'
       - name: V111 reverse-engineered output contract
         run: node --experimental-default-type=module v10/output-contract111-tests.js
+      - name: V111 adaptive family metadata and PDF delivery
+        run: node --experimental-default-type=module v10/family-meta111-tests.js
       - name: V111 syntax
-        run: node --check v10/output-contract111.js && node --check v10/output-contract111-tests.js
+        run: node --check v10/output-contract111.js && node --check v10/output-contract111-tests.js && node --check v10/family-meta111.js && node --check v10/family-meta111-tests.js && node --check v10/family-details109.js && node --check v10/pdf-model107.js
