@@ -1,0 +1,12 @@
+import fs from 'node:fs';
+import assert from 'node:assert/strict';
+const workspace=fs.readFileSync(new URL('./workspace109.js',import.meta.url),'utf8');
+const repo=fs.readFileSync(new URL('./document-repository106.js',import.meta.url),'utf8');
+assert.equal(workspace.includes('sessionStorage'),false,'workspace109 must not use sessionStorage');
+assert.match(workspace,/requestResume109/,'workspace must request resume via repository');
+assert.match(workspace,/consumeResumeRequest109/,'workspace must consume resume intent from repository');
+assert.match(repo,/export async function requestResume109/,'repository must expose resume request');
+assert.match(repo,/export async function consumeResumeRequest109/,'repository must expose resume request consumption');
+for(const label of ['الرئيسية','السابق','التالي','الأرشيف والملفات'])assert.ok(workspace.includes(label),`missing navigation label: ${label}`);
+for(const action of ['data-ws109-resume','data-ws109-edit','data-ws109-duplicate','data-ws109-delete-doc','data-ws109-delete-draft'])assert.ok(workspace.includes(action),`missing archive action: ${action}`);
+console.log('workspace109 static contract: PASS');

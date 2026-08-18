@@ -1,7 +1,7 @@
 name: School Engine Quality Gate
 on:
   push:
-    branches: [v106-engineering-foundation, v106-adaptive-ui, v109-main-clean, main]
+    branches: [v106-engineering-foundation, v106-adaptive-ui, v109-main-clean, v109-workspace-cleanup, main]
     paths:
       - 'v10/**'
       - 'home106.html'
@@ -35,12 +35,14 @@ jobs:
         run: node --experimental-default-type=module v10/title-spelling108-tests.js
       - name: V109 source-to-question contract audit
         run: node --experimental-default-type=module v10/source-audit109-tests.js
+      - name: V109 workspace archive/navigation contract
+        run: node --experimental-default-type=module v10/workspace109-tests.js
       - name: Browser module syntax checks
         run: node --check v10/family-details106.js && node --check v10/family-details109.js && node --check v10/subject-selector109.js && node --check v10/matrix106.js && node --check v10/question-router106.js && node --check v10/source-contract109.js && node --check v10/document-repository106.js && node --check v10/storage-v53.js && node --check v10/workspace109.js && node --check v10/app103.js && node --check v10/pdf-schema107.js && node --check v10/pdf-layout107.js && node --check v10/pdf-model107.js && node --check v10/pdf-renderer107.js && node --check v10/title108.js && node --check v10/title-page108.js && node --check v10/spelling108.js
       - name: Existing V85 regression tests
         run: node --experimental-default-type=module v10/run-context85-tests.js
-      - name: Canonical core must not use sessionStorage
+      - name: Canonical and workspace layers must not use sessionStorage
         run: |
-          if grep -R "sessionStorage" v10/canonical-context106.js v10/question-router106.js v10/generators106.js v10/skill-resolver106.js v10/matrix106.js v10/family-details106.js v10/family-details109.js v10/subject-selector109.js v10/source-contract109.js v10/pdf-schema107.js v10/pdf-layout107.js v10/pdf-model107.js v10/pdf-renderer107.js v10/title108.js v10/title-page108.js v10/spelling108.js; then
-            echo "Canonical core must use document state only"; exit 1
+          if grep -R "sessionStorage" v10/canonical-context106.js v10/question-router106.js v10/generators106.js v10/skill-resolver106.js v10/matrix106.js v10/family-details106.js v10/family-details109.js v10/subject-selector109.js v10/source-contract109.js v10/document-repository106.js v10/workspace109.js v10/pdf-schema107.js v10/pdf-layout107.js v10/pdf-model107.js v10/pdf-renderer107.js v10/title108.js v10/title-page108.js v10/spelling108.js; then
+            echo "Canonical/workspace state must use document repository only"; exit 1
           fi
