@@ -6,6 +6,12 @@ on:
       - 'v10/**'
       - 'home106.html'
       - '.github/workflows/v106-engineering-tests.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v10/**'
+      - 'home106.html'
+      - '.github/workflows/v106-engineering-tests.yml'
   workflow_dispatch:
 jobs:
   test:
