@@ -1,0 +1,6 @@
+import {familyDetailsPage106} from './family-details106.js?v=109';
+import {subjectSelector109,applySubject109} from './subject-selector109.js?v=109';
+let current=null;
+function inject(html,state){const block=subjectSelector109(state);if(!block)return html;const marker='<div data-adaptive-zone>';return html.includes(marker)?html.replace(marker,`${block}${marker}`):html}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-subject109]');const g=e.target.closest('[data-subject-general109]');if(!current||(!b&&!g))return;if(g)applySubject109(current,'',{general:true});else applySubject109(current,b.dataset.subject109);const old=document.querySelector('.subjectBlock109');if(old)old.outerHTML=subjectSelector109(current);const hidden=document.querySelector('.subjectBlock109 [data-family-field="subject94"]');if(hidden)hidden.dispatchEvent(new Event('input',{bubbles:true}))},true);
+export function familyDetailsPage109(state){current=state;return inject(familyDetailsPage106(state),state)}
