@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import {titleCandidates108,bestTitle108,validateTitle108} from './title108.js';
+import {suggestions108,applySuggestion108,qualityIssues108} from './spelling108.js';
+import {pdfModel107} from './pdf-model107.js';
+const state=(family,subtype,subject,topic,skill='')=>({raw:'',classification:{type:family,subtype},stage:'متوسط',grades:['الصف الثاني المتوسط'],audiences:['الطلاب'],metadata:{familyDetails:{subject94:subject,skillFocus:skill},subjectHint101:subject,semantic101:{},resolvedSkill106:skill?{skill,branch:topic}:undefined},topic,answers:{goals:[],evidence:[]},attachments:[]});
+const tests=[];const test=(n,f)=>tests.push([n,f]);
+test('handwriting program gets natural formal title and creative option',()=>{const s=state('برنامج / فعالية','برنامج','اللغة العربية','الكتابة','الخط والكتابة');const a=titleCandidates108(s);assert.ok(a[0].includes('تحسين الخط العربي'));assert.ok(a.some(x=>x.includes('خطي أجمل')))});
+test('Quran generic program avoids awkward تنمية القرآن الكريم',()=>{const s=state('برنامج / فعالية','برنامج','القرآن الكريم والدراسات الإسلامية','القرآن الكريم','القرآن الكريم');const a=titleCandidates108(s);assert.ok(!a[0].includes('تنمية القرآن الكريم'));assert.ok(a.some(x=>x.includes('مع القرآن')))});
+test('precise math skill drives plan title',()=>{const s=state('خطة','خطة علاجية','الرياضيات','الكسور','توحيد المقامات');assert.ok(titleCandidates108(s)[0].includes('توحيد المقامات'))});
+test('manual accepted title has priority',()=>{const s=state('برنامج / فعالية','مبادرة','اللغة العربية','القراءة','الفهم القرائي');s.metadata.titleManual=true;s.metadata.workTitle='مبادرة قارئ اليوم';assert.equal(bestTitle108(s),'مبادرة قارئ اليوم')});
+test('question-like and personal titles are rejected',()=>{assert.equal(validateTitle108('كيف نفذت البرنامج؟'),false);assert.equal(validateTitle108('نفذت برنامج القراءة'),false)});
+test('accepted title is carried to PDF model',()=>{const s=state('برنامج / فعالية','برنامج','اللغة العربية','القراءة','الفهم القرائي');s.metadata.selectedTitle='برنامج قارئ اليوم';const m=pdfModel107(s);const t=m.sections.find(x=>x.def.id==='title');assert.equal(t.data.title,'برنامج قارئ اليوم')});
+test('proofreader suggests common Arabic school corrections',()=>{const s=suggestions108('تم تنفيد الفعاليه وكتابة النتايج');assert.ok(s.some(x=>x.to==='تنفيذ'));assert.ok(s.some(x=>x.to==='الفعالية'));assert.ok(s.some(x=>x.to==='النتائج'))});
+test('proofreader applies selected correction without rewriting whole field',()=>{assert.equal(applySuggestion108('تم تنفيد البرنامج','تنفيد','تنفيذ'),'تم تنفيذ البرنامج')});
+test('proofreader catches technical separator and distorted repetition',()=>{const q=qualityIssues108('نص ||| مدرررسي');assert.ok(q.some(x=>x.id==='separator'));assert.ok(q.some(x=>x.token==='مدرررسي'))});
+let passed=0;for(const [n,f] of tests){try{f();passed++;console.log(`✓ ${n}`)}catch(e){console.error(`✗ ${n}`);throw e}}console.log(`\nV108 title and spelling tests: ${passed}/${tests.length} passed`);
