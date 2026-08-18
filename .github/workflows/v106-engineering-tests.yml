@@ -21,12 +21,14 @@ jobs:
         run: node --experimental-default-type=module v10/adaptive-ui106-tests.js
       - name: V106 full teacher-stage-document UX matrix
         run: node --experimental-default-type=module v10/ux-matrix106-tests.js
+      - name: V107 adaptive PDF schema and print tests
+        run: node --experimental-default-type=module v10/pdf-schema107-tests.js
       - name: Browser module syntax checks
-        run: node --check v10/family-details106.js && node --check v10/matrix106.js
+        run: node --check v10/family-details106.js && node --check v10/matrix106.js && node --check v10/pdf-schema107.js && node --check v10/pdf-layout107.js && node --check v10/pdf-model107.js
       - name: Existing V85 regression tests
         run: node --experimental-default-type=module v10/run-context85-tests.js
       - name: Foundation must not use sessionStorage
         run: |
-          if grep -R "sessionStorage" v10/canonical-context106.js v10/question-router106.js v10/generators106.js v10/skill-resolver106.js v10/matrix106.js v10/family-details106.js; then
-            echo "V106 foundation must use canonical state only"; exit 1
+          if grep -R "sessionStorage" v10/canonical-context106.js v10/question-router106.js v10/generators106.js v10/skill-resolver106.js v10/matrix106.js v10/family-details106.js v10/pdf-schema107.js v10/pdf-layout107.js v10/pdf-model107.js; then
+            echo "Foundation must use canonical state only"; exit 1
           fi
