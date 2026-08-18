@@ -1,0 +1,31 @@
+name: V111 Output Contract Gate
+on:
+  push:
+    branches: [v111-output-contract]
+    paths:
+      - 'v10/output-contract111.js'
+      - 'v10/output-contract111-tests.js'
+      - 'v10/source-contract109.js'
+      - 'V10_OUTPUT_REVERSE_ENGINEERING.md'
+      - '.github/workflows/v111-output-contract-tests.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v10/output-contract111.js'
+      - 'v10/output-contract111-tests.js'
+      - 'v10/source-contract109.js'
+      - 'V10_OUTPUT_REVERSE_ENGINEERING.md'
+      - '.github/workflows/v111-output-contract-tests.yml'
+  workflow_dispatch:
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: V111 reverse-engineered output contract
+        run: node --experimental-default-type=module v10/output-contract111-tests.js
+      - name: V111 syntax
+        run: node --check v10/output-contract111.js && node --check v10/output-contract111-tests.js
