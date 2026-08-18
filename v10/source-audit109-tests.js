@@ -1,3 +1,4 @@
+// Final V109 verification trigger: source/question/archive/navigation gate.
 import assert from 'node:assert/strict';
 import {matrix106} from './matrix106.js';
 import {routeSequence106} from './question-router106.js';
