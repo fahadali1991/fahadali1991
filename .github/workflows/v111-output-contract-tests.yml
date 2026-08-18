@@ -1,0 +1,59 @@
+name: V111 Output Contract Gate
+on:
+  push:
+    branches: [v111-output-contract]
+    paths:
+      - 'home106.html'
+      - 'v10/app103.js'
+      - 'v10/app89.js'
+      - 'v10/app88.js'
+      - 'v10/family-details68.js'
+      - 'v10/final76.js'
+      - 'v10/pdf-renderer107.js'
+      - 'v10/cache111-tests.js'
+      - 'v10/output-contract111.js'
+      - 'v10/output-contract111-tests.js'
+      - 'v10/family-meta111.js'
+      - 'v10/family-meta111-tests.js'
+      - 'v10/family-details109.js'
+      - 'v10/pdf-model107.js'
+      - 'v10/source-contract109.js'
+      - 'V10_OUTPUT_REVERSE_ENGINEERING.md'
+      - '.github/workflows/v111-output-contract-tests.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'home106.html'
+      - 'v10/app103.js'
+      - 'v10/app89.js'
+      - 'v10/app88.js'
+      - 'v10/family-details68.js'
+      - 'v10/final76.js'
+      - 'v10/pdf-renderer107.js'
+      - 'v10/cache111-tests.js'
+      - 'v10/output-contract111.js'
+      - 'v10/output-contract111-tests.js'
+      - 'v10/family-meta111.js'
+      - 'v10/family-meta111-tests.js'
+      - 'v10/family-details109.js'
+      - 'v10/pdf-model107.js'
+      - 'v10/source-contract109.js'
+      - 'V10_OUTPUT_REVERSE_ENGINEERING.md'
+      - '.github/workflows/v111-output-contract-tests.yml'
+  workflow_dispatch:
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: V111 reverse-engineered output contract
+        run: node --experimental-default-type=module v10/output-contract111-tests.js
+      - name: V111 adaptive family metadata and PDF delivery
+        run: node --experimental-default-type=module v10/family-meta111-tests.js
+      - name: V111 production cache chain
+        run: node --experimental-default-type=module v10/cache111-tests.js
+      - name: V111 syntax
+        run: node --check v10/output-contract111.js && node --check v10/output-contract111-tests.js && node --check v10/family-meta111.js && node --check v10/family-meta111-tests.js && node --check v10/cache111-tests.js && node --check v10/family-details109.js && node --check v10/pdf-model107.js && node --check v10/pdf-renderer107.js && node --check v10/final76.js && node --check v10/app88.js && node --check v10/app89.js && node --check v10/app103.js
