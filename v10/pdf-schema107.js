@@ -1,20 +1,11 @@
 const section=(id,label,{required=false,when=()=>true,layout='text',maxItems=6,pageBreak='auto',priority=5}={})=>({id,label,required,when,layout,maxItems,pageBreak,priority});
 const has=(s,k)=>Boolean(String(s?.metadata?.familyDetails?.[k]||'').trim());
-const hasFiles=s=>(s?.attachments||[]).length>0;
+const hasEvidence=s=>Boolean((s?.attachments||[]).length||(s?.answers?.evidence||[]).length||String(s?.metadata?.evidenceLink||'').trim());
 const hasImages=s=>(s?.attachments||[]).some(f=>String(f.type||f.file?.type||'').startsWith('image/'));
 const hasIndicators=s=>Boolean(s?.metadata?.guidePrimaryDomain76||s?.metadata?.guideRelatedDomain76||s?.metadata?.guideLinks76?.length);
 const hasMeasure=s=>has(s,'measurement');
-const COMMON=[
- section('identity','الهوية المؤسسية',{required:true,layout:'identity',priority:10}),
- section('title','عنوان الوثيقة',{required:true,layout:'hero',priority:10}),
- section('meta','بيانات التنفيذ',{required:true,layout:'meta-strip',priority:9}),
-];
-const TAIL=[
- section('indicators','الارتباط بالمؤشرات',{when:hasIndicators,layout:'indicator-table',maxItems:4,priority:4}),
- section('evidence','الشواهد والمرفقات',{when:hasFiles,layout:'evidence-gallery',maxItems:6,pageBreak:'smart',priority:8}),
- section('approval','اعتماد التنفيذ',{when:s=>Boolean(s?.metadata?.executorName||s?.metadata?.approverName),layout:'approval',priority:3}),
- section('footer','التذييل',{required:true,layout:'footer',priority:10}),
-];
+const COMMON=[section('identity','الهوية المؤسسية',{required:true,layout:'identity',priority:10}),section('title','عنوان الوثيقة',{required:true,layout:'hero',priority:10}),section('meta','بيانات التنفيذ',{required:true,layout:'meta-strip',priority:9})];
+const TAIL=[section('indicators','الارتباط بالمؤشرات',{when:hasIndicators,layout:'indicator-table',maxItems:4,priority:4}),section('evidence','الشواهد والمرفقات',{when:hasEvidence,layout:'evidence-gallery',maxItems:6,pageBreak:'smart',priority:8}),section('approval','اعتماد التنفيذ',{when:s=>Boolean(s?.metadata?.executorName||s?.metadata?.approverName),layout:'approval',priority:3}),section('footer','التذييل',{required:true,layout:'footer',priority:10})];
 const PROGRAM=[...COMMON,section('summary','ملخص تنفيذي',{layout:'lead',priority:9}),section('goal','الهدف',{required:true,layout:'card',priority:9}),section('execution','أبرز التنفيذ',{required:true,layout:'bullets',priority:9}),section('results','الأثر والنتائج',{layout:'results',priority:8}),section('measurement','القياس',{when:hasMeasure,layout:'measure',priority:7}),...TAIL];
 const MEETING=[...COMMON,section('purpose','الغرض',{required:true,layout:'card',priority:9}),section('agenda','أبرز ما نوقش',{required:true,layout:'bullets',priority:8}),section('decisions','القرارات',{required:true,layout:'decision-table',priority:10}),section('owners','المسؤوليات',{when:s=>has(s,'owner'),layout:'responsibility-table',priority:9}),section('follow','المتابعة',{when:s=>has(s,'follow'),layout:'timeline',priority:8}),...TAIL];
 const ANALYSIS=[...COMMON,section('basis','مصدر البيانات',{required:true,layout:'data-source',priority:9}),section('metrics','ملخص النتائج',{required:true,layout:'metrics',priority:10}),section('strengths','جوانب القوة',{layout:'bullets',priority:7}),section('needs','جوانب الاحتياج',{layout:'bullets',priority:9}),section('interpretation','التفسير',{when:s=>has(s,'cause'),layout:'analysis-text',priority:8}),section('action','الإجراء التحسيني',{when:s=>has(s,'action'),layout:'action-plan',priority:10}),section('follow','إعادة القياس والمتابعة',{when:s=>has(s,'follow')||hasMeasure(s),layout:'timeline',priority:9}),...TAIL];
@@ -23,16 +14,6 @@ const FOLLOW=[...COMMON,section('subject','محور المتابعة',{required:
 const PD=[...COMMON,section('need','الاحتياج المهني',{required:true,layout:'card',priority:10}),section('content','محتوى التطوير',{required:true,layout:'bullets',priority:8}),section('application','التطبيق في الممارسة',{when:s=>has(s,'application'),layout:'application',priority:10}),section('measurement','أثر التطوير',{when:hasMeasure,layout:'measure',priority:9}),section('follow','المتابعة',{when:s=>has(s,'follow'),layout:'timeline',priority:8}),...TAIL];
 const PARTNERSHIP=[...COMMON,section('need','الحاجة',{required:true,layout:'card',priority:9}),section('partner','الشريك ودوره',{required:true,layout:'partner',priority:10}),section('execution','ما تم تنفيذه',{required:true,layout:'bullets',priority:9}),section('outputs','المخرجات',{layout:'results',priority:8}),section('feedback','التغذية الراجعة',{when:hasMeasure,layout:'feedback',priority:7}),...TAIL];
 const MAINT=[...COMMON,section('problem','وصف المشكلة',{required:true,layout:'issue',priority:10}),section('location','الموقع',{layout:'meta',priority:8}),section('action','الإجراء المنفذ',{required:true,layout:'action',priority:10}),section('status','الحالة الحالية',{required:true,layout:'status',priority:10}),section('beforeAfter','قبل / بعد',{when:hasImages,layout:'before-after',maxItems:4,priority:9}),section('follow','المتابعة',{when:s=>has(s,'follow'),layout:'timeline',priority:8}),...TAIL.filter(x=>x.id!=='evidence')];
-
-export const PDF_SCHEMAS107={
- 'برنامج / فعالية':{id:'program',sections:PROGRAM,imagePolicy:'hero-evidence',preferredPages:[1,2]},
- 'اجتماع / متابعة إدارية':{id:'meeting',sections:MEETING,imagePolicy:'minimal',preferredPages:[1,2]},
- 'تحليل نتائج':{id:'analysis',sections:ANALYSIS,imagePolicy:'charts-first',preferredPages:[2,3]},
- 'خطة':{id:'plan',sections:PLAN,imagePolicy:'evidence-secondary',preferredPages:[2,3]},
- 'إجراء متابعة':{id:'followup',sections:FOLLOW,imagePolicy:'minimal',preferredPages:[1,2]},
- 'تطوير مهني':{id:'professional-development',sections:PD,imagePolicy:'supporting',preferredPages:[1,2]},
- 'شراكة مجتمعية':{id:'partnership',sections:PARTNERSHIP,imagePolicy:'partner-evidence',preferredPages:[1,2]},
- 'صيانة وتجهيزات':{id:'maintenance',sections:MAINT,imagePolicy:'before-after',preferredPages:[1,2]},
-};
+export const PDF_SCHEMAS107={'برنامج / فعالية':{id:'program',sections:PROGRAM,imagePolicy:'hero-evidence',preferredPages:[1,2]},'اجتماع / متابعة إدارية':{id:'meeting',sections:MEETING,imagePolicy:'minimal',preferredPages:[1,2]},'تحليل نتائج':{id:'analysis',sections:ANALYSIS,imagePolicy:'charts-first',preferredPages:[2,3]},'خطة':{id:'plan',sections:PLAN,imagePolicy:'evidence-secondary',preferredPages:[2,3]},'إجراء متابعة':{id:'followup',sections:FOLLOW,imagePolicy:'minimal',preferredPages:[1,2]},'تطوير مهني':{id:'professional-development',sections:PD,imagePolicy:'supporting',preferredPages:[1,2]},'شراكة مجتمعية':{id:'partnership',sections:PARTNERSHIP,imagePolicy:'partner-evidence',preferredPages:[1,2]},'صيانة وتجهيزات':{id:'maintenance',sections:MAINT,imagePolicy:'before-after',preferredPages:[1,2]}};
 export function pdfSchema107(state){return PDF_SCHEMAS107[state?.classification?.type]||PDF_SCHEMAS107['برنامج / فعالية']}
-export function visiblePdfSections107(state){return pdfSchema107(state).sections.filter(x=>x.required||x.when(state)).sort((a,b)=>b.priority-a.priority)}
+export function visiblePdfSections107(state){return pdfSchema107(state).sections.filter(x=>x.required||x.when(state))}
