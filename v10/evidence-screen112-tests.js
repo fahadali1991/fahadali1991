@@ -4,12 +4,13 @@ import {suggestEvidenceTargets112} from './evidence-reference112.js';
 
 function state(family,raw='',extra={}){return{raw,topic:'',classification:{type:family,subtype:''},metadata:{contextEvidence85:[],generatedDescription:'',selectedTitle:'',workTitle:'',familyDetails:{},...extra.metadata},answers:{goals:[],evidence:extra.evidence||[]},attachments:extra.attachments||[],audiences:['الطلاب'],stage:'متوسط',grades:['الثاني المتوسط']}}
 
-const analysis=state('تحليل نتائج','حللت نتائج الاختبار التشخيصي وحددت فجوة الأداء وأسبابها');
-const aTargets=suggestEvidenceTargets112(analysis,{limit:4});
-assert.ok(aTargets.some(x=>x.id===91),'analysis should suggest result analysis evidence target');
-assert.ok(aTargets.some(x=>x.id===93),'analysis should suggest performance-gap evidence target');
+const analysis=state('تحليل نتائج','حللت نتائج الاختبارات وحددت فجوة الأداء وأسبابها');
+const aTargets=suggestEvidenceTargets112(analysis,{limit:6});
+assert.ok(aTargets.some(x=>x.id===91),'analysis should include result-analysis evidence target');
+assert.ok(aTargets.some(x=>x.id===93),'analysis should include performance-gap evidence target');
 const aHtml=evidencePage(analysis);
 for(const text of ['الشواهد الموجودة الآن','الشواهد المناسبة لهذا العمل','ما الذي يقوّي ملف التوثيق؟','مرجع: جدول حصر الشواهد'])assert.ok(aHtml.includes(text),`evidence screen missing ${text}`);
+assert.ok(aHtml.includes('شواهد تقارير فجوة الأداء وأسبابها لمعالجتها بالشكل الصحيح'),'visible analysis strengthening card missing');
 assert.ok(aHtml.includes('ليست حكمًا رسميًا بتحقق مؤشر'),'official-indicator disclaimer missing');
 assert.ok(!aHtml.includes('تحقق المؤشر رسميًا'),'screen must not claim official indicator fulfillment');
 
