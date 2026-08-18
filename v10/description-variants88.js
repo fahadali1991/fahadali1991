@@ -1,4 +1,4 @@
-import {shortText80,mediumText80,longText80,bulletText80} from './description-texts80.js?v=110';
+import {shortText80,mediumText80,longText80,bulletText80} from './description-texts80.js?v=110.1';
 export function descriptionVariants88(s){const b=bulletText80(s);return[
 {id:'short',label:'مختصر',help:'مباشر وسريع دون تكرار بيانات الوثيقة',mode:'text',text:shortText80(s)},
 {id:'medium',label:'متوسط',help:'متوازن ويستخدم المجال والارتباطات المعتمدة دون ادعاء أثر غير مقاس',mode:'text',text:mediumText80(s)},
