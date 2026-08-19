@@ -1,0 +1,29 @@
+name: V112.2 Text and Print Quality Gate
+on:
+  push:
+    branches: [v112-2-text-print-quality]
+    paths:
+      - 'v10/description-texts80.js'
+      - 'v10/description-variants88.js'
+      - 'v10/pdf-renderer107.js'
+      - 'v10/pdf-renderer107.css'
+      - 'v10/pdf-layout107.js'
+      - 'v10/pdf-model107.js'
+      - 'v10/pdf-schema107.js'
+      - 'v10/quality1122-tests.js'
+      - '.github/workflows/v1122-quality-tests.yml'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  editorial-print-acceptance:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: V112.2 simulated expert panel
+        run: node --experimental-default-type=module v10/quality1122-tests.js
+      - name: Syntax
+        run: node --check v10/quality1122-tests.js && node --check v10/description-texts80.js && node --check v10/pdf-renderer107.js
