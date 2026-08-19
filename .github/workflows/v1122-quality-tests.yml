@@ -11,6 +11,8 @@ on:
       - 'v10/pdf-model107.js'
       - 'v10/pdf-schema107.js'
       - 'v10/quality1122-tests.js'
+      - 'v10/final-acceptance1122-tests.js'
+      - 'v1122-acceptance-samples.html'
       - '.github/workflows/v1122-quality-tests.yml'
   pull_request:
     branches: [main]
@@ -24,6 +26,8 @@ jobs:
         with:
           node-version: '22'
       - name: V112.2 simulated expert panel
-        run: node --experimental-default-type=module v10/quality1122-tests.js
+        run: node v10/quality1122-tests.js
+      - name: V112.2 final acceptance and sample fidelity
+        run: node v10/final-acceptance1122-tests.js
       - name: Syntax
-        run: node --check v10/quality1122-tests.js && node --check v10/description-texts80.js && node --check v10/pdf-renderer107.js
+        run: node --check v10/quality1122-tests.js && node --check v10/final-acceptance1122-tests.js && node --check v10/description-texts80.js && node --check v10/pdf-renderer107.js

@@ -64,4 +64,4 @@ for(const [role,x] of Object.entries(scores)){const pass=x.checks-x.fail,rate=x.
 if(issues.length){console.log('\nISSUES');for(const x of issues)console.log(`${x.critical?'CRITICAL':'MAJOR'} | ${x.role} | ${x.msg}`)}
 const critical=issues.filter(x=>x.critical);
 console.log(`\nCritical: ${critical.length} | Major: ${issues.length-critical.length}`);
-assert.equal(critical.length,0,`V112.2 human-quality acceptance blocked by ${critical.length} critical issue(s)`);
+assert.equal(issues.length,0,`V112.2 human-quality acceptance blocked by ${critical.length} critical and ${issues.length-critical.length} major issue(s)`);
