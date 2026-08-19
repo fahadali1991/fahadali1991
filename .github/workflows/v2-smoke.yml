@@ -1,0 +1,40 @@
+name: V2 Smoke Test
+on:
+  push:
+    paths:
+      - '*.js'
+      - 'v2-smoke-test.html'
+      - 'school-engine-v9-guided-capture-lab.html'
+      - '.github/workflows/v2-smoke.yml'
+  workflow_dispatch:
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Syntax check JavaScript
+        run: |
+          set -e
+          for f in *.js; do node --check "$f"; done
+      - name: Start local server
+        run: |
+          python3 -m http.server 8000 >/tmp/v2-http.log 2>&1 &
+          sleep 2
+      - name: Browser smoke test
+        run: |
+          set -e
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME"
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=2000 --dump-dom http://127.0.0.1:8000/v2-smoke-test.html > /tmp/v2-dom.html
+          cat /tmp/v2-dom.html
+          grep -q 'PASS:registry,print,family,output' /tmp/v2-dom.html
+      - name: Verify V2 load order
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          s=Path('school-engine-v9-guided-capture-lab.html').read_text()
+          order=['guided-capture-v2-foundation.js','guided-capture-output-engine-v2.js','guided-capture-print-v2.js']
+          pos=[s.index(x) for x in order]
+          assert pos==sorted(pos), pos
+          print('PASS load order', order)
+          PY
