@@ -22,17 +22,28 @@
   patch();
   const s=document.createElement('style');s.textContent=`
   @media print{
-    @page{size:A4;margin:0}
-    html.gc-v2-printing,body.gc-v2-printing{background:#fff!important;margin:0!important;padding:0!important;width:210mm!important}
+    @page{size:A4 portrait;margin:6mm}
+    html.gc-v2-printing,body.gc-v2-printing{background:#fff!important;margin:0!important;padding:0!important;width:auto!important}
     body.gc-v2-printing *{visibility:hidden!important}
     body.gc-v2-printing #printDocument,body.gc-v2-printing #printDocument *{visibility:visible!important}
-    body.gc-v2-printing #printDocument{position:absolute!important;right:0!important;top:0!important;width:210mm!important;min-height:297mm!important;margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;padding:10mm 12mm 9mm!important;background:#fff!important}
+    body.gc-v2-printing #printDocument{position:absolute!important;right:0!important;top:0!important;width:198mm!important;min-height:285mm!important;margin:0!important;box-shadow:none!important;border:0!important;border-radius:0!important;padding:7mm 9mm 7mm!important;background:#fff!important;transform:none!important}
     body.gc-v2-printing #printDocument .noPrint,body.gc-v2-printing #printDocument button,body.gc-v2-printing #printDocument input[type=file]{display:none!important}
-    body.gc-v2-printing .paperNarrative p{line-height:1.7!important;margin-bottom:4px!important}
-    body.gc-v2-printing .paperSection{margin:8px 0!important}
-    body.gc-v2-printing .evFig img{height:37mm!important}
-    body.gc-v2-printing .signatures{margin-top:9px!important;padding-top:7px!important}
-    body.gc-v2-printing .paperFooter{margin-top:8px!important}
+    body.gc-v2-printing .paperHeader{gap:8px!important}
+    body.gc-v2-printing .brandMark{width:42px!important;height:42px!important;font-size:22px!important}
+    body.gc-v2-printing .schoolHead strong{font-size:14px!important}
+    body.gc-v2-printing .docClass b{font-size:12px!important}
+    body.gc-v2-printing .paperHero{padding:5px 6px 8px!important}
+    body.gc-v2-printing .paperHero h1{font-size:18px!important;line-height:1.35!important}
+    body.gc-v2-printing .metaTable{margin-bottom:8px!important}
+    body.gc-v2-printing .metaTable>div{min-height:42px!important;padding:6px 8px!important}
+    body.gc-v2-printing .metaTable b{font-size:11.5px!important}
+    body.gc-v2-printing .paperNarrative p{font-size:11.5px!important;line-height:1.62!important;margin-bottom:3px!important}
+    body.gc-v2-printing .paperSection{margin:6px 0!important}
+    body.gc-v2-printing .paperSection h3{font-size:12.5px!important;margin-bottom:5px!important}
+    body.gc-v2-printing .evFig img{height:32mm!important}
+    body.gc-v2-printing .signatures{margin-top:7px!important;padding-top:6px!important;gap:28px!important}
+    body.gc-v2-printing .signatures i{margin-top:6px!important}
+    body.gc-v2-printing .paperFooter{margin-top:6px!important;font-size:7.5px!important}
   }`;
   document.head.appendChild(s);
 })();
