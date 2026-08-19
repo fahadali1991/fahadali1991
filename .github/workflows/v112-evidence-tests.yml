@@ -1,0 +1,43 @@
+name: V112 Evidence Intelligence Gate
+on:
+  push:
+    branches: [v112-evidence-intelligence]
+    paths:
+      - 'v10/evidence-reference112.js'
+      - 'v10/evidence-reference112-tests.js'
+      - 'v10/evidence-screen112-tests.js'
+      - 'v10/evidence85.js'
+      - 'v10/styles112.css'
+      - 'v10/app88.js'
+      - 'v10/app89.js'
+      - 'v10/app103.js'
+      - 'home106.html'
+      - '.github/workflows/v112-evidence-tests.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v10/evidence-reference112.js'
+      - 'v10/evidence-reference112-tests.js'
+      - 'v10/evidence-screen112-tests.js'
+      - 'v10/evidence85.js'
+      - 'v10/styles112.css'
+      - 'v10/app88.js'
+      - 'v10/app89.js'
+      - 'v10/app103.js'
+      - 'home106.html'
+      - '.github/workflows/v112-evidence-tests.yml'
+  workflow_dispatch:
+jobs:
+  evidence-reference:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: V112 source-aware evidence routing
+        run: node --experimental-default-type=module v10/evidence-reference112-tests.js
+      - name: V112 evidence screen integration
+        run: node --experimental-default-type=module v10/evidence-screen112-tests.js
+      - name: V112 syntax
+        run: node --check v10/evidence-reference112.js && node --check v10/evidence-reference112-tests.js && node --check v10/evidence-screen112-tests.js && node --check v10/evidence85.js && node --check v10/app88.js && node --check v10/app89.js && node --check v10/app103.js
