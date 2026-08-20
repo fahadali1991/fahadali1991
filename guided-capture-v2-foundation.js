@@ -1,33 +1,70 @@
-/* School Documentation Engine — V2 Foundation
-   Document Registry + family-aware output routing. No visual identity copied from external products. */
+/* School Documentation Engine — V2 Foundation / Registry 2.1
+   Structured document definitions: when used, required data, evidence, signatures, output family and next-step suggestions. */
 (function(){
   const REGISTRY={
-    'program-report':{family:'event',label:'تقرير برنامج / فعالية',evidence:'execution',output:'event'},
-    'exam-analysis':{family:'analysis',label:'تحليل نتائج',evidence:'result',output:'analysis'},
-    'remedial-plan':{family:'plan',label:'خطة علاجية',evidence:'result',output:'plan'},
-    'plc':{family:'professional',label:'مجتمع تعلم مهني',evidence:'product',output:'professional'},
-    'minutes':{family:'minutes',label:'محضر',evidence:'execution',output:'minutes'}
-  };
-  window.GC_V2={version:'2.0-foundation',registry:REGISTRY,getDocument(id){return REGISTRY[id]||null},family(id){return REGISTRY[id]?.family||'generic'}};
-  function currentId(){return window.gcInferredParityDoc?.()||window.GC_BENCHMARK_DOC?.id||window.cur?.benchmarkDocId||''}
-  window.gcV2CurrentDocument=function(){return GC_V2.getDocument(currentId())};
-
-  /* Analysis documents must privilege data/results over generic photo evidence. */
-  const oldRenderParity=window.renderParity;
-  if(typeof oldRenderParity==='function')window.renderParity=function(){
-    const result=oldRenderParity.apply(this,arguments);
-    const d=gcV2CurrentDocument();
-    if(result&&d?.family==='analysis'){
-      const sec=document.querySelector('#printDocument .evidenceSection');
-      if(sec){
-        const h=sec.querySelector('h3'); if(h)h.textContent='المرفقات الداعمة';
-        const empty=sec.querySelector('.evidenceEmpty');
-        if(empty)empty.textContent='الصور اختيارية في تحليل النتائج. الأولوية لبيانات الدرجات والمؤشرات والرسوم الناتجة عنها.';
-      }
+    'program-report':{
+      id:'program-report',family:'event',label:'تقرير برنامج / فعالية',output:'event',
+      useWhen:['برنامج','فعالية','مبادرة','حملة','مسابقة','نشاط'],
+      required:['workTitle','date','executorName','audiences'],
+      inferable:['workTitle','audiences','grades','topic','stage'],
+      evidence:['execution','product','result'],
+      signatures:['executor','principal'],
+      next:['impact-review','follow-up']
+    },
+    'minutes':{
+      id:'minutes',family:'minutes',label:'محضر اجتماع',output:'minutes',
+      useWhen:['اجتماع','لجنة','لقاء','مناقشة'],
+      required:['workTitle','date','executorName'],
+      inferable:['topic','audiences','reason'],
+      evidence:['execution','product'],
+      signatures:['recorder','principal'],
+      next:['follow-up']
+    },
+    'exam-analysis':{
+      id:'exam-analysis',family:'analysis',label:'تحليل نتائج',output:'analysis',
+      useWhen:['نتائج','درجات','اختبار','تشخيص','تحصيل'],
+      required:['subject','period','maxScore'],
+      inferable:['stage','grades','topic'],
+      evidence:['result','impact'],
+      signatures:['executor','principal'],
+      next:['remedial-plan','enrichment-plan','re-measure']
+    },
+    'remedial-plan':{
+      id:'remedial-plan',family:'plan',label:'خطة علاجية',output:'plan',
+      useWhen:['خطة علاجية','تعثر','ضعف','مهارة منخفضة'],
+      required:['goal','basis','method','follow'],
+      inferable:['audiences','grades','topic'],
+      evidence:['result','product','impact'],
+      signatures:['executor','principal'],
+      next:['implementation','re-measure']
+    },
+    'plc':{
+      id:'plc',family:'professional',label:'مجتمع تعلم مهني',output:'professional',
+      useWhen:['مجتمع تعلم','PLC','تبادل خبرات'],
+      required:['reason','method','product'],
+      inferable:['topic','audiences'],
+      evidence:['execution','product','impact'],
+      signatures:['executor','principal'],
+      next:['application','impact-review']
     }
-    return result;
   };
-
-  /* Quality cue: output family is explicit, so later V2 renderers can replace family by family. */
-  window.gcV2OutputFamily=function(){return gcV2CurrentDocument()?.output||'generic'};
+  function currentId(){return window.gcInferredParityDoc?.()||window.GC_BENCHMARK_DOC?.id||window.cur?.benchmarkDocId||''}
+  function validateRegistry(){
+    const problems=[];
+    Object.values(REGISTRY).forEach(d=>{
+      ['id','family','label','output','required','evidence','signatures','next'].forEach(k=>{if(d[k]===undefined)problems.push(`${d.id||'unknown'}:${k}`)});
+      if(!Array.isArray(d.required)||!Array.isArray(d.evidence)||!Array.isArray(d.next))problems.push(`${d.id}:array-contract`);
+    });
+    return {passed:problems.length===0,count:Object.keys(REGISTRY).length,problems};
+  }
+  window.GC_V2={
+    version:'2.1-registry',registry:REGISTRY,
+    getDocument(id){return REGISTRY[id]||null},
+    family(id){return REGISTRY[id]?.family||'generic'},
+    getCurrent(){return REGISTRY[currentId()]||null},
+    validateRegistry
+  };
+  window.gcV2CurrentDocument=()=>window.GC_V2.getCurrent();
+  window.gcV2OutputFamily=()=>window.GC_V2.getCurrent()?.output||'generic';
+  window.GC_V2_REGISTRY_AUDIT=validateRegistry();
 })();
