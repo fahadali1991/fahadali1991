@@ -16,7 +16,7 @@ jobs:
         run: |
           set -e
           for f in *.js; do node --check "$f"; done
-      - name: Verify G0 and analysis print contracts
+      - name: Verify G0, analysis and program contracts
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -27,6 +27,8 @@ jobs:
           printer=Path('guided-capture-print-v2.js').read_text()
           analysis=Path('guided-capture-analysis-sheet-v2.js').read_text()
           analysis_out=Path('guided-capture-analysis-output-v2.js').read_text()
+          program=Path('guided-capture-program-sheet-v2.js').read_text()
+          program_out=Path('guided-capture-program-output-v2.js').read_text()
           letter=Path('guided-capture-letterhead-v2.js').read_text()
           checks={
             'entry-loaded':'guided-capture-entry-v1.js' in html,
@@ -35,6 +37,8 @@ jobs:
             'print-loaded':'guided-capture-print-v2.js' in html,
             'analysis-input-loaded':'guided-capture-analysis-sheet-v2.js' in html,
             'analysis-output-loaded':'guided-capture-analysis-output-v2.js' in html,
+            'program-input-loaded':'guided-capture-program-sheet-v2.js' in html,
+            'program-output-loaded':'guided-capture-program-output-v2.js' in html,
             'letterhead-loaded':'guided-capture-letterhead-v2.js' in html,
             'legacy-icon-guard-removed':'guided-capture-icon-guard-v2.js' not in html,
             'legacy-create-guard-removed':'guided-capture-create-document-guard-v2.js' not in html,
@@ -56,6 +60,14 @@ jobs:
             'analysis-decision-bands':'arBands' in analysis_out,
             'analysis-priority-students':'priorityStudents' in analysis_out,
             'analysis-signatures':'function signatures()' in analysis_out,
+            'program-low-effort':'أكمل ما لا يعرفه النظام فقط' in program,
+            'program-generated-goals':'function generatedGoals()' in program,
+            'program-generated-steps':'function generatedSteps()' in program,
+            'program-evidence-url':'evidenceUrl' in program,
+            'program-premium-renderer':'programReportV2' in program_out,
+            'program-evidence-gallery':'pr2EvidenceGrid' in program_out,
+            'program-quality-note':'حالة التوثيق' in program_out,
+            'program-no-fake-impact':'لا يُعد ذلك قياسًا للأثر' in program_out,
             'letterhead-ministry':'وزارة التعليم' in letter,
             'letterhead-school-identity':'gc_school_identity_v1' in letter,
             'letterhead-print-css':'@media print' in letter,
@@ -65,7 +77,7 @@ jobs:
           bad=[k for k,v in checks.items() if not v]
           print(checks)
           assert not bad, bad
-          print('PASS G0 + analysis + letterhead static contracts')
+          print('PASS G0 + analysis + program + letterhead static contracts')
           PY
       - name: Start local server
         run: |
@@ -95,7 +107,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           s=Path('school-engine-v9-guided-capture-lab.html').read_text()
-          order=['guided-capture-v2-foundation.js','guided-capture-analysis-sheet-v2.js','guided-capture-output-engine-v2.js','guided-capture-analysis-output-v2.js','guided-capture-letterhead-v2.js','guided-capture-print-v2.js','guided-capture-stability-v2.js','guided-capture-g0-diagnostics.js','guided-capture-g0-acceptance-v2.js']
+          order=['guided-capture-v2-foundation.js','guided-capture-analysis-sheet-v2.js','guided-capture-program-sheet-v2.js','guided-capture-output-engine-v2.js','guided-capture-analysis-output-v2.js','guided-capture-program-output-v2.js','guided-capture-letterhead-v2.js','guided-capture-print-v2.js','guided-capture-stability-v2.js','guided-capture-g0-diagnostics.js','guided-capture-g0-acceptance-v2.js']
           pos=[s.index(x) for x in order]
           assert pos==sorted(pos), pos
           print('PASS load order', order)
