@@ -1,4 +1,4 @@
-/* G0/G1 Acceptance Audit V2.2 — silent structural/runtime checks */
+/* G0/G1 Acceptance Audit V2.3 — silent structural/runtime checks */
 (function(){
   function duplicateIds(){
     const seen=new Set(),dups=[];
@@ -18,29 +18,22 @@
     const requiredFamilies=['event','minutes','analysis','plan'];
     const outputFamilies=window.GC_V2_OUTPUT?.renderers||[];
     const missingRenderers=requiredFamilies.filter(f=>!outputFamilies.includes(f));
+    const analysisAudit=window.GC_ANALYSIS_V2?.selfTest?.()||{passed:false,reason:'analysis-engine-unavailable'};
+    const analysisOutput=!!(window.GC_ANALYSIS_OUTPUT_V2&&typeof window.GC_ANALYSIS_OUTPUT_V2.render==='function');
     const dups=duplicateIds();
     const result={
-      passed:tiles.length>=7&&entryInline.length===0&&missingIntent.length===0&&missingFunctions.length===0&&dups.length===0&&stabilityContract&&stabilityTest.passed&&registryAudit.passed&&missingRenderers.length===0,
-      entryTiles:tiles.length,
-      inlineHandlers:entryInline.length,
-      missingIntent:missingIntent.length,
-      missingFunctions,
-      duplicateIds:dups,
-      stabilityContract,
-      stabilityTest,
-      evidenceCount:window.GC_STABILITY?.getSnapshot?.().evidenceCount??null,
-      registryAudit,
-      outputFamilies,
-      missingRenderers,
-      timestamp:new Date().toISOString()
+      passed:tiles.length>=7&&entryInline.length===0&&missingIntent.length===0&&missingFunctions.length===0&&dups.length===0&&stabilityContract&&stabilityTest.passed&&registryAudit.passed&&missingRenderers.length===0&&analysisAudit.passed&&analysisOutput,
+      entryTiles:tiles.length,inlineHandlers:entryInline.length,missingIntent:missingIntent.length,missingFunctions,duplicateIds:dups,
+      stabilityContract,stabilityTest,evidenceCount:window.GC_STABILITY?.getSnapshot?.().evidenceCount??null,
+      registryAudit,outputFamilies,missingRenderers,analysisAudit,analysisOutput,timestamp:new Date().toISOString()
     };
     window.GC_G0_ACCEPTANCE=result;
-    window.GC_G1_ACCEPTANCE={passed:registryAudit.passed&&missingRenderers.length===0,registryAudit,outputFamilies,missingRenderers,timestamp:result.timestamp};
+    window.GC_G1_ACCEPTANCE={passed:registryAudit.passed&&missingRenderers.length===0&&analysisAudit.passed&&analysisOutput,registryAudit,outputFamilies,missingRenderers,analysisAudit,analysisOutput,timestamp:result.timestamp};
     if(!result.passed)console.warn('[G0/G1 acceptance]',result);
     return result;
   }
   window.gcRunG0Acceptance=run;
   window.gcRunG1Acceptance=()=>{run();return window.GC_G1_ACCEPTANCE};
   let t;new MutationObserver(()=>{clearTimeout(t);t=setTimeout(run,120)}).observe(document.documentElement,{childList:true,subtree:true});
-  setTimeout(run,250);
+  setTimeout(run,350);
 })();
