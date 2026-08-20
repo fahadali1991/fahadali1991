@@ -16,7 +16,7 @@ jobs:
         run: |
           set -e
           for f in *.js; do node --check "$f"; done
-      - name: Verify G0 static contracts
+      - name: Verify G0 and analysis static contracts
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -25,11 +25,15 @@ jobs:
           stability=Path('guided-capture-stability-v2.js').read_text()
           acceptance=Path('guided-capture-g0-acceptance-v2.js').read_text()
           printer=Path('guided-capture-print-v2.js').read_text()
+          analysis=Path('guided-capture-analysis-sheet-v2.js').read_text()
+          analysis_out=Path('guided-capture-analysis-output-v2.js').read_text()
           checks={
             'entry-loaded':'guided-capture-entry-v1.js' in html,
             'stability-loaded':'guided-capture-stability-v2.js' in html,
             'acceptance-loaded':'guided-capture-g0-acceptance-v2.js' in html,
             'print-loaded':'guided-capture-print-v2.js' in html,
+            'analysis-input-loaded':'guided-capture-analysis-sheet-v2.js' in html,
+            'analysis-output-loaded':'guided-capture-analysis-output-v2.js' in html,
             'legacy-icon-guard-removed':'guided-capture-icon-guard-v2.js' not in html,
             'legacy-create-guard-removed':'guided-capture-create-document-guard-v2.js' not in html,
             'delegated-controller':"document.addEventListener('click'" in entry,
@@ -41,12 +45,20 @@ jobs:
             'stability-self-test':'function selfTest()' in stability,
             'restore-evidence':'restoreEvidence' in stability,
             'acceptance-stability-check':'stabilityTest' in acceptance,
+            'analysis-self-test':'function selfTest()' in analysis,
+            'analysis-arabic-digits':'normalizeDigits' in analysis,
+            'analysis-range-validation':'outOfRange' in analysis,
+            'analysis-professional-reading':'reading' in analysis and 'priority' in analysis and 'action' in analysis,
+            'analysis-premium-renderer':'analysisReportV2' in analysis_out,
+            'analysis-level-table':'arLevelTable' in analysis_out,
+            'analysis-decision-bands':'arBands' in analysis_out,
+            'analysis-priority-students':'priorityStudents' in analysis_out,
             'print-action':'window.gcPrintV2' in printer,
           }
           bad=[k for k,v in checks.items() if not v]
           print(checks)
           assert not bad, bad
-          print('PASS G0 static contracts')
+          print('PASS G0 + analysis static contracts')
           PY
       - name: Start local server
         run: |
@@ -76,7 +88,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           s=Path('school-engine-v9-guided-capture-lab.html').read_text()
-          order=['guided-capture-v2-foundation.js','guided-capture-output-engine-v2.js','guided-capture-print-v2.js','guided-capture-stability-v2.js','guided-capture-g0-diagnostics.js','guided-capture-g0-acceptance-v2.js']
+          order=['guided-capture-v2-foundation.js','guided-capture-analysis-sheet-v2.js','guided-capture-output-engine-v2.js','guided-capture-analysis-output-v2.js','guided-capture-print-v2.js','guided-capture-stability-v2.js','guided-capture-g0-diagnostics.js','guided-capture-g0-acceptance-v2.js']
           pos=[s.index(x) for x in order]
           assert pos==sorted(pos), pos
           print('PASS load order', order)
