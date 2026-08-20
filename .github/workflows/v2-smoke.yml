@@ -16,6 +16,38 @@ jobs:
         run: |
           set -e
           for f in *.js; do node --check "$f"; done
+      - name: Verify G0 static contracts
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          html=Path('school-engine-v9-guided-capture-lab.html').read_text()
+          entry=Path('guided-capture-entry-v1.js').read_text()
+          stability=Path('guided-capture-stability-v2.js').read_text()
+          acceptance=Path('guided-capture-g0-acceptance-v2.js').read_text()
+          printer=Path('guided-capture-print-v2.js').read_text()
+          checks={
+            'entry-loaded':'guided-capture-entry-v1.js' in html,
+            'stability-loaded':'guided-capture-stability-v2.js' in html,
+            'acceptance-loaded':'guided-capture-g0-acceptance-v2.js' in html,
+            'print-loaded':'guided-capture-print-v2.js' in html,
+            'legacy-icon-guard-removed':'guided-capture-icon-guard-v2.js' not in html,
+            'legacy-create-guard-removed':'guided-capture-create-document-guard-v2.js' not in html,
+            'delegated-controller':"document.addEventListener('click'" in entry,
+            'entry-intents':'data-entry-intent' in entry,
+            'create-action':'window.gcCreateDocumentV2' in entry,
+            'create-captures-state':'GC_STABILITY?.capture' in entry,
+            'create-syncs-evidence':'GC_STABILITY?.syncEvidence' in entry,
+            'sync-evidence-contract':'function syncEvidence()' in stability,
+            'stability-self-test':'function selfTest()' in stability,
+            'restore-evidence':'restoreEvidence' in stability,
+            'acceptance-stability-check':'stabilityTest' in acceptance,
+            'print-action':'window.gcPrintV2' in printer,
+          }
+          bad=[k for k,v in checks.items() if not v]
+          print(checks)
+          assert not bad, bad
+          print('PASS G0 static contracts')
+          PY
       - name: Start local server
         run: |
           python3 -m http.server 8000 >/tmp/v2-http.log 2>&1 &
@@ -25,15 +57,26 @@ jobs:
           set -e
           CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$CHROME"
-          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=2000 --dump-dom http://127.0.0.1:8000/v2-smoke-test.html > /tmp/v2-dom.html
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=2500 --dump-dom http://127.0.0.1:8000/v2-smoke-test.html > /tmp/v2-dom.html
           cat /tmp/v2-dom.html
           grep -q 'PASS:registry,print,family,output' /tmp/v2-dom.html
+      - name: Browser G0 acceptance on main lab
+        run: |
+          set -e
+          CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
+          test -n "$CHROME"
+          "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=3000 --dump-dom http://127.0.0.1:8000/school-engine-v9-guided-capture-lab.html > /tmp/g0-dom.html
+          grep -q 'data-entry-intent="smart"' /tmp/g0-dom.html
+          grep -q 'data-entry-intent="analysis"' /tmp/g0-dom.html
+          grep -q 'data-entry-intent="plan"' /tmp/g0-dom.html
+          grep -q 'data-entry-intent="program"' /tmp/g0-dom.html
+          echo 'PASS G0 entry DOM'
       - name: Verify V2 load order
         run: |
           python3 - <<'PY'
           from pathlib import Path
           s=Path('school-engine-v9-guided-capture-lab.html').read_text()
-          order=['guided-capture-v2-foundation.js','guided-capture-output-engine-v2.js','guided-capture-print-v2.js']
+          order=['guided-capture-v2-foundation.js','guided-capture-output-engine-v2.js','guided-capture-print-v2.js','guided-capture-stability-v2.js','guided-capture-g0-diagnostics.js','guided-capture-g0-acceptance-v2.js']
           pos=[s.index(x) for x in order]
           assert pos==sorted(pos), pos
           print('PASS load order', order)
