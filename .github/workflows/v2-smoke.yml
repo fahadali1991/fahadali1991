@@ -16,7 +16,7 @@ jobs:
         run: |
           set -e
           for f in *.js; do node --check "$f"; done
-      - name: Verify G0 and analysis static contracts
+      - name: Verify G0 and analysis print contracts
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -27,6 +27,7 @@ jobs:
           printer=Path('guided-capture-print-v2.js').read_text()
           analysis=Path('guided-capture-analysis-sheet-v2.js').read_text()
           analysis_out=Path('guided-capture-analysis-output-v2.js').read_text()
+          letter=Path('guided-capture-letterhead-v2.js').read_text()
           checks={
             'entry-loaded':'guided-capture-entry-v1.js' in html,
             'stability-loaded':'guided-capture-stability-v2.js' in html,
@@ -34,6 +35,7 @@ jobs:
             'print-loaded':'guided-capture-print-v2.js' in html,
             'analysis-input-loaded':'guided-capture-analysis-sheet-v2.js' in html,
             'analysis-output-loaded':'guided-capture-analysis-output-v2.js' in html,
+            'letterhead-loaded':'guided-capture-letterhead-v2.js' in html,
             'legacy-icon-guard-removed':'guided-capture-icon-guard-v2.js' not in html,
             'legacy-create-guard-removed':'guided-capture-create-document-guard-v2.js' not in html,
             'delegated-controller':"document.addEventListener('click'" in entry,
@@ -53,12 +55,17 @@ jobs:
             'analysis-level-table':'arLevelTable' in analysis_out,
             'analysis-decision-bands':'arBands' in analysis_out,
             'analysis-priority-students':'priorityStudents' in analysis_out,
+            'analysis-signatures':'function signatures()' in analysis_out,
+            'letterhead-ministry':'وزارة التعليم' in letter,
+            'letterhead-school-identity':'gc_school_identity_v1' in letter,
+            'letterhead-print-css':'@media print' in letter,
+            'letterhead-no-brand-mark':'brandMark' not in letter,
             'print-action':'window.gcPrintV2' in printer,
           }
           bad=[k for k,v in checks.items() if not v]
           print(checks)
           assert not bad, bad
-          print('PASS G0 + analysis static contracts')
+          print('PASS G0 + analysis + letterhead static contracts')
           PY
       - name: Start local server
         run: |
@@ -88,7 +95,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           s=Path('school-engine-v9-guided-capture-lab.html').read_text()
-          order=['guided-capture-v2-foundation.js','guided-capture-analysis-sheet-v2.js','guided-capture-output-engine-v2.js','guided-capture-analysis-output-v2.js','guided-capture-print-v2.js','guided-capture-stability-v2.js','guided-capture-g0-diagnostics.js','guided-capture-g0-acceptance-v2.js']
+          order=['guided-capture-v2-foundation.js','guided-capture-analysis-sheet-v2.js','guided-capture-output-engine-v2.js','guided-capture-analysis-output-v2.js','guided-capture-letterhead-v2.js','guided-capture-print-v2.js','guided-capture-stability-v2.js','guided-capture-g0-diagnostics.js','guided-capture-g0-acceptance-v2.js']
           pos=[s.index(x) for x in order]
           assert pos==sorted(pos), pos
           print('PASS load order', order)
