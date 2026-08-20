@@ -1,7 +1,8 @@
 /* Smart Guided Capture — Two Entrances, One Engine
-   V2 interaction refactor: one delegated event path; icons/labels/tiles are equally clickable. */
+   V2 interaction refactor: one delegated event path for entry + create document. */
 (function(){
   let entryIntent='';
+  let createBusy=false;
   const ENTRY={
     smart:{label:'صف لي ما حدث',icon:'✨',title:'صف لي ما حدث',help:'اكتب بطريقتك، وسأحدد نوع العمل المناسب ثم أكمل معك.',placeholder:'مثال: اجتمعنا مع المعلمين بسبب تدني النتائج وحددنا إجراءات للمتابعة'},
     report:{label:'تقرير',icon:'📄',title:'ما العمل الذي تريد إعداد تقرير عنه؟',help:'صف العمل باختصار، وسأفهم نوعه وأبني التقرير المناسب.',placeholder:'مثال: نفذنا برنامج تحسين الخط لطلاب أول وثاني متوسط'},
@@ -28,8 +29,27 @@
   };
   window.returnToEntryHome=renderLanding;
 
-  /* Single source of truth for all entry interactions. A click on icon, text, or tile bubbles here. */
+  function isCreateButton(el){
+    const button=el?.closest?.('button,[role="button"],.btn'); if(!button)return null;
+    if(button.dataset.gcAction==='create-document')return button;
+    const t=(button.textContent||'').replace(/\s+/g,' ').trim();
+    return /^(?:إنشاء|انشاء)(?:\s+(?:التقرير|تقرير|الوثيقة|وثيقة))?(?:\s*[←→›»])?$/i.test(t)||/إنشاء\s+(?:التقرير|تقرير|الوثيقة)/i.test(t)?button:null;
+  }
+  window.gcCreateDocumentV2=function(){
+    if(createBusy)return;
+    if(typeof window.generate!=='function'){alert('محرك إنشاء الوثيقة غير جاهز. أعد فتح الصفحة وحاول مرة أخرى.');return;}
+    createBusy=true;
+    try{window.GC_STABILITY?.capture?.();window.GC_STABILITY?.syncEvidence?.();}catch(e){}
+    try{
+      window.generate();
+      setTimeout(()=>{const paper=document.getElementById('printDocument');if(paper){try{paper.scrollIntoView({behavior:'smooth',block:'start'})}catch(e){}}else{console.error('[G0] generate without printDocument');alert('تعذر إظهار الوثيقة بعد الإنشاء. تم تسجيل الخلل.')}},180);
+    }catch(err){console.error('[G0] create failed',err);alert('تعذر إنشاء الوثيقة. تم تسجيل الخطأ للفحص.');}
+    finally{setTimeout(()=>{createBusy=false},400)}
+  };
+
+  /* Single source of truth for entry interactions + document creation. */
   document.addEventListener('click',function(e){
+    const create=isCreateButton(e.target);if(create){e.preventDefault();e.stopPropagation();window.gcCreateDocumentV2();return;}
     const intentEl=e.target.closest?.('[data-entry-intent]');
     if(intentEl){e.preventDefault();window.openEntry(intentEl.dataset.entryIntent);return;}
     const actionEl=e.target.closest?.('[data-entry-action]'); if(!actionEl)return;
@@ -39,7 +59,7 @@
     else if(action==='back')window.returnToEntryHome();
     else if(action==='start'&&typeof window.start==='function')window.start();
     else if(action==='spell'&&typeof window.reviewSpelling==='function')window.reviewSpelling();
-  });
+  },true);
 
   function forceIntent(f,intent){
     f.entryIntent=intent;if(intent==='report'||intent==='smart')return f;
