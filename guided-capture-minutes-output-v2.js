@@ -1,0 +1,27 @@
+/* Smart Meeting Minutes — Print Output V2 */
+(function(){
+  function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+  function active(){return (window.gcInferredParityDoc?.()||window.cur?.benchmarkDocId||'')==='minutes'}
+  function val(k,f='—'){try{return typeof valText==='function'?(valText(k,f)||f):f}catch(e){return f}}
+  function m(){return window.GC_MINUTES_V2?.get?.()||cur?.docMeta?.minutes||{}}
+  function list(items){return `<ul class="minList">${(items||[]).map(x=>`<li>${esc(x)}</li>`).join('')||'<li>—</li>'}</ul>`}
+  function render(){
+    if(!active())return;
+    const paper=document.getElementById('printDocument');if(!paper||paper.querySelector('.minutesSmartV2'))return;
+    const data=m(), s=window.GC_MINUTES_V2?.summary?.()||{};
+    const tasks=Array.isArray(data.tasks)?data.tasks:[];
+    const html=`<div class="minutesSmartV2">
+      <section class="paperSection minHero"><div><span>محضر اجتماع ذكي</span><h2>${esc(typeof workName==='function'?workName():'اجتماع')}</h2></div><div class="minKpis"><b>${s.decisions||0}<small>قرار</small></b><b>${s.tasks||0}<small>تكليف</small></b><b>${s.pending||0}<small>قيد المتابعة</small></b></div></section>
+      <section class="paperSection"><div class="minMeta"><div><span>التاريخ</span><b>${esc(data.date||val('date'))}</b></div><div><span>المكان</span><b>${esc(data.place||val('place'))}</b></div><div><span>رئيس الاجتماع</span><b>${esc(data.chair||val('executorName'))}</b></div><div><span>عدد الحضور</span><b>${esc((data.attendees||[]).length||data.attendeeCount||'—')}</b></div></div></section>
+      <div class="minCols"><section class="paperSection"><h3>جدول الأعمال</h3>${list(data.agenda)}</section><section class="paperSection"><h3>أبرز المناقشات</h3><p>${esc(data.discussion||val('method','—'))}</p></section></div>
+      <section class="paperSection"><h3>القرارات المعتمدة</h3>${list(data.decisions?.length?data.decisions:[val('product','—')])}</section>
+      <section class="paperSection"><h3>مصفوفة التكليف والمتابعة</h3><div class="minTaskTable"><div class="head">التكليف</div><div class="head">المسؤول</div><div class="head">الموعد</div><div class="head">الحالة</div>${tasks.length?tasks.map(t=>`<div>${esc(t.task)}</div><div>${esc(t.owner||'—')}</div><div>${esc(t.due||'—')}</div><div><span class="minStatus">${esc(t.status||'قيد المتابعة')}</span></div>`).join(''):`<div>${esc(val('follow','متابعة ما تم الاتفاق عليه'))}</div><div>—</div><div>—</div><div><span class="minStatus">قيد المتابعة</span></div>`}</div></section>
+      <section class="paperSection minNext"><h3>الخطوة التالية</h3><p>${esc(data.nextMeeting?`موعد المتابعة / الاجتماع القادم: ${data.nextMeeting}`:val('follow','متابعة تنفيذ القرارات والتكليفات في الموعد المحدد.'))}</p></section>
+      ${data.attendees?.length?`<section class="paperSection"><h3>الحضور</h3><div class="minPeople">${data.attendees.map(x=>`<span>${esc(x)}</span>`).join('')}</div></section>`:''}
+    </div>`;
+    const old=paper.querySelector('.v2FamilyBody'); if(old){old.outerHTML=html}else{const target=paper.querySelector('.paperSection');if(target)target.insertAdjacentHTML('beforebegin',html)}
+    paper.dataset.documentId='minutes';paper.dataset.outputFamily='minutes';
+  }
+  const st=document.createElement('style');st.textContent=`.minHero{display:flex;align-items:center;justify-content:space-between;border:1px solid #cfe2dc;background:linear-gradient(135deg,#f7fbfa,#eef7f4);border-radius:12px;padding:12px}.minHero span{color:#17806e;font-size:10px;font-weight:800}.minHero h2{margin:3px 0 0;font-size:19px;color:#173f38}.minKpis{display:flex;gap:7px}.minKpis b{min-width:55px;padding:7px;border-radius:9px;background:#fff;border:1px solid #d8e7e2;text-align:center;font-size:17px;color:#137762}.minKpis small{display:block;font-size:8px;color:#71827c;margin-top:2px}.minMeta{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.minMeta>div{border:1px solid #dfe9e5;border-radius:8px;padding:7px;text-align:center}.minMeta span{display:block;font-size:9px;color:#71827c;font-weight:800}.minMeta b{font-size:11px}.minCols{display:grid;grid-template-columns:1fr 1fr;gap:10px}.minList{margin:0;padding-right:18px;line-height:1.8;font-size:11px}.minTaskTable{display:grid;grid-template-columns:2.1fr 1fr .9fr 1fr;border:1px solid #dce7e3;border-radius:9px;overflow:hidden}.minTaskTable>div{padding:7px;border-left:1px solid #e5ece9;border-bottom:1px solid #e5ece9;font-size:10px}.minTaskTable .head{background:#eef7f4;color:#315c53;font-weight:800;text-align:center}.minStatus{display:inline-block;background:#fff4d9;color:#8c6610;border-radius:20px;padding:2px 7px;font-weight:800}.minNext{border-right:4px solid #17806e;background:#fbfdfc}.minPeople{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.minPeople span{border-bottom:1px dotted #9eaaa6;padding:5px;font-size:10px}@media print{.minHero{padding:8px!important}.minHero h2{font-size:15px!important}.minTaskTable>div{padding:4px!important;font-size:8.8px!important}.minCols{gap:6px!important}.minList{font-size:9.5px!important;line-height:1.5!important}.minNext p{font-size:9.5px!important}}`;
+  document.head.appendChild(st);new MutationObserver(render).observe(document.documentElement,{childList:true,subtree:true});render();window.GC_MINUTES_OUTPUT_V2={version:'2.0',render};
+})();
