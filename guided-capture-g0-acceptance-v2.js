@@ -1,4 +1,4 @@
-/* G0 Acceptance Audit V2 — silent structural/runtime checks */
+/* G0 Acceptance Audit V2.1 — silent structural/runtime checks */
 (function(){
   function duplicateIds(){
     const seen=new Set(),dups=[];
@@ -12,14 +12,19 @@
     const missingFunctions=[];
     ['openEntry','start','gcCreateDocumentV2','gcPrintV2'].forEach(n=>{if(typeof window[n]!=='function')missingFunctions.push(n)});
     if(!window.GC_STABILITY)missingFunctions.push('GC_STABILITY');
+    const stabilityContract=!!(window.GC_STABILITY&&typeof GC_STABILITY.capture==='function'&&typeof GC_STABILITY.guard==='function'&&typeof GC_STABILITY.syncEvidence==='function'&&typeof GC_STABILITY.restoreEvidence==='function');
+    const stabilityTest=window.GC_STABILITY?.selfTest?.()||{passed:false};
     const dups=duplicateIds();
     const result={
-      passed:tiles.length>=7&&entryInline.length===0&&missingIntent.length===0&&missingFunctions.length===0&&dups.length===0,
+      passed:tiles.length>=7&&entryInline.length===0&&missingIntent.length===0&&missingFunctions.length===0&&dups.length===0&&stabilityContract&&stabilityTest.passed,
       entryTiles:tiles.length,
       inlineHandlers:entryInline.length,
       missingIntent:missingIntent.length,
       missingFunctions,
       duplicateIds:dups,
+      stabilityContract,
+      stabilityTest,
+      evidenceCount:window.GC_STABILITY?.getSnapshot?.().evidenceCount??null,
       timestamp:new Date().toISOString()
     };
     window.GC_G0_ACCEPTANCE=result;
