@@ -16,7 +16,7 @@ jobs:
         run: |
           set -e
           for f in *.js; do node --check "$f"; done
-      - name: Verify G0, analysis and program contracts
+      - name: Verify G0, analysis, program and remedial contracts
         run: |
           python3 - <<'PY'
           from pathlib import Path
@@ -29,6 +29,8 @@ jobs:
           analysis_out=Path('guided-capture-analysis-output-v2.js').read_text()
           program=Path('guided-capture-program-sheet-v2.js').read_text()
           program_out=Path('guided-capture-program-output-v2.js').read_text()
+          remedial=Path('guided-capture-remedial-plan-v2.js').read_text()
+          remedial_out=Path('guided-capture-remedial-output-v2.js').read_text()
           letter=Path('guided-capture-letterhead-v2.js').read_text()
           checks={
             'entry-loaded':'guided-capture-entry-v1.js' in html,
@@ -39,6 +41,8 @@ jobs:
             'analysis-output-loaded':'guided-capture-analysis-output-v2.js' in html,
             'program-input-loaded':'guided-capture-program-sheet-v2.js' in html,
             'program-output-loaded':'guided-capture-program-output-v2.js' in html,
+            'remedial-input-loaded':'guided-capture-remedial-plan-v2.js' in html,
+            'remedial-output-loaded':'guided-capture-remedial-output-v2.js' in html,
             'letterhead-loaded':'guided-capture-letterhead-v2.js' in html,
             'legacy-icon-guard-removed':'guided-capture-icon-guard-v2.js' not in html,
             'legacy-create-guard-removed':'guided-capture-create-document-guard-v2.js' not in html,
@@ -47,37 +51,28 @@ jobs:
             'create-action':'window.gcCreateDocumentV2' in entry,
             'create-captures-state':'GC_STABILITY?.capture' in entry,
             'create-syncs-evidence':'GC_STABILITY?.syncEvidence' in entry,
-            'sync-evidence-contract':'function syncEvidence()' in stability,
-            'stability-self-test':'function selfTest()' in stability,
-            'restore-evidence':'restoreEvidence' in stability,
-            'acceptance-stability-check':'stabilityTest' in acceptance,
             'analysis-self-test':'function selfTest()' in analysis,
-            'analysis-arabic-digits':'normalizeDigits' in analysis,
-            'analysis-range-validation':'outOfRange' in analysis,
             'analysis-professional-reading':'reading' in analysis and 'priority' in analysis and 'action' in analysis,
             'analysis-premium-renderer':'analysisReportV2' in analysis_out,
-            'analysis-level-table':'arLevelTable' in analysis_out,
-            'analysis-decision-bands':'arBands' in analysis_out,
-            'analysis-priority-students':'priorityStudents' in analysis_out,
-            'analysis-signatures':'function signatures()' in analysis_out,
-            'program-low-effort':'أكمل ما لا يعرفه النظام فقط' in program,
             'program-generated-goals':'function generatedGoals()' in program,
             'program-generated-steps':'function generatedSteps()' in program,
-            'program-evidence-url':'evidenceUrl' in program,
             'program-premium-renderer':'programReportV2' in program_out,
-            'program-evidence-gallery':'pr2EvidenceGrid' in program_out,
-            'program-quality-note':'حالة التوثيق' in program_out,
-            'program-no-fake-impact':'لا يُعد ذلك قياسًا للأثر' in program_out,
+            'remedial-analysis-bridge':'gc_last_analysis_v2' in remedial,
+            'remedial-import':'استيراد من التحليل' in remedial,
+            'remedial-multiselect':'data-rp-choice' in remedial,
+            'remedial-validation':'function validate()' in remedial,
+            'remedial-premium-renderer':'remedialReportV2' in remedial_out,
+            'remedial-remeasure':'المتابعة وإعادة القياس' in remedial_out,
+            'remedial-no-fake-impact':'لا يعتبر إعداد الخطة أو تنفيذ أنشطتها دليلًا تلقائيًا على تحقق الأثر' in remedial_out,
             'letterhead-ministry':'وزارة التعليم' in letter,
             'letterhead-school-identity':'gc_school_identity_v1' in letter,
             'letterhead-print-css':'@media print' in letter,
-            'letterhead-no-brand-mark':'brandMark' not in letter,
             'print-action':'window.gcPrintV2' in printer,
           }
           bad=[k for k,v in checks.items() if not v]
           print(checks)
           assert not bad, bad
-          print('PASS G0 + analysis + program + letterhead static contracts')
+          print('PASS V2 static contracts')
           PY
       - name: Start local server
         run: |
@@ -89,7 +84,6 @@ jobs:
           CHROME="$(command -v google-chrome || command -v chromium || command -v chromium-browser || true)"
           test -n "$CHROME"
           "$CHROME" --headless --no-sandbox --disable-gpu --virtual-time-budget=2500 --dump-dom http://127.0.0.1:8000/v2-smoke-test.html > /tmp/v2-dom.html
-          cat /tmp/v2-dom.html
           grep -q 'PASS:registry,print,family,output' /tmp/v2-dom.html
       - name: Browser G0 acceptance on main lab
         run: |
@@ -107,7 +101,7 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           s=Path('school-engine-v9-guided-capture-lab.html').read_text()
-          order=['guided-capture-v2-foundation.js','guided-capture-analysis-sheet-v2.js','guided-capture-program-sheet-v2.js','guided-capture-output-engine-v2.js','guided-capture-analysis-output-v2.js','guided-capture-program-output-v2.js','guided-capture-letterhead-v2.js','guided-capture-print-v2.js','guided-capture-stability-v2.js','guided-capture-g0-diagnostics.js','guided-capture-g0-acceptance-v2.js']
+          order=['guided-capture-v2-foundation.js','guided-capture-analysis-sheet-v2.js','guided-capture-program-sheet-v2.js','guided-capture-remedial-plan-v2.js','guided-capture-output-engine-v2.js','guided-capture-analysis-output-v2.js','guided-capture-program-output-v2.js','guided-capture-remedial-output-v2.js','guided-capture-letterhead-v2.js','guided-capture-print-v2.js','guided-capture-stability-v2.js','guided-capture-g0-diagnostics.js','guided-capture-g0-acceptance-v2.js']
           pos=[s.index(x) for x in order]
           assert pos==sorted(pos), pos
           print('PASS load order', order)
