@@ -5,12 +5,15 @@ import {pdfModel107} from './pdf-model107.js';
 const expectedCounts={
  'برنامج / فعالية':0,
  'اجتماع / متابعة إدارية':5,
- 'تحليل نتائج':2,
+ 'تحليل نتائج':4,
  'خطة':3,
  'إجراء متابعة':2,
  'تطوير مهني':4
 };
 for(const [family,count] of Object.entries(expectedCounts))assert.equal(familyMetaDefinitions111(family).length,count,`${family}: wrong adaptive metadata count`);
+
+const analysisDefs=familyMetaDefinitions111('تحليل نتائج');
+assert.deepEqual(analysisDefs.map(x=>x.id),['section','period','assessmentType','expectedCount'],'analysis metadata must follow grade → section → term → assessment → optional expected count');
 
 function base(family){return{classification:{type:family,subtype:''},metadata:{familyDetails:{},familyMeta111:{},familyMeta111Skipped:[],semantic101:{},executorName:'فهد',dateISO:'2026-08-18',dateDisplay:'',duration:'',durationChoice:'',place:'',placeMode:'',placeChoice:'',selectedTitle:'وثيقة اختبار'},audiences:['الطلاب'],stage:'متوسط',grades:['الثاني المتوسط'],answers:{goals:[],evidence:[]},attachments:[]}}
 
@@ -21,9 +24,9 @@ assert.equal(nextFamilyMeta111(meeting)?.id,'minutesWriter');
 meeting.metadata.familyMeta111Skipped=['minutesWriter'];
 assert.equal(nextFamilyMeta111(meeting)?.id,'startTime');
 
-const analysis=base('تحليل نتائج');analysis.metadata.familyDetails.subject94='الرياضيات';analysis.metadata.familyMeta111={assessmentType:'اختبار تشخيصي',period:'الفترة الأولى'};analysis.metadata.analysis={maxScore:'40',scores:[35,28,40,31,20],names:[],rawRows:'35\n28\n40\n31\n20'};analysis.metadata.count='5';analysis.metadata.countSource101='derived';
+const analysis=base('تحليل نتائج');analysis.metadata.familyDetails.subject94='الرياضيات';analysis.metadata.familyMeta111={section:'ب',period:'الفصل الدراسي الأول',assessmentType:'اختبار تشخيصي',expectedCount:'5'};analysis.metadata.analysis={maxScore:'40',scores:[35,28,40,31,20],names:[],rawRows:'35\n28\n40\n31\n20'};analysis.metadata.count='5';analysis.metadata.countSource101='derived';
 const analysisModel=pdfModel107(analysis);const analysisMeta=Object.fromEntries(analysisModel.sections.find(x=>x.def.id==='meta').data);
-assert.equal(analysisMeta['المادة'],'الرياضيات');assert.equal(analysisMeta['نوع الاختبار'],'اختبار تشخيصي');assert.equal(analysisMeta['الفترة'],'الفترة الأولى');assert.equal(analysisMeta['عدد الطلاب/المختبرين'],'5');assert.equal(analysisMeta['الدرجة الكلية'],'40');
+assert.equal(analysisMeta['المادة'],'الرياضيات');assert.equal(analysisMeta['نوع الاختبار'],'اختبار تشخيصي');assert.equal(analysisMeta['الفترة'],'الفصل الدراسي الأول');assert.equal(analysisMeta['عدد الطلاب/المختبرين'],'5');assert.equal(analysisMeta['الدرجة الكلية'],'40');
 
 const pd=base('تطوير مهني');pd.metadata.familyMeta111={provider:'المعهد الوطني للتطوير المهني التعليمي',hours:'6',deliveryMode:'عن بُعد مباشر',certificateOrPresenter:'شهادة حضور'};
 const pdMeta=Object.fromEntries(pdfModel107(pd).sections.find(x=>x.def.id==='meta').data);
@@ -35,4 +38,4 @@ const planMeta=Object.fromEntries(pdfModel107(plan).sections.find(x=>x.def.id===
 const follow=base('إجراء متابعة');follow.metadata.familyDetails.method='سجل متابعة أسبوعي';follow.metadata.familyMeta111={period:'أربعة أسابيع',casesCount:'12'};
 const followMeta=Object.fromEntries(pdfModel107(follow).sections.find(x=>x.def.id==='meta').data);assert.equal(followMeta['المسؤول'],'فهد');assert.equal(followMeta['فترة المتابعة'],'أربعة أسابيع');assert.equal(followMeta['الحالات/العدد'],'12');assert.equal(followMeta['وسيلة المتابعة'],'سجل متابعة أسبوعي');
 
-console.log('V111/V113 family metadata PASS: analysis count is derived from score data, not asked again.');
+console.log('V111/V117 family metadata PASS: analysis uses ordered scope metadata plus optional expected count; actual analysed count remains derived from scores.');
