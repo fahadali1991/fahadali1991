@@ -35,8 +35,10 @@ assert.match(app,/function todayISO\(\)/,'app must default the date from the use
 assert.match(app,/dateISO:state\.metadata\?\.dateISO\|\|today/,'today must populate date when no prior date exists');
 const meta=fs.readFileSync(new URL('./family-meta111.js',import.meta.url),'utf8');
 assert.equal(meta.includes('testedCount'),false,'analysis must never ask a second manual student count');
-assert.ok(meta.indexOf("id:'section'")<meta.indexOf("id:'period'"),'section must follow grade scope before semester');
 assert.ok(meta.indexOf("id:'period'")<meta.indexOf("id:'assessmentType'"),'semester must precede assessment type');
+assert.equal(meta.includes("id:'section'"),false,'section belongs beside grade, not in the adaptive question queue');
+assert.equal(meta.includes("id:'expectedCount'"),false,'expected count belongs beside max score, not in the adaptive question queue');
+assert.ok(html.includes('id="analysisSection111"'),'analysis section must appear beside grade scope');
 const bank=fs.readFileSync(new URL('./BANK101_SPEC.md',import.meta.url),'utf8');
 assert.ok(bank.includes('سأل عن معلومة مؤكدة سبق للمستخدم ذكرها'),'bank no-repeat rule must remain explicit');
 
