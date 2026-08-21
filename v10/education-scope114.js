@@ -36,26 +36,43 @@ const GENERIC_MAP={
  'القران الكريم والدراسات الاسلاميه':['القرآن الكريم والدراسات الإسلامية','قرآن ودراسات إسلامية','القرآن الكريم وتفسيره','القرآن الكريم'],
  'القران الكريم':['القرآن الكريم','القرآن الكريم وتفسيره','قرآن ودراسات إسلامية','القرآن الكريم والدراسات الإسلامية'],
  'اللغه العربيه':['اللغة العربية','الكفايات اللغوية 1','الكفايات اللغوية'],
+ 'عربي':['اللغة العربية','الكفايات اللغوية 1','الكفايات اللغوية'],
+ 'العربي':['اللغة العربية','الكفايات اللغوية 1','الكفايات اللغوية'],
+ 'رياضيات':['الرياضيات','الرياضيات 1'],
  'الرياضيات':['الرياضيات','الرياضيات 1'],
+ 'علوم':['العلوم'],
  'العلوم':['العلوم'],
+ 'انجليزي':['اللغة الإنجليزية','اللغة الإنجليزية 1'],
+ 'انقليزي':['اللغة الإنجليزية','اللغة الإنجليزية 1'],
+ 'الانجليزي':['اللغة الإنجليزية','اللغة الإنجليزية 1'],
  'اللغه الانجليزيه':['اللغة الإنجليزية','اللغة الإنجليزية 1'],
+ 'رقميه':['المهارات الرقمية','التقنية الرقمية 1','التقنية الرقمية'],
+ 'حاسب':['المهارات الرقمية','التقنية الرقمية 1','التقنية الرقمية'],
  'المهارات الرقميه':['المهارات الرقمية','التقنية الرقمية 1','التقنية الرقمية'],
+ 'اجتماعيات':['الدراسات الاجتماعية'],
+ 'الاجتماعيات':['الدراسات الاجتماعية'],
  'الدراسات الاجتماعيه':['الدراسات الاجتماعية']
 };
 const looseToken=t=>norm(t).replace(/\bال(?=\S)/g,'');
 function strictContainsSubject(raw,subject){const r=` ${norm(raw)} `,s=` ${norm(subject)} `;return r.includes(s)}
 function looseContainsSubject(raw,subject){
  const rt=looseToken(raw).split(' '),rawNums=new Set(rt.filter(x=>/^\d+$/.test(x))),st=looseToken(subject).split(' ').filter(Boolean),subjectNums=st.filter(x=>/^\d+$/.test(x));
- // لا نسمح للمطابقة المرنة بتحويل «الرياضيات» إلى «الرياضيات 1» أو ما شابه دون رقم صريح من المستخدم.
  if(subjectNums.some(x=>!rawNums.has(x)))return false;
  const words=st.filter(x=>!/^\d+$/.test(x));return words.length>0&&words.every(x=>rt.includes(x));
+}
+function shorthandSubject(raw,selectable,searchable){
+ const tokens=norm(raw).split(/\s+/).filter(Boolean),maps=[];
+ for(const token of tokens){const candidates=GENERIC_MAP[token];if(candidates)maps.push(...candidates)}
+ for(const candidate of uniq(maps)){if(selectable.includes(candidate))return candidate}
+ for(const candidate of uniq(maps)){if(searchable.includes(candidate))return candidate}
+ return'';
 }
 export function resolveSubject114(state={}){
  const explicit=String(state.metadata?.familyDetails?.subject94||'').split('|||').map(clean).filter(Boolean);if(explicit.length)return{name:explicit[0],all:explicit,source:'user',confidence:1};
  const selectable=curriculumSubjects114(state),searchable=allStageSubjects114(state),raw=state.raw||'';
- // المطابقة الحرفية للمقرر تسبق أي تساهل لغوي؛ وبذلك لا تتحول «الرياضيات» إلى «الرياضيات 1».
  const strict=[...searchable].sort((a,b)=>b.length-a.length).find(x=>strictContainsSubject(raw,x));if(strict)return{name:strict,all:[strict],source:'curriculum-inference',confidence:.99};
  const loose=[...searchable].sort((a,b)=>b.length-a.length).find(x=>looseContainsSubject(raw,x));if(loose)return{name:loose,all:[loose],source:'curriculum-inference',confidence:.96};
+ const shorthand=shorthandSubject(raw,selectable,searchable);if(shorthand)return{name:shorthand,all:[shorthand],source:'curriculum-inference',confidence:.94};
  const inferred=clean(state.metadata?.subjectHint101||state.metadata?.semantic101?.subject?.name);if(!inferred)return null;
  const candidates=GENERIC_MAP[norm(inferred)]||[inferred];
  const mapped=candidates.find(x=>selectable.includes(x))||candidates.find(x=>searchable.includes(x));if(mapped)return{name:mapped,all:[mapped],source:'curriculum-inference',confidence:Math.max(.8,Number(state.metadata?.subjectConfidence101||0)/100)};
