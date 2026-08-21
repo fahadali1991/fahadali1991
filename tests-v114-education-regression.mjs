@@ -1,10 +1,11 @@
-// Verification-only change: exercises the permanent V114 PR regression gate.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {SUBJECTS94} from './v10/subject-registry94.js';
 import {canonicalGrades114,educationScopeLabel114,resolveSubject114,normalizeEducationState114} from './v10/education-scope114.js';
 import {buildCanonicalContext106} from './v10/canonical-context106.js';
 import {titleCandidates108} from './v10/title108.js';
+import {matrix106} from './v10/matrix106.js';
+import {routeNextQuestion106} from './v10/question-router106.js';
 
 let subjectCases=0;
 for(const [stage,groups] of Object.entries(SUBJECTS94)){
@@ -23,6 +24,10 @@ for(const [stage,groups] of Object.entries(SUBJECTS94)){
     }
   }
 }
+
+const shorthandState={raw:'سويت تحليل نتائج عربي اول متوسط',classification:{type:'تحليل نتائج',subtype:'اختبار تشخيصي'},stage:'متوسط',grades:['الأول المتوسط'],audiences:[],metadata:{familyDetails:{},semantic101:{}}};
+normalizeEducationState114(shorthandState);
+assert.equal(resolveSubject114(shorthandState)?.name,'اللغة العربية','اختصار «عربي» يجب أن يلتقط اللغة العربية تلقائيًا');
 
 const gradeCases=[
  ['متوسط',['الأول','الأول المتوسط'],['الأول المتوسط']],
@@ -43,8 +48,29 @@ for(const t of titles){
  assert.ok(!/الثالث\s*و\s*الثالث/u.test(t),`تكرار الصف عاد في العنوان: ${t}`);
 }
 
+const analysisState={raw:'تحليل نتائج عربي اول متوسط',classification:{type:'تحليل نتائج',subtype:'اختبار تشخيصي'},stage:'متوسط',grades:['الأول المتوسط'],audiences:['الطلاب'],metadata:{familyDetails:{basis:'اختبار تشخيصي — الفصل الدراسي الأول',finding:'مهارات منخفضة الإتقان'}}};
+const matrix=matrix106(analysisState);
+for(const id of ['basis','finding','cause','action','follow']){
+ const q=matrix.questions.find(x=>x.id===id);if(q)assert.equal(Number(q.max||0),0,`سؤال ${id} في تحليل النتائج يجب ألا يفرض حدًا عدديًا على الاختيارات`);
+}
+const routed=routeNextQuestion106(analysisState,matrix);
+assert.notEqual(routed.gap,'basis','إذا سبق بناء أساس التحليل من نوع الاختبار والفصل فلا يجوز سؤاله مرة أخرى');
+
+const familyMetaSource=fs.readFileSync('./v10/family-meta111.js','utf8');
+assert.doesNotMatch(familyMetaSource,/الفصل الدراسي الثالث/,'يجب حذف الفصل الدراسي الثالث من نموذج تحليل النتائج');
+assert.match(familyMetaSource,/اختبار الفترة الأولى/,'الفترة الأولى يجب أن تكون نوع اختبار داخل الفصل الدراسي');
+assert.match(familyMetaSource,/اختبار قبلي/,'القبلي يجب أن يكون نوع اختبار داخل الفصل الدراسي');
+const detailsSource=fs.readFileSync('./v10/family-details106.js','utf8');
+assert.match(detailsSource,/family-meta-change111/,'يجب إعادة حساب السؤال التكيفي بعد إجابات بيانات التحليل السابقة');
+const routerSource=fs.readFileSync('./v10/question-router106.js','utf8');
+assert.match(routerSource,/measurementQuestion\(\).*max:0/s,'سؤال التحقق من النتيجة يجب ألا يفرض حد اختيار اعتباطيًا');
 const pdfSource=fs.readFileSync('./v10/pdf-analysis113.js','utf8');
 assert.match(pdfSource,/educationScopeLabel114/,'PDF تحليل النتائج يجب أن يقرأ المرحلة/الصف من Resolver المركزي');
 assert.doesNotMatch(pdfSource,/c\.education\.stage\.value\s*,\s*c\.education\.grades\.join/,'ممنوع إعادة تركيب المرحلة والصف يدويًا داخل PDF');
+const printFix=fs.readFileSync('./v10/styles115.css','utf8');
+assert.match(printFix,/height:296mm!important/,'يجب تثبيت تحليل النتائج داخل صفحة A4 واحدة عند الطباعة');
+const shareSource=fs.readFileSync('./v10/analysis-feedback115.js','utf8');
+assert.match(shareSource,/data-pdf-whatsapp115/,'معاينة الوثيقة يجب أن تتضمن مشاركة واتساب');
+assert.match(shareSource,/navigator\.share/,'معاينة الوثيقة يجب أن تتضمن مشاركة نظامية عامة');
 
-console.log(`V114 education regression passed: ${subjectCases} curriculum subject cases + ${gradeCases.length} grade normalization cases + canonical context + title + PDF scope.`);
+console.log(`V115 analysis feedback regression passed: ${subjectCases} curriculum subjects + shorthand + term model + adaptive carry-forward + unlimited evidence choices + print/share.`);
