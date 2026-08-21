@@ -8,6 +8,7 @@ on:
       - 'v10/title108.js'
       - 'v10/understanding84.js'
       - 'v10/subject-selector109.js'
+      - 'v10/pdf-analysis113.js'
       - 'tests-v114-education-regression.mjs'
       - '.github/workflows/v114-education-regression.yml'
   workflow_dispatch:
