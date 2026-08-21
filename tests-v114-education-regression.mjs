@@ -1,3 +1,4 @@
+// Verification-only change: exercises the permanent V114 PR regression gate.
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {SUBJECTS94} from './v10/subject-registry94.js';
