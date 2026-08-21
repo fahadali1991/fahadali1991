@@ -10,12 +10,9 @@ const DEFINITIONS111={
   {id:'attendees',label:'الحضور',q:'من حضر الاجتماع؟',type:'text',placeholder:'مثال: أعضاء اللجنة أو 8 معلمين'}
  ],
  'تحليل نتائج':[
-  {id:'assessmentType',label:'نوع الاختبار',q:'ما نوع الاختبار أو التقويم الذي حُللت نتائجه؟',type:'choice',opts:['اختبار تشخيصي','اختبار قبلي','اختبار بعدي','اختبار فترة','اختبار نهائي','تقويم مستمر','اختبار وطني أو مركزي']},
-  {id:'period',label:'الفترة',q:'ما الفترة التي تمثلها النتائج؟',type:'periodChoice',opts:[
-   {v:'الفترة الأولى',i:'①',s:'فترة'}, {v:'الفترة الثانية',i:'②',s:'فترة'},
-   {v:'منتصف الفصل',i:'◐',s:'مرحلي'}, {v:'نهاية الفصل',i:'✓',s:'ختامي'},
-   {v:'قبلي',i:'↤',s:'قبل التدخل'}, {v:'بعدي',i:'↦',s:'بعد التدخل'},
-   {v:'الفصل الدراسي الأول',i:'١',s:'فصل'}, {v:'الفصل الدراسي الثاني',i:'٢',s:'فصل'}, {v:'الفصل الدراسي الثالث',i:'٣',s:'فصل'}
+  {id:'assessmentType',label:'نوع الاختبار',q:'ما نوع الاختبار أو التقويم الذي حُللت نتائجه؟',type:'choice',opts:['اختبار تشخيصي','اختبار الفترة الأولى','اختبار الفترة الثانية','اختبار قبلي','اختبار بعدي','اختبار نهائي','تقويم تكويني','تقويم مستمر','اختبار وطني أو مركزي']},
+  {id:'period',label:'الفصل الدراسي',q:'في أي فصل دراسي نُفذ الاختبار أو التقويم؟',type:'periodChoice',opts:[
+   {v:'الفصل الدراسي الأول',i:'١',s:'فصل دراسي'}, {v:'الفصل الدراسي الثاني',i:'٢',s:'فصل دراسي'}
   ]}
  ],
  'خطة':[
@@ -41,10 +38,10 @@ export function familyMetaDefinitions111(family){return DEFINITIONS111[family]||
 export function nextFamilyMeta111(state){const defs=familyMetaDefinitions111(state?.classification?.type),m=meta(state),skip=skipped(state);return defs.find(x=>!String(m[x.id]??'').trim()&&!skip.has(x.id))||null}
 function control(def,value=''){
  if(def.type==='choice')return `<div class="chips choiceGrid familyMetaChoices111">${def.opts.map(x=>`<button type="button" class="chip ${value===x?'on':''}" data-family-meta-choice111="${esc(x)}">${esc(x)}</button>`).join('')}</div><input type="hidden" data-family-meta111="${esc(def.id)}" value="${esc(value)}">`;
- if(def.type==='periodChoice')return `<div class="periodChoice114">${def.opts.map(x=>`<button type="button" class="periodTile114 ${value===x.v?'on':''}" data-family-meta-choice111="${esc(x.v)}"><b>${esc(x.i)}</b><span>${esc(x.v)}</span><small>${esc(x.s)}</small></button>`).join('')}<button type="button" class="periodTile114 custom ${value&&!def.opts.some(x=>x.v===value)?'on':''}" data-period-custom114><b>＋</b><span>فترة أخرى</span><small>اكتبها بنفسك</small></button></div><input type="hidden" data-family-meta111="${esc(def.id)}" value="${esc(value)}"><div class="periodCustom114" ${value&&!def.opts.some(x=>x.v===value)?'':'hidden'}><input data-period-custom-input114 value="${value&&!def.opts.some(x=>x.v===value)?esc(value):''}" placeholder="مثال: الأسبوع الخامس"></div>`;
+ if(def.type==='periodChoice')return `<div class="periodChoice114">${def.opts.map(x=>`<button type="button" class="periodTile114 ${value===x.v?'on':''}" data-family-meta-choice111="${esc(x.v)}"><b>${esc(x.i)}</b><span>${esc(x.v)}</span><small>${esc(x.s)}</small></button>`).join('')}<button type="button" class="periodTile114 custom ${value&&!def.opts.some(x=>x.v===value)?'on':''}" data-period-custom114><b>＋</b><span>فصل آخر</span><small>اكتبه بنفسك عند الحاجة</small></button></div><input type="hidden" data-family-meta111="${esc(def.id)}" value="${esc(value)}"><div class="periodCustom114" ${value&&!def.opts.some(x=>x.v===value)?'':'hidden'}><input data-period-custom-input114 value="${value&&!def.opts.some(x=>x.v===value)?esc(value):''}" placeholder="مثال: فصل صيفي"></div>`;
  return `<input data-family-meta111="${esc(def.id)}" type="${esc(def.type||'text')}" value="${esc(value)}" ${def.type==='number'?'inputmode="numeric" min="0"':''} placeholder="${esc(def.placeholder||'')}">`;
 }
-export function familyMetaQuestion111(state){const def=nextFamilyMeta111(state);if(!def)return'';const value=String(meta(state)[def.id]??'');return `<div class="familyMeta111" data-family-meta-host111 data-field111="${esc(def.id)}"><div class="adaptiveKicker106">بيانات ستظهر في الوثيقة</div><h2>${esc(def.q)}</h2><p class="questionHelp">اخترها بلمسة واحدة. إن لم تنطبق الخيارات اختر «فترة أخرى».</p>${control(def,value)}<div class="row adaptiveActions106" style="margin-top:12px"><button type="button" class="btn primary" data-family-meta-next111 ${value?'':'disabled'}>التالي</button><button type="button" class="btn" data-family-meta-skip111>لا ينطبق / تجاوز</button></div></div>`}
+export function familyMetaQuestion111(state){const def=nextFamilyMeta111(state);if(!def)return'';const value=String(meta(state)[def.id]??'');return `<div class="familyMeta111" data-family-meta-host111 data-field111="${esc(def.id)}"><div class="adaptiveKicker106">بيانات ستظهر في الوثيقة</div><h2>${esc(def.q)}</h2><p class="questionHelp">اخترها بلمسة واحدة. استخدم الخيار الآخر فقط إذا لم ينطبق الفصلان المعتادان.</p>${control(def,value)}<div class="row adaptiveActions106" style="margin-top:12px"><button type="button" class="btn primary" data-family-meta-next111 ${value?'':'disabled'}>التالي</button><button type="button" class="btn" data-family-meta-skip111>لا ينطبق / تجاوز</button></div></div>`}
 export function familyMetaPending111(state){return Boolean(nextFamilyMeta111(state))}
 
 let current=null;
