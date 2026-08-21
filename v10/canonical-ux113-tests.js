@@ -10,7 +10,7 @@ import {pdfPreview107} from './pdf-renderer107.js';
 const semantic=preview101('حللت نتائج اختبار الرياضيات لعدد 20 طالب في الثاني المتوسط');
 assert.equal(semantic.subject?.name,'الرياضيات','subject must be inferred once from raw text');
 assert.equal(semantic.count,20,'student count in raw text must be inferred');
-const state={raw:'حللت نتائج اختبار الرياضيات لعدد 20 طالب في الثاني المتوسط',classification:{type:'تحليل نتائج',subtype:''},metadata:{semantic101:semantic,subjectHint101:semantic.subject.name,subjectConfidence101:semantic.subject.confidence,count:String(semantic.count),countSource101:'inference',familyDetails:{},analysis:{maxScore:40,scores:[35,28,40,10],names:[],rawRows:'35\n28\n40\n10'},familyMeta111:{assessmentType:'اختبار تشخيصي',period:'الفترة الأولى'},dateISO:'2026-08-20',dateDisplay:'20/08/2026'},audiences:['الطلاب'],stage:'متوسط',grades:['الثاني المتوسط'],answers:{goals:[],evidence:[]},attachments:[]};
+const state={raw:'حللت نتائج اختبار الرياضيات لعدد 20 طالب في الثاني المتوسط',classification:{type:'تحليل نتائج',subtype:''},metadata:{semantic101:semantic,subjectHint101:semantic.subject.name,subjectConfidence101:semantic.subject.confidence,count:String(semantic.count),countSource101:'inference',expectedCount111:String(semantic.count),familyDetails:{},analysis:{maxScore:40,scores:[35,28,40,10],names:[],rawRows:'35\n28\n40\n10'},familyMeta111:{assessmentType:'اختبار تشخيصي',period:'الفصل الدراسي الأول',expectedCount:String(semantic.count)},dateISO:'2026-08-20',dateDisplay:'20/08/2026'},audiences:['الطلاب'],stage:'متوسط',grades:['الثاني المتوسط'],answers:{goals:[],evidence:[]},attachments:[]};
 const ctx=buildCanonicalContext106(state);
 assert.equal(ctx.education.subject.value,'الرياضيات');
 assert.equal(ctx.execution.count.value,'20');
@@ -35,11 +35,13 @@ assert.match(app,/function todayISO\(\)/,'app must default the date from the use
 assert.match(app,/dateISO:state\.metadata\?\.dateISO\|\|today/,'today must populate date when no prior date exists');
 const meta=fs.readFileSync(new URL('./family-meta111.js',import.meta.url),'utf8');
 assert.equal(meta.includes('testedCount'),false,'analysis must never ask a second manual student count');
+assert.ok(meta.indexOf("id:'section'")<meta.indexOf("id:'period'"),'section must follow grade scope before semester');
+assert.ok(meta.indexOf("id:'period'")<meta.indexOf("id:'assessmentType'"),'semester must precede assessment type');
 const bank=fs.readFileSync(new URL('./BANK101_SPEC.md',import.meta.url),'utf8');
 assert.ok(bank.includes('سأل عن معلومة مؤكدة سبق للمستخدم ذكرها'),'bank no-repeat rule must remain explicit');
 
 const pdf=pdfPreview107(state,{mode:'color'});
 assert.ok(pdf.includes('analysisSheet113'),'analysis must have a real printable renderer');
 assert.ok(pdf.includes('طباعة / حفظ PDF'),'analysis print action must be visible');
-assert.ok(pdf.includes('20'),'derived count must reach the PDF output');
-console.log('V113 canonical UX recovery: PASS');
+assert.ok(pdf.includes('20'),'declared student count must reach the PDF consistency output');
+console.log('V113/V117 canonical UX recovery: PASS');
