@@ -1,0 +1,23 @@
+name: V114 Education Regression
+on:
+  push:
+    paths:
+      - 'v10/education-scope114.js'
+      - 'v10/subject-registry94.js'
+      - 'v10/canonical-context106.js'
+      - 'v10/title108.js'
+      - 'v10/understanding84.js'
+      - 'v10/subject-selector109.js'
+      - 'tests-v114-education-regression.mjs'
+      - '.github/workflows/v114-education-regression.yml'
+  workflow_dispatch:
+jobs:
+  education-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test every curriculum subject and canonical scope
+        run: node tests-v114-education-regression.mjs
