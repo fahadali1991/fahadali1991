@@ -1,7 +1,8 @@
 import {buildCanonicalContext106} from './canonical-context106.js?v=106';
+import {educationScopeLabel114} from './education-scope114.js?v=114';
 const clean=v=>String(v??'').replace(/\s+/g,' ').replace(/\s+([،؛:.])/g,'$1').trim();
 const uniq=a=>[...new Set(a.map(clean).filter(Boolean))];
-function target(c){const g=(c.education.grades||[]).join(' و');if(g)return`طلاب ${g}`;const a=(c.education.audiences||[]).filter(x=>x!=='الطلاب');return a[0]||((c.education.audiences||[]).includes('الطلاب')?'الطلاب':'')}
+function target(c){const g=educationScopeLabel114(c.education.stage.value,c.education.grades||[]);if(g)return`طلاب ${g}`;const a=(c.education.audiences||[]).filter(x=>x!=='الطلاب');return a[0]||((c.education.audiences||[]).includes('الطلاب')?'الطلاب':'')}
 function focus(c){return c.education.skill.value||c.education.topic.value||c.education.branch.value||c.education.subject.value||''}
 function kind(c){return c.document.subtype.value||c.document.family.value||''}
 function valid(x){x=clean(x);if(x.length<5||x.length>96)return false;if(/[؟?]/.test(x))return false;if(/^(هل|كيف|وش|ايش|لماذا|ليش)(?=\s|$|[،؛:.!؟])/u.test(x))return false;if(/(^|\s)(نفذت|نفذنا|سويت|سوينا|عملت|عملنا)(?=\s|$|[،؛:.!؟])/u.test(x))return false;if(/(^|\s)(لمدة|بهدف|داخل المدرسة|خارج المدرسة)(?=\s|$|[،؛:.!؟])/u.test(x))return false;return true}
