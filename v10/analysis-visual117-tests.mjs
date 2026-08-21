@@ -1,3 +1,4 @@
+// V117 second verification pass after preserving inferred student count.
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
