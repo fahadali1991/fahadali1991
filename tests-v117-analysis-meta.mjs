@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {familyMetaDefinitions111} from './v10/family-meta111.js';
+const defs=familyMetaDefinitions111('تحليل نتائج');
+const byId=Object.fromEntries(defs.map(x=>[x.id,x]));
+assert.ok(byId.assessmentType);
+assert.ok(byId.period);
+assert.deepEqual(byId.period.opts.map(x=>x.v),['الفصل الدراسي الأول','الفصل الدراسي الثاني']);
+assert.equal(byId.expectedCount.optional,true);
+assert.equal(byId.expectedCount.type,'number');
+assert.equal(byId.section.optional,true);
+assert.equal(byId.section.type,'text');
+assert.ok(!defs.some(x=>String(x.q||'').includes('الفصل الدراسي الثالث')));
+console.log('V117 analysis optional metadata regression passed.');
