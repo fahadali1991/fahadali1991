@@ -99,6 +99,7 @@ function subtype(type,text){
 export function understand84(raw){return scoreSemantic(raw)}
 export function analyze(raw,entryIntent='smart'){
  const s=base.analyze(raw,entryIntent),u=scoreSemantic(raw);s.metadata=s.metadata||{};s.metadata.understanding84=u;s.metadata.secondaryEvents84=u.secondary;
+ if(entryIntent==='analysis'){base.setType(s,'تحليل نتائج');base.setSubtype(s,subtype('تحليل نتائج',u.text)||'تحليل نتائج');s.classification.detected='تحليل نتائج';s.classification.confidence=100;s.classification.conflict=false;s.classification.autoDecision='direct-entry84';s.classification.ranked84=[{type:'تحليل نتائج',score:100}];return s}
  if(u.primary){base.setType(s,u.primary);const st=subtype(u.primary,u.text);if(st)base.setSubtype(s,st);s.classification.detected=u.primary;s.classification.confidence=u.confidence;s.classification.conflict=false;s.classification.autoDecision='semantic84';s.classification.ranked84=u.ranked.slice(0,3)}
  else{s.classification.type='';s.classification.subtype='';s.classification.domain='';s.classification.confidence=u.confidence;s.classification.conflict=false;s.classification.autoDecision='uncertain84';s.classification.ranked84=u.ranked.slice(0,3);s.titleSuggestions=[];s.metadata.workTitle=''}
  return s;

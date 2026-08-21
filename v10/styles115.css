@@ -39,3 +39,5 @@
   .pdfPages107 .analysisInsight113{margin-bottom:2.5mm!important}
   .pdfPages107 .analysisApproval113{margin-top:3mm!important;margin-bottom:7mm!important}
 }
+/* V118: بيانات الاختبار المترابطة في بطاقة واحدة */
+.analysisSetup118{display:grid;grid-template-columns:1fr 1fr;gap:10px}.analysisSetup118 .fullField{margin:0}@media(max-width:600px){.analysisSetup118{grid-template-columns:1fr}}

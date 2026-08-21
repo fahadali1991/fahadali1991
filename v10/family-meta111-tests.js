@@ -5,7 +5,7 @@ import {pdfModel107} from './pdf-model107.js';
 const expectedCounts={
  'برنامج / فعالية':0,
  'اجتماع / متابعة إدارية':5,
- 'تحليل نتائج':4,
+ 'تحليل نتائج':2,
  'خطة':3,
  'إجراء متابعة':2,
  'تطوير مهني':4
@@ -13,7 +13,7 @@ const expectedCounts={
 for(const [family,count] of Object.entries(expectedCounts))assert.equal(familyMetaDefinitions111(family).length,count,`${family}: wrong adaptive metadata count`);
 
 const analysisDefs=familyMetaDefinitions111('تحليل نتائج');
-assert.deepEqual(analysisDefs.map(x=>x.id),['section','period','assessmentType','expectedCount'],'analysis metadata must follow grade → section → term → assessment → optional expected count');
+assert.deepEqual(analysisDefs.map(x=>x.id),['period','assessmentType'],'analysis adaptive metadata is only term → assessment; section and expected count live beside their related inputs');
 
 function base(family){return{classification:{type:family,subtype:''},metadata:{familyDetails:{},familyMeta111:{},familyMeta111Skipped:[],semantic101:{},executorName:'فهد',dateISO:'2026-08-18',dateDisplay:'',duration:'',durationChoice:'',place:'',placeMode:'',placeChoice:'',selectedTitle:'وثيقة اختبار'},audiences:['الطلاب'],stage:'متوسط',grades:['الثاني المتوسط'],answers:{goals:[],evidence:[]},attachments:[]}}
 
@@ -38,4 +38,4 @@ const planMeta=Object.fromEntries(pdfModel107(plan).sections.find(x=>x.def.id===
 const follow=base('إجراء متابعة');follow.metadata.familyDetails.method='سجل متابعة أسبوعي';follow.metadata.familyMeta111={period:'أربعة أسابيع',casesCount:'12'};
 const followMeta=Object.fromEntries(pdfModel107(follow).sections.find(x=>x.def.id==='meta').data);assert.equal(followMeta['المسؤول'],'فهد');assert.equal(followMeta['فترة المتابعة'],'أربعة أسابيع');assert.equal(followMeta['الحالات/العدد'],'12');assert.equal(followMeta['وسيلة المتابعة'],'سجل متابعة أسبوعي');
 
-console.log('V111/V117 family metadata PASS: analysis uses ordered scope metadata plus optional expected count; actual analysed count remains derived from scores.');
+console.log('V111/V118 family metadata PASS: adaptive questions are term → assessment; actual analysed count remains derived from scores.');
