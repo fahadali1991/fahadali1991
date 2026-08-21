@@ -1,20 +1,38 @@
-/* V115 - analysis print parity and preview sharing */
+/* V116 - analysis print parity, sharing and Safari one-page contract */
 .pdfShare115{display:inline-flex;align-items:center;gap:6px}
 .pdfShare115 b{font-size:15px;line-height:1}
 @media print{
+  @page{size:A4 portrait;margin:0!important}
+  html,body{margin:0!important;padding:0!important;width:210mm!important;height:auto!important;background:#fff!important}
+  .pdfPages107{position:absolute!important;inset:0!important;width:210mm!important;height:296mm!important;max-height:296mm!important;overflow:hidden!important;margin:0!important;padding:0!important}
   .pdfPages107 .analysisSheet113{
-    height:296mm!important;
-    min-height:296mm!important;
-    max-height:296mm!important;
+    position:relative!important;
     width:210mm!important;
+    height:294mm!important;
+    min-height:294mm!important;
+    max-height:294mm!important;
     margin:0!important;
+    padding-bottom:10mm!important;
     box-sizing:border-box!important;
     overflow:hidden!important;
     break-inside:avoid!important;
     page-break-inside:avoid!important;
-  }
-  .pdfPages107 .analysisSheet113:last-child{
     break-after:auto!important;
     page-break-after:auto!important;
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
   }
+  .pdfPages107 .analysisFooter113{position:absolute!important;right:8mm!important;left:8mm!important;bottom:3mm!important;margin:0!important;box-sizing:border-box!important}
+  .pdfPages107 .analysisHeader113{padding-top:4mm!important;padding-bottom:2mm!important}
+  .pdfPages107 .analysisHero113{padding-top:3mm!important;padding-bottom:2mm!important}
+  .pdfPages107 .analysisHero113 h1{font-size:17pt!important}
+  .pdfPages107 .analysisMeta113{padding-bottom:2mm!important}
+  .pdfPages107 .analysisKpis113{padding-bottom:2.5mm!important}
+  .pdfPages107 .analysisGrid113{padding-bottom:2.5mm!important}
+  .pdfPages107 .analysisBars113{height:43mm!important}
+  .pdfPages107 .analysisDecision113{margin-bottom:2.5mm!important}
+  .pdfPages107 .analysisDecision113 article{padding:2mm!important}
+  .pdfPages107 .analysisDecision113 article b{font-size:14pt!important}
+  .pdfPages107 .analysisInsight113{margin-bottom:2.5mm!important}
+  .pdfPages107 .analysisApproval113{margin-top:3mm!important;margin-bottom:7mm!important}
 }
