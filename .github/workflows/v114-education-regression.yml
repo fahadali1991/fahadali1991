@@ -8,11 +8,17 @@ on:
       - 'v10/title108.js'
       - 'v10/understanding84.js'
       - 'v10/subject-selector109.js'
+      - 'v10/semantic101.js'
+      - 'v10/family-meta111.js'
       - 'v10/analysis-data113.js'
       - 'v10/pdf-analysis113.js'
+      - 'v10/evidence-reference112.js'
+      - 'v10/evidence85.js'
+      - 'v10/assets/moe-logo.svg'
       - 'tests-v114-education-regression.mjs'
       - 'tests-v116-language-regression.mjs'
       - 'tests-v116-analysis-consistency.mjs'
+      - 'tests-v116-analysis-contract.mjs'
       - '.github/workflows/v114-education-regression.yml'
   pull_request:
     paths:
@@ -22,11 +28,17 @@ on:
       - 'v10/title108.js'
       - 'v10/understanding84.js'
       - 'v10/subject-selector109.js'
+      - 'v10/semantic101.js'
+      - 'v10/family-meta111.js'
       - 'v10/analysis-data113.js'
       - 'v10/pdf-analysis113.js'
+      - 'v10/evidence-reference112.js'
+      - 'v10/evidence85.js'
+      - 'v10/assets/moe-logo.svg'
       - 'tests-v114-education-regression.mjs'
       - 'tests-v116-language-regression.mjs'
       - 'tests-v116-analysis-consistency.mjs'
+      - 'tests-v116-analysis-contract.mjs'
       - '.github/workflows/v114-education-regression.yml'
   workflow_dispatch:
 jobs:
@@ -39,7 +51,9 @@ jobs:
           node-version: '22'
       - name: Test every curriculum subject and canonical scope
         run: node tests-v114-education-regression.mjs
-      - name: Test free-language subject aliases
+      - name: Test free-language school expressions
         run: node tests-v116-language-regression.mjs
       - name: Test analysis count consistency
         run: node tests-v116-analysis-consistency.mjs
+      - name: Test analysis document contract and official logo asset
+        run: node tests-v116-analysis-contract.mjs
