@@ -24,6 +24,7 @@ assert.match(panel,/الدرجة العظمى للاختبار/);
 assert.match(panel,/عدد الطلاب المتوقع رصد درجاتهم/);
 const pdf=fs.readFileSync('./v10/pdf-analysis113.js','utf8');
 assert.match(pdf,/fd\.cause\|\|fd\.reason/,'السبب المعتمد يجب أن يصل إلى الطباعة');
+assert.match(pdf,/src="data:image\/png;base64,/,'يجب تضمين الشعار الرسمي داخل PDF مباشرة حتى لا ينكسر عند الطباعة');
 for(const label of ['الصف والشعبة','الدرجة العظمى','عدد الطلاب'])assert.match(pdf,new RegExp(label));
 assert.doesNotMatch(pdf,/\['عدد الدرجات'/);
 const evidence=fs.readFileSync('./v10/evidence85.js','utf8');
