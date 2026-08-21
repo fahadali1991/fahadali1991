@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {evidenceReferenceSummary112,EVIDENCE_TARGETS112} from './v10/evidence-reference112.js';
+const state={classification:{type:'تحليل نتائج'},raw:'تحليل نتائج الطلاب واختبار تشخيصي وفجوة أداء',metadata:{familyDetails:{basis:'اختبار تشخيصي'}}};
+const ref=evidenceReferenceSummary112(state);
+assert.equal(ref.source.title,'جدول حصر الشواهد');
+assert.ok(ref.hasSuggestions);
+const ids=new Set(EVIDENCE_TARGETS112.map(x=>x.id));
+for(const id of [91,92,93,94,95,98])assert.ok(ids.has(id),`missing evidence inventory item ${id}`);
+const analysisIds=EVIDENCE_TARGETS112.filter(x=>x.families.includes('تحليل نتائج')).map(x=>x.id);
+for(const id of [91,92,93])assert.ok(analysisIds.includes(id),`analysis family should expose ${id}`);
+console.log('V117 evidence chain source regression passed.');
