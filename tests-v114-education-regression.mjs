@@ -68,9 +68,11 @@ const pdfSource=fs.readFileSync('./v10/pdf-analysis113.js','utf8');
 assert.match(pdfSource,/educationScopeLabel114/,'PDF تحليل النتائج يجب أن يقرأ المرحلة/الصف من Resolver المركزي');
 assert.doesNotMatch(pdfSource,/c\.education\.stage\.value\s*,\s*c\.education\.grades\.join/,'ممنوع إعادة تركيب المرحلة والصف يدويًا داخل PDF');
 const printFix=fs.readFileSync('./v10/styles115.css','utf8');
-assert.match(printFix,/height:296mm!important/,'يجب تثبيت تحليل النتائج داخل صفحة A4 واحدة عند الطباعة');
+assert.match(printFix,/html,body[^}]*height:297mm!important[^}]*max-height:297mm!important[^}]*overflow:hidden!important/s,'يجب تثبيت جذر الطباعة على أبعاد ورقة A4 واحدة ومنع امتداد صفحة ثانية');
+assert.match(printFix,/\.pdfPages107[^}]*height:292mm!important[^}]*max-height:292mm!important[^}]*overflow:hidden!important/s,'يجب إبقاء حاوية تحليل النتائج داخل المساحة الآمنة لصفحة A4 واحدة');
 const shareSource=fs.readFileSync('./v10/analysis-feedback115.js','utf8');
-assert.match(shareSource,/data-pdf-whatsapp115/,'معاينة الوثيقة يجب أن تتضمن مشاركة واتساب');
+assert.doesNotMatch(shareSource,/data-pdf-whatsapp115/,'معاينة الوثيقة يجب ألا تتضمن زر واتساب خاصًا');
+assert.match(shareSource,/data-pdf-share115/,'معاينة الوثيقة يجب أن تتضمن زر المشاركة النظامية');
 assert.match(shareSource,/navigator\.share/,'معاينة الوثيقة يجب أن تتضمن مشاركة نظامية عامة');
 
 console.log(`V115 analysis feedback regression passed: ${subjectCases} curriculum subjects + shorthand + term model + adaptive carry-forward + unlimited evidence choices + print/share.`);
