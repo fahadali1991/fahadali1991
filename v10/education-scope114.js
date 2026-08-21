@@ -34,9 +34,9 @@ export function allStageSubjects114(state={}){const st=clean(state.stage||state.
 
 const GENERIC_MAP={
  'القران الكريم والدراسات الاسلاميه':['القرآن الكريم والدراسات الإسلامية','قرآن ودراسات إسلامية','القرآن الكريم وتفسيره','القرآن الكريم'],
- 'اسلاميه':['القرآن الكريم والدراسات الإسلامية','الدراسات الإسلامية','التوحيد','الفقه','الحديث'],
- 'اسلامي':['القرآن الكريم والدراسات الإسلامية','الدراسات الإسلامية','التوحيد','الفقه','الحديث'],
- 'دين':['القرآن الكريم والدراسات الإسلامية','الدراسات الإسلامية'],
+ 'اسلاميه':['قرآن ودراسات إسلامية','القرآن الكريم والدراسات الإسلامية','القرآن الكريم وتفسيره','التوحيد','الفقه','الحديث 1','الحديث'],
+ 'اسلامي':['قرآن ودراسات إسلامية','القرآن الكريم والدراسات الإسلامية','القرآن الكريم وتفسيره','التوحيد','الفقه','الحديث 1','الحديث'],
+ 'دين':['قرآن ودراسات إسلامية','القرآن الكريم والدراسات الإسلامية','القرآن الكريم وتفسيره','التوحيد','الفقه','الحديث 1'],
  'قران':['القرآن الكريم','القرآن الكريم وتفسيره','قرآن ودراسات إسلامية','القرآن الكريم والدراسات الإسلامية'],
  'القران الكريم':['القرآن الكريم','القرآن الكريم وتفسيره','قرآن ودراسات إسلامية','القرآن الكريم والدراسات الإسلامية'],
  'اللغه العربيه':['اللغة العربية','لغتي','لغتي الخالدة','الكفايات اللغوية 1','الكفايات اللغوية'],
@@ -48,7 +48,7 @@ const GENERIC_MAP={
  'لغتي الخالده':['لغتي الخالدة','اللغة العربية'],
  'كفايات':['الكفايات اللغوية 1','الكفايات اللغوية'],
  'رياضيات':['الرياضيات','الرياضيات 1'],
- 'رياضه':['الرياضيات','الرياضيات 1'],
+ 'حساب':['الرياضيات','الرياضيات 1'],
  'الرياضيات':['الرياضيات','الرياضيات 1'],
  'علوم':['العلوم'],
  'العلوم':['العلوم'],
@@ -75,13 +75,12 @@ const GENERIC_MAP={
  'الاجتماعيات':['الدراسات الاجتماعية'],
  'الدراسات الاجتماعيه':['الدراسات الاجتماعية'],
  'فنيه':['التربية الفنية','الفنون'],
- 'فنيه':['التربية الفنية','الفنون'],
  'تربيه فنيه':['التربية الفنية','الفنون'],
  'رسم':['التربية الفنية','الفنون'],
- 'بدنيه':['التربية البدنية والدفاع عن النفس','التربية البدنية','الصحة واللياقة'],
- 'بدنيه':['التربية البدنية والدفاع عن النفس','التربية البدنية','الصحة واللياقة'],
- 'تربيه بدنيه':['التربية البدنية والدفاع عن النفس','التربية البدنية','الصحة واللياقة'],
- 'رياضه بدنيه':['التربية البدنية والدفاع عن النفس','التربية البدنية','الصحة واللياقة'],
+ 'بدنيه':['التربية البدنية والدفاع عن النفس','التربية الصحية والبدنية 1','التربية الصحية والبدنية','اللياقة والثقافة الصحية'],
+ 'تربيه بدنيه':['التربية البدنية والدفاع عن النفس','التربية الصحية والبدنية 1','التربية الصحية والبدنية','اللياقة والثقافة الصحية'],
+ 'رياضه':['التربية البدنية والدفاع عن النفس','التربية الصحية والبدنية 1','التربية الصحية والبدنية','اللياقة والثقافة الصحية'],
+ 'رياضه بدنيه':['التربية البدنية والدفاع عن النفس','التربية الصحية والبدنية 1','التربية الصحية والبدنية','اللياقة والثقافة الصحية'],
  'مهارات حياتيه':['المهارات الحياتية والأسرية'],
  'اسريه':['المهارات الحياتية والأسرية'],
  'تفكير ناقد':['التفكير الناقد'],
@@ -105,21 +104,36 @@ function shorthandSubject(raw,selectable,searchable){
  for(const candidate of uniq(maps)){if(searchable.includes(candidate))return candidate}
  return'';
 }
+export function subjectFamily114(value=''){
+ const n=norm(value);
+ if(/لغتي|عربي|كفايات لغويه/.test(n))return'اللغة العربية';
+ if(/انجليزي|انقليزي|انقلش|english/.test(n))return'اللغة الإنجليزية';
+ if(/قران|اسلام|دين|توحيد|فقه|حديث|تفسير|تجويد/.test(n))return'الدراسات الإسلامية';
+ if(/رياضيات|حساب/.test(n))return'الرياضيات';
+ if(/علوم|احياء|كيمياء|فيزياء|بيئه|ارض/.test(n))return'العلوم';
+ if(/اجتماع|تاريخ|جغرافيا/.test(n))return'الدراسات الاجتماعية';
+ if(/رقمي|حاسب|تقنيه|كمبيوتر/.test(n))return'المهارات الرقمية';
+ if(/بدني|رياضه|لياقه/.test(n))return'التربية البدنية';
+ if(/فني|فنون|رسم/.test(n))return'التربية الفنية';
+ if(/حياتي|اسري/.test(n))return'المهارات الحياتية والأسرية';
+ if(/تفكير ناقد/.test(n))return'التفكير الناقد';
+ return clean(value);
+}
 export function resolveSubject114(state={}){
- const explicit=String(state.metadata?.familyDetails?.subject94||'').split('|||').map(clean).filter(Boolean);if(explicit.length)return{name:explicit[0],all:explicit,source:'user',confidence:1};
+ const explicit=String(state.metadata?.familyDetails?.subject94||'').split('|||').map(clean).filter(Boolean);if(explicit.length)return{name:explicit[0],all:explicit,family:subjectFamily114(explicit[0]),source:'user',confidence:1};
  const selectable=curriculumSubjects114(state),searchable=allStageSubjects114(state),raw=state.raw||'';
- const strict=[...searchable].sort((a,b)=>b.length-a.length).find(x=>strictContainsSubject(raw,x));if(strict)return{name:strict,all:[strict],source:'curriculum-inference',confidence:.99};
- const loose=[...searchable].sort((a,b)=>b.length-a.length).find(x=>looseContainsSubject(raw,x));if(loose)return{name:loose,all:[loose],source:'curriculum-inference',confidence:.96};
- const shorthand=shorthandSubject(raw,selectable,searchable);if(shorthand)return{name:shorthand,all:[shorthand],source:'curriculum-inference',confidence:.94};
+ const strict=[...searchable].sort((a,b)=>b.length-a.length).find(x=>strictContainsSubject(raw,x));if(strict)return{name:strict,all:[strict],family:subjectFamily114(strict),source:'curriculum-inference',confidence:.99};
+ const loose=[...searchable].sort((a,b)=>b.length-a.length).find(x=>looseContainsSubject(raw,x));if(loose)return{name:loose,all:[loose],family:subjectFamily114(loose),source:'curriculum-inference',confidence:.96};
+ const shorthand=shorthandSubject(raw,selectable,searchable);if(shorthand)return{name:shorthand,all:[shorthand],family:subjectFamily114(shorthand),source:'curriculum-inference',confidence:.94};
  const inferred=clean(state.metadata?.subjectHint101||state.metadata?.semantic101?.subject?.name);if(!inferred)return null;
  const candidates=GENERIC_MAP[norm(inferred)]||[inferred];
- const mapped=candidates.find(x=>selectable.includes(x))||candidates.find(x=>searchable.includes(x));if(mapped)return{name:mapped,all:[mapped],source:'curriculum-inference',confidence:Math.max(.8,Number(state.metadata?.subjectConfidence101||0)/100)};
- return{name:inferred,all:[inferred],source:'inference',confidence:Number(state.metadata?.subjectConfidence101||state.metadata?.semantic101?.subject?.confidence||0)/100};
+ const mapped=candidates.find(x=>selectable.includes(x))||candidates.find(x=>searchable.includes(x));if(mapped)return{name:mapped,all:[mapped],family:subjectFamily114(mapped),source:'curriculum-inference',confidence:Math.max(.8,Number(state.metadata?.subjectConfidence101||0)/100)};
+ return{name:inferred,all:[inferred],family:subjectFamily114(inferred),source:'inference',confidence:Number(state.metadata?.subjectConfidence101||state.metadata?.semantic101?.subject?.confidence||0)/100};
 }
 export function normalizeEducationState114(state={}){
  state.metadata=state.metadata||{};const sm=state.metadata.semantic101||{},stage=clean(state.stage||sm.stage),grades=canonicalGrades114(stage,(state.grades?.length?state.grades:sm.grades)||[]);
  if(stage)state.stage=stage;if(grades.length)state.grades=grades;
  if(state.classification?.type==='تحليل نتائج'&&!(state.audiences||[]).length)state.audiences=['الطلاب'];
- const subject=resolveSubject114(state);if(subject&&subject.source==='curriculum-inference'){state.metadata.subjectHint101=subject.name;state.metadata.subjectConfidence101=Math.round(subject.confidence*100);state.metadata.subjectResolved114=true}
+ const subject=resolveSubject114(state);if(subject){state.metadata.subjectFamily114=subject.family||subjectFamily114(subject.name)}if(subject&&subject.source==='curriculum-inference'){state.metadata.subjectHint101=subject.name;state.metadata.subjectConfidence101=Math.round(subject.confidence*100);state.metadata.subjectResolved114=true}
  return state;
 }
