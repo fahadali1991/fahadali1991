@@ -1,4 +1,4 @@
-/* V114 — تحليل النتائج: مستفيدون أذكى */
+/* V114 — تحليل النتائج: مستفيدون أذكى + انتقال إدخال أسرع */
 (function(){
   let busy=false;
   function isAnalysis(){return !!document.querySelector('[data-type="تحليل نتائج"].on')}
@@ -20,5 +20,14 @@
   }
   new MutationObserver(apply).observe(document.documentElement,{childList:true,subtree:true});
   document.addEventListener('click',e=>{if(e.target.closest('[data-type],[data-audience]'))setTimeout(apply,0)},true);
+  document.addEventListener('keydown',e=>{
+    const score=e.target.closest?.('[data-analysis-score114]');
+    if(!score||e.key!=='Enter')return;
+    const nextIndex=Number(score.dataset.analysisScore114)+1;
+    queueMicrotask(()=>{
+      const nextName=document.querySelector(`[data-analysis-name114="${nextIndex}"]`);
+      if(nextName){nextName.focus();nextName.select?.()}
+    });
+  },true);
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',apply,{once:true});else apply();
 })();
