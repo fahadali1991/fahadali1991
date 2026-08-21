@@ -8,4 +8,35 @@
  .pdfToolbar107,.documentHead,[data-action],nav,.topNav,.workspaceNav109,.documentActions{display:none!important}
  .pdfSheet107{display:flex!important;box-shadow:none!important;border:0!important;break-after:page!important;page-break-after:always!important;margin:0!important;transform:none!important;min-height:297mm!important;width:210mm!important;max-width:210mm!important}
  .pdfSheet107:last-child{break-after:auto!important;page-break-after:auto!important}
+ /* تحليل النتائج: ضغط محسوب لصفحة A4 واحدة على Safari/iPhone */
+ .analysisSheet113{height:297mm!important;min-height:297mm!important;max-height:297mm!important;padding:4.5mm 6mm 4mm!important;gap:1.4mm!important;overflow:hidden!important;box-sizing:border-box!important}
+ .analysisSheet113 .analysisHeader113{padding:2.5mm 6mm 1.5mm!important;min-height:13mm!important}
+ .analysisSheet113 .analysisMinistry113{min-height:12mm!important}
+ .analysisSheet113 .analysisOfficialLogo114 img{display:none!important}
+ .analysisSheet113 .analysisLogoFallback114{display:flex!important}
+ .analysisSheet113 .analysisWave113{height:2px!important}
+ .analysisSheet113 .analysisHero113{padding:2mm 5mm 1.5mm!important}
+ .analysisSheet113 .analysisHero113 h1{font-size:16.5pt!important;margin:0 0 1mm!important;line-height:1.18!important}
+ .analysisSheet113 .analysisHero113 h2{font-size:11pt!important}
+ .analysisSheet113 .analysisMeta113{gap:1.2mm!important;padding:0 5mm 1.5mm!important}
+ .analysisSheet113 .analysisMeta113>div{padding:1.6mm 1mm!important}
+ .analysisSheet113 .analysisKpis113{gap:1.2mm!important;padding:0 5mm 1.8mm!important}
+ .analysisSheet113 .analysisKpis113>div{padding:1.6mm 1mm!important}
+ .analysisSheet113 .analysisKpis113 b{font-size:13.5pt!important}
+ .analysisSheet113 .analysisGrid113{gap:2mm!important;padding:0 5mm 1.8mm!important}
+ .analysisSheet113 .analysisPanel113 h3,.analysisSheet113 .analysisDecision113 h3,.analysisSheet113 .analysisInsight113 h3{padding:1.5mm 2mm!important;font-size:8pt!important}
+ .analysisSheet113 .analysisLevelsHead113,.analysisSheet113 .analysisLevel113{min-height:6mm!important}
+ .analysisSheet113 .analysisLevelsHead113>*,.analysisSheet113 .analysisLevel113>*{padding:.8mm!important;font-size:6.6pt!important}
+ .analysisSheet113 .analysisBars113{height:34mm!important;padding:4mm 3mm 2mm!important}
+ .analysisSheet113 .analysisBars113 i strong{top:-4mm!important;font-size:6.5pt!important}
+ .analysisSheet113 .analysisDecision113{margin:0 5mm 1.8mm!important}
+ .analysisSheet113 .analysisDecision113>div{gap:1.2mm!important;padding:1.5mm!important}
+ .analysisSheet113 .analysisDecision113 article{padding:1.5mm!important}
+ .analysisSheet113 .analysisDecision113 article b{font-size:12.5pt!important;margin:.5mm 0!important}
+ .analysisSheet113 .analysisDecision113 article small{font-size:5.7pt!important;margin-top:.5mm!important}
+ .analysisSheet113 .analysisInsight113{gap:2mm!important;margin:0 5mm 1.5mm!important}
+ .analysisSheet113 .analysisInsight113 p{font-size:6.5pt!important;line-height:1.35!important;margin:1.4mm 2mm!important}
+ .analysisSheet113 .analysisApproval113{gap:12mm!important;margin:2.5mm 15mm 1mm!important}
+ .analysisSheet113 .analysisApproval113 span{font-size:6pt!important}.analysisSheet113 .analysisApproval113 b{font-size:7pt!important;margin-top:1mm!important}
+ .analysisSheet113 .analysisFooter113{margin-top:auto!important;padding:1.6mm 6mm!important;font-size:5.8pt!important;flex-shrink:0!important}
 }
