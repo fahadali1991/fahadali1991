@@ -12,7 +12,7 @@ const pdf=fs.readFileSync('./v10/pdf-analysis113.js','utf8');
 assert.match(pdf,/section111/,'PDF must render optional class section');
 assert.match(pdf,/function professionalReading\(/,'PDF must use data-derived professional reading');
 assert.match(pdf,/analysisFooter113\{position:absolute!important/,'analysis footer must stay inside physical A4');
-assert.match(pdf,/v10\/assets\/moe-logo\.svg/,'PDF must reference local ministry logo asset');
+assert.match(pdf,/src="data:image\/png;base64,/,'PDF must embed the official logo directly for reliable Chromium printing');
 const logo=fs.readFileSync('./v10/assets/moe-logo.svg','utf8');
 assert.match(logo,/وزارة التعليم - Ministry of Education/);
 assert.match(logo,/data:image\/png;base64,/,'official logo asset must be self-contained and offline-safe');
