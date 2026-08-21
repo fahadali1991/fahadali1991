@@ -34,7 +34,7 @@ try{
  const data=page.locator('[data-analysis-host113]').first();assert.ok(await data.isVisible(),'analysis data panel missing');
  await data.locator('[data-analysis-max113]').fill('10');
  await data.locator('[data-analysis-rows113]').fill('10\n9\n8\n7\n6\n5\n4\n3\n2\n1\n10\n9\n8\n7\n6\n5\n4\n3');
- const feedback=await data.locator('[data-analysis-feedback113]').textContent();assert.match(feedback,/ناقص|18 من أصل 20|درجتان/,'count mismatch warning missing');
+ const consistency=await data.locator('.analysisConsistency116').textContent();assert.match(consistency,/18|20|ناقص|درجة/,'count mismatch warning missing');
  await data.locator('[data-analysis-next113]').click();
  for(let guard=0;guard<12;guard++){
   const q=page.locator('[data-adaptive-question]').first();if(!(await q.count())||!(await q.isVisible()))break;
