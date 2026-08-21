@@ -25,7 +25,6 @@ export function curriculumSubjects114(state={}){
  const st=clean(state.stage||state.metadata?.semantic101?.stage||''),grade=(state.grades||state.metadata?.semantic101?.grades||[])[0]||'',ord=ordinal114(grade);
  if(!st)return[];
  if(st==='ثانوي'){
-   // الأول الثانوي = السنة الأولى المشتركة. في الصفين الثاني والثالث لا نعرض مسارًا بعينه قبل معرفته.
    if(ord==='الأول'||!ord)return SUBJECTS94.ثانوي?.['الأولى المشتركة']||[];
    return uniq(Object.entries(SUBJECTS94.ثانوي||{}).filter(([k])=>k!=='الأولى المشتركة').flatMap(([,v])=>v||[]));
  }
@@ -44,17 +43,22 @@ const GENERIC_MAP={
  'الدراسات الاجتماعيه':['الدراسات الاجتماعية']
 };
 const looseToken=t=>norm(t).replace(/\bال(?=\S)/g,'');
-function containsSubject(raw,subject){const r=` ${norm(raw)} `,s=` ${norm(subject)} `;if(r.includes(s))return true;const rt=looseToken(raw).split(' '),st=looseToken(subject).split(' ').filter(x=>x&&!/^\d+$/.test(x));return st.length>0&&st.every(x=>rt.includes(x))}
+function strictContainsSubject(raw,subject){const r=` ${norm(raw)} `,s=` ${norm(subject)} `;return r.includes(s)}
+function looseContainsSubject(raw,subject){
+ const rt=looseToken(raw).split(' '),rawNums=new Set(rt.filter(x=>/^\d+$/.test(x))),st=looseToken(subject).split(' ').filter(Boolean),subjectNums=st.filter(x=>/^\d+$/.test(x));
+ // لا نسمح للمطابقة المرنة بتحويل «الرياضيات» إلى «الرياضيات 1» أو ما شابه دون رقم صريح من المستخدم.
+ if(subjectNums.some(x=>!rawNums.has(x)))return false;
+ const words=st.filter(x=>!/^\d+$/.test(x));return words.length>0&&words.every(x=>rt.includes(x));
+}
 export function resolveSubject114(state={}){
  const explicit=String(state.metadata?.familyDetails?.subject94||'').split('|||').map(clean).filter(Boolean);if(explicit.length)return{name:explicit[0],all:explicit,source:'user',confidence:1};
  const selectable=curriculumSubjects114(state),searchable=allStageSubjects114(state),raw=state.raw||'';
- // نبحث في سجل المرحلة الكامل حتى تتعرف المواد التخصصية أيضًا، ثم يستخدم المحدد قائمة الصف المناسبة للعرض.
- const exact=[...searchable].sort((a,b)=>b.length-a.length).find(x=>containsSubject(raw,x));if(exact)return{name:exact,all:[exact],source:'curriculum-inference',confidence:.99};
+ // المطابقة الحرفية للمقرر تسبق أي تساهل لغوي؛ وبذلك لا تتحول «الرياضيات» إلى «الرياضيات 1».
+ const strict=[...searchable].sort((a,b)=>b.length-a.length).find(x=>strictContainsSubject(raw,x));if(strict)return{name:strict,all:[strict],source:'curriculum-inference',confidence:.99};
+ const loose=[...searchable].sort((a,b)=>b.length-a.length).find(x=>looseContainsSubject(raw,x));if(loose)return{name:loose,all:[loose],source:'curriculum-inference',confidence:.96};
  const inferred=clean(state.metadata?.subjectHint101||state.metadata?.semantic101?.subject?.name);if(!inferred)return null;
  const candidates=GENERIC_MAP[norm(inferred)]||[inferred];
  const mapped=candidates.find(x=>selectable.includes(x))||candidates.find(x=>searchable.includes(x));if(mapped)return{name:mapped,all:[mapped],source:'curriculum-inference',confidence:Math.max(.8,Number(state.metadata?.subjectConfidence101||0)/100)};
- const science=searchable.filter(x=>['الأحياء 1','الأحياء','الكيمياء 1','الكيمياء','الفيزياء 1','الفيزياء','علم البيئة','علوم الأرض والفضاء'].includes(x));
- const scienceExact=science.find(x=>containsSubject(raw,x.replace(/ 1$/,''))||containsSubject(raw,x));if(scienceExact)return{name:scienceExact,all:[scienceExact],source:'curriculum-inference',confidence:.97};
  return{name:inferred,all:[inferred],source:'inference',confidence:Number(state.metadata?.subjectConfidence101||state.metadata?.semantic101?.subject?.confidence||0)/100};
 }
 export function normalizeEducationState114(state={}){
