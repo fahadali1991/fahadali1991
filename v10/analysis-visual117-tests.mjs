@@ -1,3 +1,4 @@
+// V117 verification branch: exercise the same mobile journey before final acceptance.
 import {chromium} from 'playwright';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
