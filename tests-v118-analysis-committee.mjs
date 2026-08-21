@@ -1,0 +1,31 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import {resolveSubject114,subjectFamily114} from './v10/education-scope114.js';
+import {analysisCountConsistency116} from './v10/analysis-data113.js';
+import {analyze} from './v10/engine84.js';
+
+const state=(raw,stage,grade)=>({raw,stage,grades:[grade],classification:{type:'تحليل نتائج'},metadata:{familyDetails:{},semantic101:{}}});
+for(const alias of ['لغتي','عربي','لغة عربية','كفايات لغوية'])assert.equal(subjectFamily114(alias),'اللغة العربية',alias);
+for(const alias of ['إنجليزي','انقليزي','English'])assert.equal(subjectFamily114(alias),'اللغة الإنجليزية',alias);
+assert.equal(resolveSubject114(state('تحليل نتائج رياضه','متوسط','الأول المتوسط'))?.name,'التربية البدنية والدفاع عن النفس','رياضة لا يجوز أن تتحول إلى الرياضيات');
+assert.notEqual(resolveSubject114(state('تحليل نتائج رياضه','متوسط','الأول المتوسط'))?.family,'الرياضيات');
+assert.equal(resolveSubject114(state('تحليل نتائج دين','ابتدائي','الأول الابتدائي'))?.family,'الدراسات الإسلامية');
+assert.equal(resolveSubject114(state('تحليل نتائج بدنيه','ثانوي','الأول الثانوي'))?.name,'التربية الصحية والبدنية 1');
+assert.equal(analyze('نتائج اختبار لغتي للصف الأول المتوسط','analysis').classification.type,'تحليل نتائج','اختصار تحليل النتائج يجب أن يثبت العائلة مباشرة');
+
+const make=(expected,scores)=>({classification:{type:'تحليل نتائج'},metadata:{familyMeta111:{expectedCount:String(expected||'')},analysis:{maxScore:'20',scores,names:[]}}});
+assert.equal(analysisCountConsistency116(make(5,[18,15,10,7])).status,'missing');
+assert.equal(analysisCountConsistency116(make(3,[18,15,10,7])).status,'extra');
+assert.equal(analysisCountConsistency116(make('',[18,15,10,7])).status,'auto');
+
+const panel=fs.readFileSync('./v10/analysis-data113.js','utf8');
+assert.match(panel,/data-analysis-expected118/);
+assert.match(panel,/الدرجة العظمى للاختبار/);
+assert.match(panel,/عدد الطلاب المتوقع رصد درجاتهم/);
+const pdf=fs.readFileSync('./v10/pdf-analysis113.js','utf8');
+assert.match(pdf,/fd\.cause\|\|fd\.reason/,'السبب المعتمد يجب أن يصل إلى الطباعة');
+for(const label of ['الصف والشعبة','الدرجة العظمى','عدد الطلاب'])assert.match(pdf,new RegExp(label));
+assert.doesNotMatch(pdf,/\['عدد الدرجات'/);
+const evidence=fs.readFileSync('./v10/evidence85.js','utf8');
+for(const n of ['91','92','93','94','95','96','97','98'])assert.match(evidence,new RegExp(`n:'${n}'`));
+console.log('V118 analysis committee regression: PASS');
