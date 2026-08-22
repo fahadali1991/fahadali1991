@@ -72,6 +72,7 @@ applyContext85(contextual);
 assert.equal(contextual.metadata.placeMode,undefined,'الفصل الدراسي في تحليل النتائج ليس مكان تنفيذ');
 assert.equal(contextual.metadata.context85.placeMode,'','سياق التحليل لا يعيد مكانًا زائفًا إلى بدء الرحلة');
 assert.match(body,/1 من الطلاب دون حد الإتقان/);
+assert.doesNotMatch(body,/\d+ طلاب/,'بطاقات القرار تستخدم صياغة عربية سليمة مع جميع الأعداد');
 
 const app88=await import('node:fs').then(fs=>fs.readFileSync(new URL('./v10/app88.js',import.meta.url),'utf8'));
 assert.match(app88,/cleanEra/,'تنسيق التاريخ ينظف رمز الحقبة قبل إضافته مرة واحدة');
