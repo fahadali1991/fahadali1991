@@ -1,4 +1,4 @@
-import {familyDetailsPage106} from './family-details106.js?v=119.1';
+import {familyDetailsPage106} from './family-details106.js?v=119.2';
 import {subjectSelector109,applySubject109,beginSubjectEdit109,cancelSubjectEdit109} from './subject-selector109.js?v=119.1';
 import {familyMetaQuestion111,familyMetaPending111,bindFamilyMeta111} from './family-meta111.js?v=119.1';
 import {bindAnalysisData113,renderAnalysisSlot113} from './analysis-data113.js?v=113';
