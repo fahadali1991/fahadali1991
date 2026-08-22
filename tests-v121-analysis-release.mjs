@@ -3,7 +3,7 @@ import {analysisSummary113,analysisDataPanel113} from './v10/analysis-data113.js
 import {analysisNextSteps121} from './v10/evidence85.js';
 import {analysisBody113} from './v10/pdf-analysis113.js';
 import {routeNextQuestion106} from './v10/question-router106.js';
-import {mediumText80} from './v10/description-texts80.js';
+import {mediumText80,bulletText80} from './v10/description-texts80.js';
 import {applyContext85} from './v10/context85b.js';
 
 function state(scores=[15,16,18,19]){
@@ -57,10 +57,14 @@ assert.match(body,/أولوية للتدخل/);
 assert.doesNotMatch(body,/بين 50٪ و70٪/);
 
 const narrativeState=state();
-Object.assign(narrativeState.metadata.familyDetails,{actionStatus:'مخطط للتنفيذ',action:'مخطط: إعداد خطة علاجية',follow:'اختبار قصير لاحق'});
+Object.assign(narrativeState.metadata.familyDetails,{finding:'شمل التحليل 4 طلاب.',actionStatus:'مخطط للتنفيذ',action:'مخطط: إعداد خطة علاجية',follow:'اختبار قصير لاحق'});
 const narrative=mediumText80(narrativeState);
 assert.match(narrative,/خُطط للإجراء التالي: إعداد خطة علاجية/);
 assert.doesNotMatch(narrative,/اتُّخذت إجراءات شملت مخطط/);
+assert.doesNotMatch(narrative,/وأظهرت النتائج شمل التحليل/);
+const bullets=bulletText80(narrativeState).join(' ');
+assert.doesNotMatch(bullets,/\.\./,'صيغة النقاط لا تضيف علامة ترقيم مزدوجة');
+assert.match(bullets,/حالة الإجراء: مخطط للتنفيذ/);
 
 const contextual=state();
 contextual.raw='تحليل نتائج عربي الأول المتوسط الفصل الأول';
