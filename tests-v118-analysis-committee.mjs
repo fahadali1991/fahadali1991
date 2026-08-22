@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import {resolveSubject114,subjectFamily114} from './v10/education-scope114.js';
 import {analysisCountConsistency116} from './v10/analysis-data113.js';
 import {analyze} from './v10/engine84.js';
+import {preview101} from './v10/intelligence101.js';
+import {familyMetaDefinitions111} from './v10/family-meta111.js';
 
 const state=(raw,stage,grade)=>({raw,stage,grades:[grade],classification:{type:'تحليل نتائج'},metadata:{familyDetails:{},semantic101:{}}});
 for(const alias of ['لغتي','عربي','لغة عربية','كفايات لغوية'])assert.equal(subjectFamily114(alias),'اللغة العربية',alias);
@@ -12,6 +14,13 @@ assert.notEqual(resolveSubject114(state('تحليل نتائج رياضه','مت
 assert.equal(resolveSubject114(state('تحليل نتائج دين','ابتدائي','الأول الابتدائي'))?.family,'الدراسات الإسلامية');
 assert.equal(resolveSubject114(state('تحليل نتائج بدنيه','ثانوي','الأول الثانوي'))?.name,'التربية الصحية والبدنية 1');
 assert.equal(analyze('نتائج اختبار لغتي للصف الأول المتوسط','analysis').classification.type,'تحليل نتائج','اختصار تحليل النتائج يجب أن يثبت العائلة مباشرة');
+const natural=preview101('سويت تحليل نتايج عربي أول متوسط ب 20 طالب');
+assert.equal(natural.subject?.name,'اللغة العربية','عربي يجب أن تُفهم مادة اللغة العربية');
+assert.equal(natural.stage,'متوسط');
+assert.deepEqual(natural.grades,['الأول']);
+assert.equal(natural.section,'ب','الشعبة الملحقة بالصف يجب ألا تضيع');
+assert.equal(natural.count,20,'عدد الطلاب المذكور يجب ألا يضيع');
+assert.deepEqual(familyMetaDefinitions111('تحليل نتائج').map(x=>x.id),['period','assessmentType'],'ترتيب الأسئلة يجب أن يبقى: الفصل ثم نوع الاختبار، ثم يظهر العدد الاختياري بجانب الدرجة العظمى قبل الدرجات');
 
 const make=(expected,scores)=>({classification:{type:'تحليل نتائج'},metadata:{familyMeta111:{expectedCount:String(expected||'')},analysis:{maxScore:'20',scores,names:[]}}});
 assert.equal(analysisCountConsistency116(make(5,[18,15,10,7])).status,'missing');

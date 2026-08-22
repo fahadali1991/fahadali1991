@@ -1,6 +1,6 @@
 import {familyDetailsPage106} from './family-details106.js?v=113';
-import {subjectSelector109,applySubject109,beginSubjectEdit109,cancelSubjectEdit109} from './subject-selector109.js?v=113';
-import {familyMetaQuestion111,familyMetaPending111,bindFamilyMeta111} from './family-meta111.js?v=113';
+import {subjectSelector109,applySubject109,beginSubjectEdit109,cancelSubjectEdit109} from './subject-selector109.js?v=119';
+import {familyMetaQuestion111,familyMetaPending111,bindFamilyMeta111} from './family-meta111.js?v=119';
 import {bindAnalysisData113,renderAnalysisSlot113} from './analysis-data113.js?v=113';
 let current=null;
 function inject(html,state){const subject=subjectSelector109(state),meta=familyMetaQuestion111(state),pending=familyMetaPending111(state),marker='<div data-adaptive-zone>';let out=html;if(subject&&out.includes(marker))out=out.replace(marker,`${subject}${marker}`);if(out.includes(marker))out=out.replace(marker,`<div data-analysis-slot113 ${pending?'hidden':''}></div>${marker}`);if(meta&&out.includes('<div data-analysis-slot113'))out=out.replace('<div data-analysis-slot113',`${meta}<div data-analysis-slot113`);if(pending)out=out.replace('<div data-adaptive-zone>','<div data-adaptive-zone hidden>');return out}
