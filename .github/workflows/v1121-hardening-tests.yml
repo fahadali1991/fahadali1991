@@ -1,0 +1,33 @@
+name: V112.1 Expert Hardening Gate
+on:
+  push:
+    branches: [v112-1-hardening]
+    paths:
+      - 'v10/hardening1121-tests.js'
+      - 'v10/evidence-reference112.js'
+      - 'v10/evidence85.js'
+      - 'v10/pdf-renderer107.js'
+      - 'v10/pdf-schema107.js'
+      - 'v10/styles112.css'
+      - '.github/workflows/v1121-hardening-tests.yml'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+jobs:
+  expert-hardening:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Supervisors, governance, adversarial evidence and UX acceptance
+        run: node --experimental-default-type=module v10/hardening1121-tests.js
+      - name: Existing V112 evidence reference regression
+        run: node --experimental-default-type=module v10/evidence-reference112-tests.js
+      - name: Existing V112 evidence screen regression
+        run: node --experimental-default-type=module v10/evidence-screen112-tests.js
+      - name: PDF schema and renderer regression
+        run: node --experimental-default-type=module v10/pdf-schema107-tests.js && node --experimental-default-type=module v10/pdf-renderer107-tests.js
+      - name: Syntax
+        run: node --check v10/hardening1121-tests.js && node --check v10/evidence-reference112.js && node --check v10/evidence85.js
