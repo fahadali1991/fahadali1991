@@ -1,5 +1,5 @@
 import {esc} from './engine.js';
-import {matrix106,nextAdaptiveQuestion106} from './matrix106.js?v=106';
+import {matrix106,nextAdaptiveQuestion106} from './matrix106.js?v=121';
 import {buildCanonicalContext106} from './canonical-context106.js?v=106';
 const parse=v=>Array.isArray(v)?v:String(v||'').split('|||').filter(Boolean);
 let currentState=null,lastUnderstood='';const $=s=>document.querySelector(s);

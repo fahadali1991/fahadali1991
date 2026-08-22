@@ -1,6 +1,6 @@
 import {matrix105} from './matrix105.js?v=105';
 import {resolveSkill106} from './skill-resolver106.js?v=106';
-import {routeNextQuestion106} from './question-router106.js?v=109';
+import {routeNextQuestion106} from './question-router106.js?v=121';
 import {buildCanonicalContext106} from './canonical-context106.js?v=106';
 import {normalizeQuestion109} from './source-contract109.js?v=109';
 const uniq=a=>[...new Set((a||[]).filter(Boolean))];
