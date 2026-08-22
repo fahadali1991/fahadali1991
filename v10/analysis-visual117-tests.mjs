@@ -20,6 +20,7 @@ try{
  assert.equal(await page.locator('#analysisSection111').inputValue(),'ب','section inferred from natural input was not carried forward');
  assert.match(await page.locator('.understoodCount119').textContent(),/20/,'inferred expected count missing from understanding screen');
  await page.locator('[data-action="go-goals"]').click();
+ assert.equal(await page.locator('.adaptiveDuration106').count(),0,'analysis journey must not ask an irrelevant duration before semester');
  assert.match(await page.locator('.subjectKnown109, .subjectBlock109').first().textContent(),/عربي|لغتي/,'Arabic subject inference missing');
  await clickIf('[data-subject109]');
  const expectedOrder=['period','assessmentType'];const seen=[];
