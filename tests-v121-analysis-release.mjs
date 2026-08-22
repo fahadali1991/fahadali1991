@@ -44,6 +44,9 @@ flow.metadata.familyDetails.actionStatus='مخطط للتنفيذ';
 q=routeNextQuestion106(flow,matrix);
 assert.equal(q.gap,'action');
 assert.ok(q.question.opts.every(x=>x.startsWith('مخطط: ')));
+flow.metadata.familyDetails.action=q.question.opts[0];
+flow.metadata.familyDetails.follow='اختبار قصير لاحق';
+assert.equal(routeNextQuestion106(flow,matrix).done,true,'التحليل العددي لا يطلب إثبات أثر لمجرد ذكر الإتقان في النتيجة المشتقة');
 
 const model={plan:{print:{mode:'compact'}},sections:[{def:{id:'title'},data:{title:'تحليل نتائج الاختبار'}}],context:{education:{subject:{value:'اللغة العربية'},stage:{value:'متوسط'},grades:['الأول المتوسط']},execution:{executor:{value:'المعلم'}}}};
 const body=analysisBody113(model,s);
