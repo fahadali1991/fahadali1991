@@ -22,6 +22,8 @@ assert.match(app,/mediumText80\(state\)/);
 assert.match(understanding,/id="schoolName"/);
 assert.match(understanding,/id="educationOffice"/);
 assert.match(understanding,/id="academicYear"/);
+assert.match(pdf,/principalName/);
+assert.match(pdf,/esc\(principal\)/);
 assert.match(pdf,/قريب من الإتقان/);
 assert.match(pdf,/repeat\(4,1fr\)/);
 assert.match(css,/moe-logo-green\.png/);
