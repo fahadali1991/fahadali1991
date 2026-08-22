@@ -3,6 +3,7 @@ import {analysisSummary113,analysisDataPanel113} from './v10/analysis-data113.js
 import {analysisNextSteps121} from './v10/evidence85.js';
 import {analysisBody113} from './v10/pdf-analysis113.js';
 import {routeNextQuestion106} from './v10/question-router106.js';
+import {mediumText80} from './v10/description-texts80.js';
 
 function state(scores=[15,16,18,19]){
   return {classification:{type:'تحليل نتائج'},stage:'متوسط',grades:['الأول المتوسط'],audiences:['الطلاب'],metadata:{analysis:{maxScore:'20',masteryPercent:'80',scores,names:[],rawRows:scores.join('\n'),invalid:[]},familyMeta111:{assessmentType:'اختبار فترة',period:'الفصل الدراسي الأول'},familyDetails:{subject94:'اللغة العربية'}},answers:{goals:[],evidence:[]}};
@@ -53,5 +54,11 @@ const body=analysisBody113(model,s);
 assert.match(body,/دون حد الإتقان المعتمد \(80٪\)/);
 assert.match(body,/أولوية للتدخل/);
 assert.doesNotMatch(body,/بين 50٪ و70٪/);
+
+const narrativeState=state();
+Object.assign(narrativeState.metadata.familyDetails,{actionStatus:'مخطط للتنفيذ',action:'مخطط: إعداد خطة علاجية',follow:'اختبار قصير لاحق'});
+const narrative=mediumText80(narrativeState);
+assert.match(narrative,/خُطط لتنفيذ إعداد خطة علاجية/);
+assert.doesNotMatch(narrative,/اتُّخذت إجراءات شملت مخطط/);
 
 console.log('V121 analysis release contract PASS: mastery, content-driven next steps, execution state, import preview and reduced questions.');
