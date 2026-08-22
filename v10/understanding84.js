@@ -1,5 +1,5 @@
 import {esc,joinAr,familyOptions,subtypeOptions} from './engine84.js?v=84';
-import {analysisAudienceOptions114,canonicalGrades114} from './education-scope114.js?v=119.1';
+import {analysisAudienceOptions114,canonicalGrades114} from './education-scope114.js?v=120.1';
 const AUD=['الطلاب','المعلمون','أولياء الأمور','الإداريون','جميع منسوبي المدرسة','مستفيدون آخرون'];
 const STAGES=['ابتدائي','متوسط','ثانوي'];
 const GRADE_MAP={ابتدائي:['الأول الابتدائي','الثاني الابتدائي','الثالث الابتدائي','الرابع الابتدائي','الخامس الابتدائي','السادس الابتدائي'],متوسط:['الأول المتوسط','الثاني المتوسط','الثالث المتوسط'],ثانوي:['الأول الثانوي','الثاني الثانوي','الثالث الثانوي']};

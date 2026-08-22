@@ -11,7 +11,7 @@ let subjectCases=0;
 for(const [stage,groups] of Object.entries(SUBJECTS94)){
   for(const [group,subjects] of Object.entries(groups)){
     for(const subject of subjects){
-      const grade=stage==='ابتدائي'?`${group} الابتدائي`:stage==='متوسط'?`${group} المتوسط`:'الأول الثانوي';
+      const grade=stage==='ابتدائي'?`${group} الابتدائي`:stage==='متوسط'?`${group} المتوسط`:group==='الأولى المشتركة'?'الأول الثانوي':'الثاني الثانوي';
       const s={raw:`عملت تحليل نتائج ${subject} ${grade}`,classification:{type:'تحليل نتائج',subtype:'اختبار تشخيصي'},stage,grades:[grade],audiences:[],metadata:{familyDetails:{},semantic101:{},subjectHint101:'',subjectConfidence101:0}};
       normalizeEducationState114(s);
       const r=resolveSubject114(s);

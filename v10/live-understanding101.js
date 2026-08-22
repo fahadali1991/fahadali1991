@@ -1,4 +1,4 @@
-import {preview101} from './intelligence101.js?v=101';
+import {preview101} from './intelligence101.js?v=120.1';
 const $=(s,r=document)=>r.querySelector(s);
 const pct=n=>Number.isFinite(Number(n))?Math.max(0,Math.min(100,Math.round(Number(n)))):null;
 function confidence101(f){const vals=[pct(f.family?.confidence),pct(f.subject?.confidence),pct(f.schoolDomain?.confidence)].filter(x=>x!==null);if(!vals.length)return null;return Math.round(vals.reduce((a,b)=>a+b,0)/vals.length)}

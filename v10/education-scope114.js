@@ -87,6 +87,9 @@ const GENERIC_MAP={
  'ماليه':['المعرفة المالية'],
  'علم بيانات':['علم البيانات'],
  'امن سيبراني':['الأمن السيبراني']
+ ,'هندسه برمجيات':['هندسة البرمجيات']
+ ,'مواطنه رقميه':['المواطنة الرقمية']
+ ,'اداره ماليه':['الإدارة المالية']
 };
 const PHRASE_ALIASES=Object.entries(GENERIC_MAP).sort((a,b)=>b[0].length-a[0].length);
 const looseToken=t=>norm(t).replace(/\bال(?=\S)/g,'');
@@ -122,13 +125,13 @@ export function subjectFamily114(value=''){
 export function resolveSubject114(state={}){
  const explicit=String(state.metadata?.familyDetails?.subject94||'').split('|||').map(clean).filter(Boolean);if(explicit.length)return{name:explicit[0],all:explicit,family:subjectFamily114(explicit[0]),source:'user',confidence:1};
  const selectable=curriculumSubjects114(state),searchable=allStageSubjects114(state),raw=state.raw||'';
- const strict=[...searchable].sort((a,b)=>b.length-a.length).find(x=>strictContainsSubject(raw,x));if(strict)return{name:strict,all:[strict],family:subjectFamily114(strict),source:'curriculum-inference',confidence:.99};
- const loose=[...searchable].sort((a,b)=>b.length-a.length).find(x=>looseContainsSubject(raw,x));if(loose)return{name:loose,all:[loose],family:subjectFamily114(loose),source:'curriculum-inference',confidence:.96};
- const shorthand=shorthandSubject(raw,selectable,searchable);if(shorthand)return{name:shorthand,all:[shorthand],family:subjectFamily114(shorthand),source:'curriculum-inference',confidence:.94};
+ const strict=[...selectable].sort((a,b)=>b.length-a.length).find(x=>strictContainsSubject(raw,x));if(strict)return{name:strict,all:[strict],family:subjectFamily114(strict),source:'curriculum-inference',confidence:.99};
+ const loose=[...selectable].sort((a,b)=>b.length-a.length).find(x=>looseContainsSubject(raw,x));if(loose)return{name:loose,all:[loose],family:subjectFamily114(loose),source:'curriculum-inference',confidence:.96};
+ const shorthand=shorthandSubject(raw,selectable,selectable);if(shorthand)return{name:shorthand,all:[shorthand],family:subjectFamily114(shorthand),source:'curriculum-inference',confidence:.94};
  const inferred=clean(state.metadata?.subjectHint101||state.metadata?.semantic101?.subject?.name);if(!inferred)return null;
  const candidates=GENERIC_MAP[norm(inferred)]||[inferred];
- const mapped=candidates.find(x=>selectable.includes(x))||candidates.find(x=>searchable.includes(x));if(mapped)return{name:mapped,all:[mapped],family:subjectFamily114(mapped),source:'curriculum-inference',confidence:Math.max(.8,Number(state.metadata?.subjectConfidence101||0)/100)};
- return{name:inferred,all:[inferred],family:subjectFamily114(inferred),source:'inference',confidence:Number(state.metadata?.subjectConfidence101||state.metadata?.semantic101?.subject?.confidence||0)/100};
+ const mapped=candidates.find(x=>selectable.includes(x));if(mapped)return{name:mapped,all:[mapped],family:subjectFamily114(mapped),source:'curriculum-inference',confidence:Math.max(.8,Number(state.metadata?.subjectConfidence101||0)/100)};
+ return null;
 }
 export function normalizeEducationState114(state={}){
  state.metadata=state.metadata||{};const sm=state.metadata.semantic101||{},stage=clean(state.stage||sm.stage),grades=canonicalGrades114(stage,(state.grades?.length?state.grades:sm.grades)||[]);
