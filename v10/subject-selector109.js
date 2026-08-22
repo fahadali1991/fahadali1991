@@ -1,5 +1,5 @@
 import {SUBJECTS94,ICONS94,SUBJECT_DECISION94} from './subject-registry94.js?v=110.2';
-import {curriculumSubjects114,resolveSubject114,ordinal114} from './education-scope114.js?v=119.1';
+import {curriculumSubjects114,resolveSubject114,ordinal114} from './education-scope114.js?v=119.2';
 const clean=v=>String(v||'').replace(/\s+/g,' ').trim();
 const academic=/قراءة|قراءه|خط|كتابة|رياضيات|علوم|انجليزي|إنجليزي|عربي|لغتي|كسور|ضرب|جمع|طرح|معادلات|تجربة|مختبر|فيزياء|كيمياء|أحياء|رقمي|حاسب|اختبار|تحصيل|مهارة|مهارات|درس|منهج|صف/;
 const general=/سلامة|امن|أمن|إخلاء|وطني|هوية|سلوك|انضباط|نشاط طلابي|توجيه|إرشاد|أسرة|مجتمع|بيئة|إعاقة/;
