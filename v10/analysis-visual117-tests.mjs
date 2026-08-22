@@ -11,14 +11,17 @@ async function clickIf(selector){const l=page.locator(selector).first();if(await
 try{
  await page.goto(base,{waitUntil:'networkidle'});
  await page.locator('[data-entry="smart"]').first().click();
- await page.locator('#raw').fill('سويت تحليل نتايج عربي اول متوسط ب');
+ await page.locator('#raw').fill('سويت تحليل نتايج عربي اول متوسط ب 20 طالب');
  await page.locator('[data-action="analyze"]').click();
  const fam=page.locator('[data-type]').filter({hasText:'تحليل نتائج'}).first();if(!(await fam.getAttribute('class'))?.includes('on'))await fam.click();
  if(!(await page.locator('[data-audience="الطلاب"].on').count()))await page.locator('[data-audience="الطلاب"]').click();
  if(!(await page.locator('[data-stage="متوسط"].on').count()))await page.locator('[data-stage="متوسط"]').click();
  const firstGrade=page.locator('[data-grade]').filter({hasText:'الأول'}).first();if(!(await firstGrade.getAttribute('class'))?.includes('on'))await firstGrade.click();
- await page.locator('#analysisSection111').fill('ب');
+ assert.equal(await page.locator('#analysisSection111').inputValue(),'ب','section inferred from natural input was not carried forward');
+ assert.match(await page.locator('.understoodCount119').textContent(),/20/,'inferred expected count missing from understanding screen');
  await page.locator('[data-action="go-goals"]').click();
+ assert.equal(await page.locator('.adaptiveDuration106').count(),0,'analysis journey must not ask an irrelevant duration before semester');
+ assert.match(await page.locator('.subjectKnown109, .subjectBlock109').first().textContent(),/عربي|لغتي/,'Arabic subject inference missing');
  await clickIf('[data-subject109]');
  const expectedOrder=['period','assessmentType'];const seen=[];
  for(let guard=0;guard<8;guard++){
@@ -30,7 +33,7 @@ try{
  assert.deepEqual(seen,expectedOrder,`analysis metadata order mismatch: ${seen.join(' > ')}`);
  const data=page.locator('[data-analysis-host113]').first();assert.ok(await data.isVisible(),'analysis data panel missing');
  await data.locator('[data-analysis-max113]').fill('10');
- await data.locator('[data-analysis-expected118]').fill('20');
+ assert.equal(await data.locator('[data-analysis-expected118]').inputValue(),'20','inferred count must prefill expected-count validation');
  await data.locator('[data-analysis-rows113]').fill('10\n9\n8\n7\n6\n5\n4\n3\n2\n1\n10\n9\n8\n7\n6\n5\n4\n3');
  const consistency=await data.locator('.analysisConsistency116').textContent();assert.match(consistency,/18|20|ناقص|درجة/,'count mismatch warning missing');
  await data.locator('[data-analysis-next113]').click();

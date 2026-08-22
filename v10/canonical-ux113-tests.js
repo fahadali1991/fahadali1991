@@ -27,7 +27,7 @@ assert.equal(parsed.count,3);
 
 const html=understanding84(state);
 assert.equal(html.includes('id="count"'),false,'analysis first step must not ask count');
-assert.ok(html.includes('سيُحسب تلقائيًا من الدرجات'),'analysis must explain derived count');
+assert.ok(html.includes('عدد الطلاب المتوقع: 20'),'analysis must show the inferred expected count without asking again');
 assert.ok(html.includes('value="2026-08-20"'),'date must be retained in the document state');
 
 const app=fs.readFileSync(new URL('./app88.js',import.meta.url),'utf8');
