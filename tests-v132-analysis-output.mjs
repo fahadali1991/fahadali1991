@@ -9,6 +9,8 @@ function state({criterion='80',scores=[12,15,16,18,19,20,14,17,13,18],names=['أ
 const s=state();
 let m=analysisOutputModel132(s);
 assert.equal(m.ready,true);
+assert.equal(m.decision.high,20,'الحزمة يجب أن تعرض أعلى درجة من الإدخال نفسه');
+assert.equal(m.decision.low,12,'الحزمة يجب أن تعرض أدنى درجة من الإدخال نفسه');
 assert.equal(m.available.criterion.defined,true);
 assert.equal(m.available.remedial.targetCount,4);
 assert.equal(m.available.enrichment.targetCount,4);
@@ -31,6 +33,8 @@ assert.match(preview,/خطة إثرائية مقترحة/);
 assert.match(preview,/أحمد/);
 assert.match(preview,/محمد/);
 assert.match(preview,/المذكر والمؤنث/);
+assert.match(preview,/أعلى درجة[\s\S]{0,80}<b>20<\/b>/);
+assert.match(preview,/أدنى درجة[\s\S]{0,80}<b>12<\/b>/);
 assert.match(preview,/لا يسجل تحسن أو أثر إلا بعد ظهور نتيجة القياس اللاحق/);
 
 const noCriterion=state({criterion:''});
@@ -64,4 +68,4 @@ assert.match(css132,/bundlePageNo132\{[^}]*direction:ltr/,'ترقيم الصفح
 const home=fs.readFileSync('home106.html','utf8');
 assert.match(home,/analysis-output132\.css\?v=132/,'الواجهة الفعلية يجب أن تحمل إصلاح ترقيم صفحات V132');
 
-console.log('V132 analysis output bundle PASS: selectable classification/plans, no fake criterion, paginated students, RTL-safe numbering, and analysis-only integration.');
+console.log('V132 analysis output bundle PASS: selectable classification/plans, score extremes, no fake criterion, paginated students, RTL-safe numbering, and analysis-only integration.');
