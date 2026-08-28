@@ -67,13 +67,15 @@ function decoratePanel133(host){
 }
 async function hydratePanel133(host){
  decoratePanel133(host);const profile=await loadSchoolProfile133();if(!host.isConnected)return;
- for(const key of FIELDS)setPanelField133(host,key,profile[key]);const current=fromPanel133(host);if(Object.values(current).some(Boolean))saveSchoolProfile133(current).catch(()=>{});updateSummary133(host);
+ host.dataset.profileApplying133='1';
+ try{for(const key of FIELDS)setPanelField133(host,key,profile[key])}finally{delete host.dataset.profileApplying133}
+ const current=fromPanel133(host);if(Object.values(current).some(Boolean))saveSchoolProfile133(current).catch(()=>{});updateSummary133(host);
 }
 function scan133(){if(typeof document==='undefined')return;document.querySelectorAll('.analysisSchoolInfo122').forEach(host=>{if(host.dataset.profileHydrating133==='1')return;host.dataset.profileHydrating133='1';hydratePanel133(host).finally(()=>{if(host.isConnected)delete host.dataset.profileHydrating133})})}
 
 let saveTimer=null;
 if(typeof document!=='undefined'){
- document.addEventListener('input',e=>{const host=e.target.closest?.('.analysisSchoolInfo122');if(!host||!FIELDS.includes(e.target.id))return;host.dataset.profileTouched133='1';updateSummary133(host);clearTimeout(saveTimer);saveTimer=setTimeout(()=>saveSchoolProfile133(fromPanel133(host)).catch(()=>{}),220)},true);
+ document.addEventListener('input',e=>{const host=e.target.closest?.('.analysisSchoolInfo122');if(!host||!FIELDS.includes(e.target.id))return;if(host.dataset.profileApplying133!=='1')host.dataset.profileTouched133='1';updateSummary133(host);clearTimeout(saveTimer);saveTimer=setTimeout(()=>saveSchoolProfile133(fromPanel133(host)).catch(()=>{}),220)},true);
  document.addEventListener('click',e=>{const b=e.target.closest?.('[data-school-profile-toggle133]');if(!b)return;const host=b.closest('.analysisSchoolInfo122'),form=host?.querySelector('.formGrid');if(!form)return;host.dataset.profileTouched133='1';form.hidden=!form.hidden;host.dataset.profileCollapsed133=form.hidden?'1':'0';b.textContent=form.hidden?'تعديل البيانات':'إخفاء التفاصيل'},true);
  new MutationObserver(()=>queueMicrotask(scan133)).observe(document.documentElement,{subtree:true,childList:true});if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',scan133,{once:true});else scan133();
  const style=document.createElement('style');style.id='school-profile133-style';style.textContent='.schoolProfile133{border:1px solid #d8e7e1;background:#fbfdfc;border-radius:16px;padding:14px}.schoolProfileBar133{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:10px 0 4px;padding:10px 12px;border-radius:12px;background:#f1f8f5;border:1px solid #dce9e4}.schoolProfileBar133>div{min-width:0;display:flex;flex-direction:column;gap:3px}.schoolProfileBar133 b{font-size:12px;color:#244f44;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.schoolProfileBar133 span{font-size:10px;color:#9a6a12}.schoolProfileBar133 span.ok133{color:#087c5c}.schoolProfile133 .formGrid[hidden]{display:none!important}@media(max-width:650px){.schoolProfileBar133{align-items:stretch;flex-direction:column}.schoolProfileBar133 .linkBtn{align-self:flex-start}}';document.head.appendChild(style);
