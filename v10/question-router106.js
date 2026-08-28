@@ -4,7 +4,9 @@ const has=(ctx,key)=>Boolean(ctx.details[key]?.value);
 const byId=m=>Object.fromEntries((m.questions||[]).map(q=>[q.id,q]));
 const ORDER={
  'برنامج / فعالية':['skillFocus','reason','goal','method','participation'],
- 'تحليل نتائج':['basis','finding','cause','actionStatus','action','follow'],
+ // V133: Analysis must show the measured result before asking for interpretation/action.
+ // assessmentType resolves basis and the quantitative finding is derived from the entered scores.
+ 'تحليل نتائج':['basis','finding'],
  'خطة':['skillFocus','basis','goal','method','follow','owner'],
  'اجتماع / متابعة إدارية':['purpose','work','product','owner','follow'],
  'إجراء متابعة':['skillFocus','goal','method','action','follow'],
