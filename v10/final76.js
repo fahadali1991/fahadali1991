@@ -1,5 +1,5 @@
 import {finalDocument76 as base} from './final-ui76.js?v=76';
-import {pdfPreview107,bindPdfPreview107} from './pdf-renderer107.js?v=128';
+import {pdfPreview107,bindPdfPreview107} from './pdf-renderer107.js?v=120.1';
 import {bindAnalysisPlans125} from './analysis-plans125.js?v=125';
 import {analysisDecisionPanel127} from './analysis-decision127.js?v=127';
 import {hasAnalysisOutput128} from './analysis-output-choice128.js?v=128';
