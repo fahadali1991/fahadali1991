@@ -36,4 +36,14 @@ assert.equal(explicitCriterion131(withCriterion).value,80);
 const cDecision=analysisDecisionModel131(withCriterion);
 assert.equal(cDecision.criterionDefined,true);
 assert.equal(cDecision.groupMap.support.count,1);
-assert.equal(cDecision.cohort.band,'continue_targeted_support','3 من 4 حققوا؟ لا، 75٪ يجب أن يكون تعليم متمايز');
+assert.equal(cDecision.cohort.band,'differentiate','3 من 4 = 75٪، لذلك القرار على مستوى الشعبة تعليم متمايز');
+assert.match(analysisPlansPanel131(withCriterion),/الخطط المقترحة بناءً على نتائج التحليل/,'عند وجود محك صريح تعود الخطط المعتمدة');
+
+const final76=fs.readFileSync('v10/final76.js','utf8');
+assert.match(final76,/analysisDecisionPanel131/);
+assert.match(final76,/analysisPlansPanel131/);
+const details109=fs.readFileSync('v10/family-details109.js','utf8');
+assert.match(details109,/bindAnalysisData131/);
+assert.doesNotMatch(details109,/bindAnalysisData113\(state\)/,'واجهة الدرجات يجب أن تمر عبر V131');
+
+console.log('V131 explicit criterion PASS: blank criterion stays neutral; explicit criterion enables decisions and plans.');
