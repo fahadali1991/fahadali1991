@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
 import {analysisStudentLevels126,analysisStudentLevelsPanel126} from './v10/analysis-levels126.js';
 
 function state({scores=[12,15,16,18,19,20,14,17,13,18],names=['أحمد','خالد','سعد','محمد','علي','ناصر','حسن','ماجد','سلمان','عبدالله'],mastery='80'}={}){
@@ -61,8 +60,4 @@ assert.match(html,/قريب من الإتقان/);
 assert.match(html,/أولوية للتدخل/);
 assert.match(html,/مستوى الأداء الوصفي فلا يُستخدم وحده لاتخاذ قرار علاجي أو إثرائي/);
 
-const final76=fs.readFileSync('v10/final76.js','utf8');
-assert.match(final76,/analysisStudentLevelsPanel126/,'التصنيف يجب أن يظهر في النتيجة النهائية قبل الخطط');
-assert.ok(final76.indexOf('levels+plans')>=0,'يجب أن يظهر التصنيف قبل الخطط المقترحة');
-
-console.log('V126 analysis student classification PASS: five performance levels + four disjoint decision bands, per-student rows, high-mastery safety, and final-screen integration.');
+console.log('V126 legacy classification model PASS: five performance levels + four disjoint decision bands remain regression-tested after V127 UI simplification.');
