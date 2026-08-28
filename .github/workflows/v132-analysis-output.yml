@@ -1,0 +1,77 @@
+name: V132 Analysis Output Bundle Gate
+on:
+  push:
+    branches: [v132-analysis-output-bundle]
+    paths:
+      - 'v10/analysis-output132.js'
+      - 'v10/analysis-output132-release.js'
+      - 'v10/analysis-output132.css'
+      - 'v10/analysis-output132-fixture.html'
+      - 'v10/analysis-output132-browser.mjs'
+      - 'v10/analysis-decision127.js'
+      - 'v10/analysis-visual123-tests.mjs'
+      - 'v10/browser1102-tests.mjs'
+      - 'v10/final76.js'
+      - 'home106.html'
+      - 'tests-v127-analysis-decision.mjs'
+      - 'tests-v132-analysis-output.mjs'
+      - '.github/workflows/v132-analysis-output.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v10/analysis-output132.js'
+      - 'v10/analysis-output132-release.js'
+      - 'v10/analysis-output132.css'
+      - 'v10/analysis-output132-fixture.html'
+      - 'v10/analysis-output132-browser.mjs'
+      - 'v10/analysis-decision127.js'
+      - 'v10/analysis-visual123-tests.mjs'
+      - 'v10/browser1102-tests.mjs'
+      - 'v10/final76.js'
+      - 'home106.html'
+      - 'tests-v127-analysis-decision.mjs'
+      - 'tests-v132-analysis-output.mjs'
+      - '.github/workflows/v132-analysis-output.yml'
+  workflow_dispatch:
+jobs:
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: V129 rules regression
+        run: node tests-v129-evaluation-rules.mjs
+      - name: V130 policy regression
+        run: node tests-v130-analysis-policy.mjs
+      - name: V131 explicit criterion regression
+        run: node tests-v131-explicit-criterion.mjs
+      - name: V127 decision regression
+        run: node tests-v127-analysis-decision.mjs
+      - name: V132 output bundle unit tests
+        run: node tests-v132-analysis-output.mjs
+      - name: V132 syntax
+        run: node --check v10/analysis-output132.js && node --check v10/analysis-output132-release.js && node --check v10/analysis-output132-browser.mjs && node --check v10/analysis-decision127.js && node --check v10/final76.js && node --check tests-v132-analysis-output.mjs
+      - name: V132 must use canonical document state
+        run: |
+          if grep -R "sessionStorage" v10/analysis-output132.js v10/analysis-output132-release.js; then
+            echo "V132 must not use sessionStorage"; exit 1
+          fi
+      - name: Install Chromium
+        run: npm install --no-save playwright && npx playwright install --with-deps chromium
+      - name: V132 mobile desktop and print acceptance
+        run: |
+          mkdir -p artifacts
+          python3 -m http.server 4173 >/tmp/v132-http.log 2>&1 &
+          PID=$!
+          trap 'kill $PID || true' EXIT
+          sleep 1
+          node v10/analysis-output132-browser.mjs
+      - name: Upload V132 model
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v132-analysis-output-model
+          path: artifacts/
+          if-no-files-found: ignore

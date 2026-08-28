@@ -11,6 +11,8 @@ const s=state();
 const m=analysisDecisionModel127(s);
 assert.equal(m.ready,true);
 assert.equal(m.total,10);
+assert.equal(m.high,20,'أعلى درجة يجب أن تبقى متاحة للمخرجات');
+assert.equal(m.low,12,'أدنى درجة يجب أن تبقى متاحة للمخرجات');
 assert.equal(m.groupMap.support.count,4,'كل من هو دون حد الإتقان يدخل يحتاج دعمًا');
 assert.deepEqual(m.groupMap.support.students.map(x=>x.name),['أحمد','خالد','حسن','سلمان']);
 assert.equal(m.groupMap.mastered.count,2,'من حد الإتقان إلى أقل من حد الإثراء محقق للإتقان');
@@ -52,4 +54,4 @@ assert.match(final76,/analysisDecisionPanel131/,'واجهة القرار الن�
 assert.ok(final76.indexOf('decision+plans')>=0,'التصنيف يجب أن يظل قبل الخطط');
 assert.doesNotMatch(final76,/analysisStudentLevelsPanel126/,'واجهة V126 المزدحمة لا ينبغي أن تعود إلى الشاشة النهائية');
 
-console.log('V127 analysis decision regression PASS: legacy grouping remains regression-tested beneath V130/V131 policy gates.');
+console.log('V127 analysis decision regression PASS: grouping + score extremes remain available beneath V130/V131 policy gates.');

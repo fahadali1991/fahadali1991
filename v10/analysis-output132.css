@@ -1,0 +1,8 @@
+.bundlePageNo132{direction:ltr;unicode-bidi:isolate;text-align:left}
+@media print{
+ body:has(.analysisBundlePages132) *:not(.analysisBundlePages132):not(.analysisBundlePages132 *):not(:has(.analysisBundlePages132)){display:none!important}
+ body:has(.analysisBundlePages132) *:has(.analysisBundlePages132){display:block!important;margin:0!important;padding:0!important;border:0!important;box-shadow:none!important;min-height:0!important;height:auto!important;max-height:none!important;overflow:visible!important;background:transparent!important}
+ .pdfPages107.analysisBundlePages132{position:static!important;inset:auto!important;width:210mm!important;height:auto!important;max-height:none!important;overflow:visible!important;display:block!important;margin:0!important;padding:0!important}
+ .analysisBundleSheet132{position:relative!important;width:210mm!important;height:292mm!important;min-height:292mm!important;max-height:292mm!important;box-sizing:border-box!important;overflow:hidden!important;break-after:auto!important;page-break-after:auto!important;break-inside:avoid!important;page-break-inside:avoid!important;transform:none!important;margin:0!important}
+ .analysisBundleSheet132+.analysisBundleSheet132{break-before:page!important;page-break-before:always!important}
+}
