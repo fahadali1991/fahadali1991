@@ -15,6 +15,23 @@ function applicable(state){
  };
 }
 
+function syncWorkflow(state,selected){
+ state.metadata=state.metadata||{};state.metadata.familyDetails=state.metadata.familyDetails||{};
+ const f=state.metadata.familyDetails;
+ if(f.actionStatus&&!state.metadata.analysisWorkflowDerived128)return;
+ const plans=selected.filter(x=>x==='remedial'||x==='enrichment');
+ if(plans.length){
+  f.actionStatus='مخطط للتنفيذ';
+  const actions=[];if(plans.includes('remedial'))actions.push('مخطط: إعداد خطة علاجية');if(plans.includes('enrichment'))actions.push('مخطط: إعداد خطة إثرائية');
+  f.action=actions.join('|||');
+  f.follow='إعادة القياس بعد تنفيذ الخطة ومقارنة أداء الطلاب بخط الأساس قبل الحكم على التحسن أو الأثر.';
+ }else{
+  f.actionStatus='لم يحدد بعد';delete f.action;
+  f.follow='متابعة مستويات الطلاب في القياسات اللاحقة، ولا يسجل تحسن أو أثر دون نتيجة قياس جديدة.';
+ }
+ state.metadata.analysisWorkflowDerived128=true;
+}
+
 function ensure(state){
  state.metadata=state.metadata||{};
  const sum=analysisSummary113(state);
@@ -22,6 +39,7 @@ function ensure(state){
  if(state.metadata.directEntry128==='classification'){
   state.metadata.analysisOutputs128=['classification'];
   state.metadata.analysisOutputsInitialized128=true;
+  syncWorkflow(state,state.metadata.analysisOutputs128);
   return state.metadata.analysisOutputs128;
  }
  if(!Array.isArray(state.metadata.analysisOutputs128)||!state.metadata.analysisOutputsInitialized128){
@@ -31,7 +49,7 @@ function ensure(state){
   state.metadata.analysisOutputs128=initial;
   state.metadata.analysisOutputsInitialized128=true;
  }
- return state.metadata.analysisOutputs128.filter(x=>ORDER.includes(x));
+ const selected=state.metadata.analysisOutputs128.filter(x=>ORDER.includes(x));syncWorkflow(state,selected);return selected;
 }
 
 export function analysisOutputSelection128(state){return [...ensure(state)]}
@@ -65,7 +83,7 @@ if(typeof document!=='undefined'){
   const id=b.dataset.analysisOutput128,a=applicable(current);if(!a[id])return;
   const set=new Set(analysisOutputSelection128(current));if(set.has(id))set.delete(id);else set.add(id);
   current.metadata.analysisOutputs128=ORDER.filter(x=>set.has(x));
-  current.metadata.analysisOutputsInitialized128=true;
+  current.metadata.analysisOutputsInitialized128=true;syncWorkflow(current,current.metadata.analysisOutputs128);
   renderAnalysisOutputChoice128Slot();signal();
  },true);
  document.addEventListener('family-meta-change111',()=>queueMicrotask(renderAnalysisOutputChoice128Slot),true);
