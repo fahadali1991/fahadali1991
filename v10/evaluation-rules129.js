@@ -14,6 +14,7 @@ export function number129(value){
   .replace(/٫/g,'.')
   .replace(/,/g,'.')
   .trim();
+ if(!raw)return null;
  const n=Number(raw);
  return Number.isFinite(n)?n:null;
 }
@@ -115,7 +116,7 @@ export function cohortTeachingDecision129({achievedCount,totalCount}){
 }
 
 export function studentDecision129({score,maxScore,criterionPct,evidenceType='total_score',purpose='unknown',outcomeMastered=null,remeasurement=null}={}){
- const scoreN=number129(score),maxN=number129(maxScore),criterion=number129(criterionPct),strength=evidenceStrength129(evidenceType),p=normalizePurpose129(purpose);
+ const scoreN=number129(score),maxN=number129(maxScore),criterion=number129(criterionPct),strength=evidenceStrength129(evidenceType);
  if(scoreN===null||maxN===null||maxN<=0)return{ready:false,reason:'missing_score'};
  const pct=scoreN/maxN*100;
  const impactAllowed=remeasurement&&number129(remeasurement.before)!==null&&number129(remeasurement.after)!==null;
