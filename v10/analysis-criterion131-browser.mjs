@@ -29,7 +29,6 @@ try{
   assert.match(noCriterionState.finding,/لم يحدد محك أداء/);
 
   const neutral=await page.evaluate(async()=>{const d=await import('./v10/analysis-decision131.js?v=131');const p=await import('./v10/analysis-plans131.js?v=131');return{decision:d.analysisDecisionPanel131(window.__s131),plans:p.analysisPlansPanel131(window.__s131)}});
-  document.querySelector;
   assert.match(neutral.decision,/المؤشرات الكمية/);
   assert.doesNotMatch(neutral.decision,/محقق للإتقان/);
   assert.match(neutral.plans,/لا توجد خطة آلية دون محك أداء/);
