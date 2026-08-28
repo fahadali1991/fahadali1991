@@ -1,0 +1,35 @@
+name: V129 Evaluation Rules Gate
+on:
+  push:
+    branches: [v129-evaluation-rules-engine, main]
+    paths:
+      - 'v10/evaluation-rules129.js'
+      - 'tests-v129-evaluation-rules.mjs'
+      - 'docs/EVALUATION_RULES_V129.md'
+      - '.github/workflows/v129-evaluation-rules.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v10/evaluation-rules129.js'
+      - 'tests-v129-evaluation-rules.mjs'
+      - 'docs/EVALUATION_RULES_V129.md'
+      - '.github/workflows/v129-evaluation-rules.yml'
+  workflow_dispatch:
+
+jobs:
+  rules:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: V129 source-backed evaluation rules
+        run: node tests-v129-evaluation-rules.mjs
+      - name: V129 syntax
+        run: node --check v10/evaluation-rules129.js && node --check tests-v129-evaluation-rules.mjs
+      - name: V129 rules layer must not use browser session state
+        run: |
+          if grep -n "sessionStorage\|localStorage" v10/evaluation-rules129.js; then
+            echo "Evaluation rules must stay deterministic and independent from browser session state"; exit 1
+          fi
