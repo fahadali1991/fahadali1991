@@ -52,7 +52,9 @@ assert.equal(routeNextQuestion106(flow,matrix).done,true,'التحليل الع�
 
 const model={plan:{print:{mode:'compact'}},sections:[{def:{id:'title'},data:{title:'تحليل نتائج الاختبار'}}],context:{education:{subject:{value:'اللغة العربية'},stage:{value:'متوسط'},grades:['الأول المتوسط']},execution:{executor:{value:'المعلم'}}}};
 const body=analysisBody113(model,s);
-assert.match(body,/دون حد الإتقان المعتمد \(80٪\)/);
+assert.match(body,/حد الإتقان المعتمد 80٪/,'يجب أن يظهر حد الإتقان الفعلي في القراءة المهنية');
+assert.match(body,/دون حد الإتقان/,'يجب أن توضح القراءة وجود طلاب دون حد الإتقان');
+assert.match(body,/قريب من الإتقان/,'V122 يقسم ما دون الإتقان إلى قريب من الإتقان وأولوية للتدخل');
 assert.match(body,/أولوية للتدخل/);
 assert.doesNotMatch(body,/بين 50٪ و70٪/);
 
@@ -78,4 +80,4 @@ const app88=await import('node:fs').then(fs=>fs.readFileSync(new URL('./v10/app8
 assert.match(app88,/cleanEra/,'تنسيق التاريخ ينظف رمز الحقبة قبل إضافته مرة واحدة');
 assert.doesNotMatch(app88,/return`\$\{h\} هـ هـ/,'لا يكرر رمز السنة الهجرية');
 
-console.log('V121 analysis release contract PASS: mastery, content-driven next steps, execution state, import preview and reduced questions.');
+console.log('V121/V122 analysis release contract PASS: mastery, content-driven next steps, execution state, import preview and reduced questions.');
