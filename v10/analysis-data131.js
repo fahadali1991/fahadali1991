@@ -5,6 +5,7 @@ let current=null,patching=false,observer=null;
 const clean=v=>String(v??'').trim();
 const setText=(el,text)=>{if(el&&el.textContent!==text)el.textContent=text};
 const setHtml=(el,html)=>{if(el&&el.innerHTML!==html)el.innerHTML=html};
+const announce133=()=>{if(typeof document!=='undefined')document.dispatchEvent(new CustomEvent('analysis-data-change133'))};
 
 export function explicitCriterion131(state){
  const raw=clean(state?.metadata?.analysis?.masteryPercent);
@@ -23,7 +24,6 @@ function initializeCriterionSource(state){
  const a=analysisState113(state);state.metadata=state.metadata||{};
  if(a.criterionSource131)return;
  const raw=clean(a.masteryPercent);
- // V127 seeded 70 automatically before any score commit. Clear only that known fresh-state case.
  if(!a.updatedAt&&raw==='70'){a.masteryPercent='';a.criterionSource131='none';return}
  a.criterionSource131=raw?'legacy_or_user':'none';
 }
@@ -70,15 +70,15 @@ function installObserver(){
   if(!current||!e.target.matches?.('[data-analysis-mastery120],[data-analysis-max113],[data-analysis-expected118],[data-analysis-rows113],[data-analysis-name114],[data-analysis-score114]'))return;
   const criterion=document.querySelector('[data-analysis-mastery120]');
   if(criterion){const raw=clean(criterion.value);current.metadata.analysis.criterionSource131=raw?'user':'none';if(!raw)current.metadata.analysis.masteryPercent=''}
-  queueMicrotask(()=>{if(current.metadata.analysis.criterionSource131==='none')syncNoCriterion(current);patchAnalysisData131()});
+  queueMicrotask(()=>{if(current.metadata.analysis.criterionSource131==='none')syncNoCriterion(current);patchAnalysisData131();announce133()});
  },true);
- document.addEventListener('change',e=>{if(e.target.matches?.('[data-analysis-file114]'))setTimeout(()=>{if(current?.metadata?.analysis?.criterionSource131==='none')syncNoCriterion(current);patchAnalysisData131()},150)},true);
+ document.addEventListener('change',e=>{if(e.target.matches?.('[data-analysis-file114]'))setTimeout(()=>{if(current?.metadata?.analysis?.criterionSource131==='none')syncNoCriterion(current);patchAnalysisData131();announce133()},150)},true);
 }
 
 export function bindAnalysisData131(state){
- current=state;initializeCriterionSource(state);if(state.metadata.analysis.criterionSource131==='none')syncNoCriterion(state);installObserver();bindAnalysisData113(state);queueMicrotask(patchAnalysisData131)
+ current=state;initializeCriterionSource(state);if(state.metadata.analysis.criterionSource131==='none')syncNoCriterion(state);installObserver();bindAnalysisData113(state);queueMicrotask(()=>{patchAnalysisData131();announce133()})
 }
-export function renderAnalysisSlot131(){renderAnalysisSlot113();queueMicrotask(patchAnalysisData131)}
+export function renderAnalysisSlot131(){renderAnalysisSlot113();queueMicrotask(()=>{patchAnalysisData131();announce133()})}
 export function analysisSummary131(state){
  const base=analysisSummary113(state),criterion=explicitCriterion131(state);
  if(!base.ready)return{...base,criterionDefined:criterion.defined,masteryPercent:criterion.value};
