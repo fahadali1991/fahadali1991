@@ -3,6 +3,8 @@ import {finiteNumber120} from './input-normalization120.js?v=120.1';
 
 let current=null,patching=false,observer=null;
 const clean=v=>String(v??'').trim();
+const setText=(el,text)=>{if(el&&el.textContent!==text)el.textContent=text};
+const setHtml=(el,html)=>{if(el&&el.innerHTML!==html)el.innerHTML=html};
 
 export function explicitCriterion131(state){
  const raw=clean(state?.metadata?.analysis?.masteryPercent);
@@ -29,26 +31,26 @@ function initializeCriterionSource(state){
 function syncNoCriterion(state){
  if(!state)return;const a=analysisState113(state),c=explicitCriterion131(state);
  if(c.defined)return;
- a.masteryPercent='';
+ if(a.masteryPercent!=='')a.masteryPercent='';
  state.metadata.familyDetails=state.metadata.familyDetails||{};
- const finding=neutralFinding(state);if(finding){state.metadata.familyDetails.finding=finding;a.findingSource='derived-quantitative-no-criterion'}
+ const finding=neutralFinding(state);if(finding){if(state.metadata.familyDetails.finding!==finding)state.metadata.familyDetails.finding=finding;a.findingSource='derived-quantitative-no-criterion'}
 }
 
 function patchReadyCard(host,state){
  const b=host.querySelector('.analysisDataReady113 b');if(!b)return;
- const c=explicitCriterion131(state);
- if(!c.defined)b.textContent=b.textContent.replace(/ · حد الإتقان:\s*70(?:\.0)?٪/,' · محك الأداء: غير محدد').replace(/ · حد الإتقان:\s*[^·]+/,' · محك الأداء: غير محدد');
- else b.textContent=b.textContent.replace('حد الإتقان:','محك الأداء:');
+ const c=explicitCriterion131(state),old=b.textContent;
+ const next=!c.defined?old.replace(/ · حد الإتقان:\s*70(?:\.0)?٪/,' · محك الأداء: غير محدد').replace(/ · حد الإتقان:\s*[^·]+/,' · محك الأداء: غير محدد'):old.replace('حد الإتقان:','محك الأداء:');
+ if(next!==old)b.textContent=next;
 }
 
 function patchEditor(host,state){
  const input=host.querySelector('[data-analysis-mastery120]');if(!input)return;
  const label=input.closest('label'),title=label?.querySelector('span'),help=label?.querySelector('small');
- if(title)title.innerHTML='محك الأداء لهذا الاختبار (%) <small>(اختياري)</small>';
- if(help)help.textContent='إذا كان للاختبار محك محدد فأدخله. إذا لم يوجد فاتركه فارغًا؛ سيستمر التحليل دون حكم إتقان أو خطة تدخل آلية.';
- input.placeholder='مثال: 80';
+ setHtml(title,'محك الأداء لهذا الاختبار (%) <small>(اختياري)</small>');
+ setText(help,'إذا كان للاختبار محك محدد فأدخله. إذا لم يوجد فاتركه فارغًا؛ سيستمر التحليل دون حكم إتقان أو خطة تدخل آلية.');
+ if(input.placeholder!=='مثال: 80')input.placeholder='مثال: 80';
  const c=explicitCriterion131(state);if(!c.defined&&input.value==='70')input.value='';
- const intro=host.querySelector('.questionHelp');if(intro)intro.textContent='سيُحسب عدد الطلاب والمؤشرات الكمية من الدرجات. محك الأداء اختياري ولا يضع النظام نسبة افتراضية نيابة عن المعلم.';
+ const intro=host.querySelector('.questionHelp');setText(intro,'سيُحسب عدد الطلاب والمؤشرات الكمية من الدرجات. محك الأداء اختياري ولا يضع النظام نسبة افتراضية نيابة عن المعلم.');
 }
 
 export function patchAnalysisData131(){
