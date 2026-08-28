@@ -82,36 +82,40 @@ async function runJourney({label,viewport,exerciseReload=false}){
   await page.locator('[data-goal]').first().click();
   await page.locator('[data-action="go-description"]').click();
   await page.locator('[data-title-accept]').first().click();
-  assert.equal(await page.locator('[data-description-variant="medium"]').count(),0,'analysis must use the V122 automatic professional reading instead of asking for a description variant');
+  assert.equal(await page.locator('[data-description-variant="medium"]').count(),0,'analysis must use the automatic professional reading instead of asking for a description variant');
   for(let guard=0;guard<12;guard++){const fix=page.locator('[data-spell76-from]').first();if(!(await fix.count()))break;await fix.click()}
   if(await page.locator('[data-action="go-evidence-direct"]').count())await page.locator('[data-action="go-evidence-direct"]').click();
   await clickIf(page,'[data-evidence]');
   await page.locator('[data-action="finalize"]').first().click();
-  await page.waitForSelector('[data-pdf-preview-host107]');
+  await page.waitForSelector('[data-analysis-output-host132]');
   await page.waitForSelector('[data-pdf-share115]');
 
   assert.equal(await page.locator('[data-pdf-whatsapp115]').count(),0,'WhatsApp-specific share button must not exist');
   assert.equal(await page.locator('[data-pdf-share115]').count(),1,'native share button missing');
   const shareSource=await page.evaluate(()=>fetch('v10/analysis-feedback115.js?v=120.1').then(r=>r.text()));assert.match(shareSource,/navigator\.share/,'share implementation must use the native Web Share API when available');
-  assert.match(await page.locator('.analysisHero113 h2').textContent(),/اللغة العربية/,'canonical Arabic subject missing from print preview');
-  assert.match(await page.locator('.analysisMeta113').textContent(),/شعبة ب/,'section missing from print preview');
-  assert.match(await page.locator('.analysisMeta113').textContent(),/18/,'actual student count must come from accepted scores');
-  assert.match(await page.locator('.analysisPrintWarn116').textContent(),/20|18|ناقص|درجة/,'optional count mismatch warning missing from print preview');
-  assert.match(await page.locator('.analysisApproval113').textContent(),/مدير الاختبار/,'principal name missing from approval block');
+  const bundle=page.locator('.analysisBundlePages132');
+  assert.match(await bundle.textContent(),/اللغة العربية/,'canonical Arabic subject missing from V132 print bundle');
+  assert.match(await bundle.textContent(),/شعبة ب/,'section missing from V132 print bundle');
+  assert.match(await page.locator('.analysisPage132 .bundleMetrics132').textContent(),/18/,'actual student count must come from accepted scores');
+  assert.match(await page.locator('.analysisPrintWarn116').textContent(),/20|18|ناقص|درجة/,'optional count mismatch warning missing from V132 analysis page');
+  assert.match(await page.locator('.analysisApproval113').textContent(),/مدير الاختبار/,'principal name missing from V132 approval block');
+  assert.equal(await page.locator('.classificationPage132 .bundleStudentRow132').count(),18,'all accepted students must appear on the classification page');
 
   const logo=page.locator('.analysisOfficialLogo114').first();assert.ok(await logo.count(),'Ministry logo container missing');
   const bg=await logo.evaluate(el=>getComputedStyle(el).backgroundImage);assert.match(bg,/moe-logo-green\.png/,'official Ministry logo asset is not used as the visual logo');
   const logoFetch=await page.evaluate(()=>fetch('v10/assets/moe-logo-green.png').then(r=>({ok:r.ok,size:Number(r.headers.get('content-length')||0)})));assert.ok(logoFetch.ok,'official Ministry logo asset did not load');
 
-  await page.screenshot({path:`artifacts/analysis-preview-v123-${label}.png`,fullPage:true});
+  await page.screenshot({path:`artifacts/analysis-preview-v132-${label}.png`,fullPage:true});
   await page.emulateMedia({media:'print'});
-  const sheets=page.locator('.pdfPages107 .analysisSheet113');assert.equal(await sheets.count(),1,`${label}: analysis print must contain one sheet`);
-  const geometry=await sheets.first().evaluate(sheet=>{const sr=sheet.getBoundingClientRect(),footer=sheet.querySelector('.analysisFooter113')?.getBoundingClientRect(),approval=sheet.querySelector('.analysisApproval113')?.getBoundingClientRect();return{sheetTop:sr.top,sheetBottom:sr.bottom,scrollHeight:sheet.scrollHeight,clientHeight:sheet.clientHeight,footerTop:footer?.top,footerBottom:footer?.bottom,approvalBottom:approval?.bottom}});
-  assert.ok(geometry.scrollHeight<=geometry.clientHeight+3,`${label}: print content overflows A4: ${JSON.stringify(geometry)}`);
-  assert.ok(geometry.footerBottom<=geometry.sheetBottom+1&&geometry.footerTop>=geometry.sheetTop,`${label}: footer escaped A4 sheet`);
-  assert.ok(geometry.approvalBottom<=geometry.footerTop+1,`${label}: approval overlaps footer`);
-  const pdf=await page.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,path:`artifacts/analysis-print-v123-${label}.pdf`});
-  const pageCount=(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length;assert.equal(pageCount,1,`${label}: Chromium generated ${pageCount} PDF pages instead of 1`);
+  const sheets=page.locator('.pdfPages107 .analysisBundleSheet132');assert.equal(await sheets.count(),2,`${label}: default V132 output must contain analysis + classification sheets`);
+  for(let i=0;i<2;i++){
+   const geometry=await sheets.nth(i).evaluate(sheet=>{const sr=sheet.getBoundingClientRect(),footer=sheet.querySelector('.bundleFooter132')?.getBoundingClientRect(),approval=sheet.querySelector('.bundleApproval132')?.getBoundingClientRect();return{sheetTop:sr.top,sheetBottom:sr.bottom,scrollHeight:sheet.scrollHeight,clientHeight:sheet.clientHeight,footerTop:footer?.top,footerBottom:footer?.bottom,approvalBottom:approval?.bottom}});
+   assert.ok(geometry.scrollHeight<=geometry.clientHeight+3,`${label}/sheet${i+1}: print content overflows A4: ${JSON.stringify(geometry)}`);
+   assert.ok(geometry.footerBottom<=geometry.sheetBottom+1&&geometry.footerTop>=geometry.sheetTop,`${label}/sheet${i+1}: footer escaped A4 sheet`);
+   if(i===0&&geometry.approvalBottom!==undefined)assert.ok(geometry.approvalBottom<=geometry.footerTop+1,`${label}: approval overlaps footer`);
+  }
+  const pdf=await page.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,path:`artifacts/analysis-print-v132-${label}.pdf`});
+  const pageCount=(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length;assert.equal(pageCount,2,`${label}: Chromium generated ${pageCount} PDF pages instead of 2`);
   assert.equal(errors.length,0,`${label}: browser errors: ${errors.join(' | ')}`);
   return{label,seenMeta,seenQuestions,pageCount};
  }finally{await context.close()}
@@ -120,5 +124,5 @@ async function runJourney({label,viewport,exerciseReload=false}){
 try{
  const mobile=await runJourney({label:'mobile',viewport:{width:390,height:844},exerciseReload:true});
  const desktop=await runJourney({label:'desktop',viewport:{width:1440,height:1000}});
- console.log('V123 analysis visual acceptance PASS',JSON.stringify({mobile,desktop}));
+ console.log('V132 analysis visual acceptance PASS',JSON.stringify({mobile,desktop}));
 }finally{await browser.close()}
