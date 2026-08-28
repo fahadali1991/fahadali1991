@@ -1,9 +1,10 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import {analysisOutputModel132,analysisOutputPanel132,analysisOutputPreview132} from './v10/analysis-output132.js';
+import {analysisOutputModel132,analysisOutputPanel132,analysisOutputPreview132} from './v10/analysis-output132-release.js';
 
-function state({criterion='80',scores=[12,15,16,18,19,20,14,17,13,18],names=['أحمد','خالد','سعد','محمد','علي','ناصر','حسن','ماجد','سلمان','عبدالله']}={}){
- return {classification:{type:'تحليل نتائج'},stage:'متوسط',grades:['الأول المتوسط'],metadata:{schoolName:'مدرسة حطين المتوسطة',educationOffice:'الإدارة العامة للتعليم بنجران',academicYear:'1448هـ',principalName:'مدير المدرسة',executorName:'معلم اللغة العربية',analysis:{maxScore:'20',masteryPercent:criterion,scores,names,rawRows:'',entryMode:'paste'},familyMeta111:{assessmentType:'اختبار تشخيصي',period:'الفصل الدراسي الأول',section:'ب'},familyDetails:{subject94:'اللغة العربية',skillFocus:'المذكر والمؤنث'}}};
+function state({criterion='80',scores=[12,15,16,18,19,20,14,17,13,18],names=['أحمد','خالد','سعد','محمد','علي','ناصر','حسن','ماجد','سلمان','عبدالله'],expectedCount=''}={}){
+ const familyMeta111={assessmentType:'اختبار تشخيصي',period:'الفصل الدراسي الأول',section:'ب'};if(expectedCount)familyMeta111.expectedCount=String(expectedCount);
+ return {classification:{type:'تحليل نتائج'},stage:'متوسط',grades:['الأول المتوسط'],metadata:{schoolName:'مدرسة حطين المتوسطة',educationOffice:'الإدارة العامة للتعليم بنجران',academicYear:'1448هـ',principalName:'مدير المدرسة',executorName:'معلم اللغة العربية',analysis:{maxScore:'20',masteryPercent:criterion,scores,names,rawRows:'',entryMode:'paste'},familyMeta111,familyDetails:{subject94:'اللغة العربية',skillFocus:'المذكر والمؤنث'}}};
 }
 
 const s=state();
@@ -35,7 +36,14 @@ assert.match(preview,/محمد/);
 assert.match(preview,/المذكر والمؤنث/);
 assert.match(preview,/أعلى درجة[\s\S]{0,80}<b>20<\/b>/);
 assert.match(preview,/أدنى درجة[\s\S]{0,80}<b>12<\/b>/);
+assert.match(preview,/اعتماد مدير المدرسة[\s\S]{0,100}مدير المدرسة/,'اعتماد المدير يجب أن يبقى في صفحة التحليل الجديدة');
+assert.match(preview,/إعداد \/ تنفيذ[\s\S]{0,100}معلم اللغة العربية/,'اسم المنفذ يجب أن يبقى في صفحة التحليل الجديدة');
 assert.match(preview,/لا يسجل تحسن أو أثر إلا بعد ظهور نتيجة القياس اللاحق/);
+
+const mismatch=state({expectedCount:'12'});
+const mismatchPreview=analysisOutputPreview132(mismatch);
+assert.match(mismatchPreview,/تحقق من اكتمال الدرجات/);
+assert.match(mismatchPreview,/12|10|ناقص|درجة/,'تنبيه العدد المتوقع/الفعلي يجب أن ينتقل إلى حزمة الطباعة');
 
 const noCriterion=state({criterion:''});
 noCriterion.metadata.analysisOutput132={classification:true,remedial:true,enrichment:true};
@@ -60,6 +68,7 @@ assert.equal(manyModel.totalPages,4,'40 طالبًا => تحليل + ثلاث ص
 assert.deepEqual(manyModel.pages.map(x=>x.id),['analysis','classification-1','classification-2','classification-3']);
 
 const final76=fs.readFileSync('v10/final76.js','utf8');
+assert.match(final76,/analysis-output132-release\.js\?v=132/,'الشاشة النهائية يجب أن تمر عبر نسخة الإصدار التي تحفظ تنبيه العدد والاعتماد');
 assert.match(final76,/analysisOutputPanel132/,'الشاشة النهائية يجب أن تمر عبر حزمة V132 لتحليل النتائج');
 assert.match(final76,/isAnalysis\?analysisOutputPanel132/,'حزمة V132 لا تستبدل طباعة بقية العائلات');
 assert.match(final76,/bindAnalysisOutput132/);
@@ -68,4 +77,4 @@ assert.match(css132,/bundlePageNo132\{[^}]*direction:ltr/,'ترقيم الصفح
 const home=fs.readFileSync('home106.html','utf8');
 assert.match(home,/analysis-output132\.css\?v=132/,'الواجهة الفعلية يجب أن تحمل إصلاح ترقيم صفحات V132');
 
-console.log('V132 analysis output bundle PASS: selectable classification/plans, score extremes, no fake criterion, paginated students, RTL-safe numbering, and analysis-only integration.');
+console.log('V132 analysis output bundle PASS: selectable pages, score extremes, count warning, approval, no fake criterion, pagination, RTL-safe numbering, and analysis-only integration.');
