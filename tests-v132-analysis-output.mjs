@@ -59,5 +59,9 @@ const final76=fs.readFileSync('v10/final76.js','utf8');
 assert.match(final76,/analysisOutputPanel132/,'الشاشة النهائية يجب أن تمر عبر حزمة V132 لتحليل النتائج');
 assert.match(final76,/isAnalysis\?analysisOutputPanel132/,'حزمة V132 لا تستبدل طباعة بقية العائلات');
 assert.match(final76,/bindAnalysisOutput132/);
+const css132=fs.readFileSync('v10/analysis-output132.css','utf8');
+assert.match(css132,/bundlePageNo132\{[^}]*direction:ltr/,'ترقيم الصفحات يجب أن يبقى LTR داخل المستند العربي');
+const home=fs.readFileSync('home106.html','utf8');
+assert.match(home,/analysis-output132\.css\?v=132/,'الواجهة الفعلية يجب أن تحمل إصلاح ترقيم صفحات V132');
 
-console.log('V132 analysis output bundle PASS: selectable classification/plans, no fake criterion, paginated students, and analysis-only integration.');
+console.log('V132 analysis output bundle PASS: selectable classification/plans, no fake criterion, paginated students, RTL-safe numbering, and analysis-only integration.');
