@@ -45,7 +45,7 @@ function patchReadyCard(host,state){
 
 function patchEditor(host,state){
  const input=host.querySelector('[data-analysis-mastery120]');if(!input)return;
- const label=input.closest('label'),title=label?.querySelector('span'),help=label?.querySelector('small');
+ const label=input.closest('label'),title=label?.querySelector(':scope > span'),help=label?.querySelector(':scope > small');
  setHtml(title,'محك الأداء لهذا الاختبار (%) <small>(اختياري)</small>');
  setText(help,'إذا كان للاختبار محك محدد فأدخله. إذا لم يوجد فاتركه فارغًا؛ سيستمر التحليل دون حكم إتقان أو خطة تدخل آلية.');
  if(input.placeholder!=='مثال: 80')input.placeholder='مثال: 80';
