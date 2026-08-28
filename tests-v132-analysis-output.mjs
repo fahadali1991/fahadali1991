@@ -46,7 +46,7 @@ const neutralPreview=analysisOutputPreview132(noCriterion);
 assert.match(neutralPreview,/محك الأداء/);
 assert.match(neutralPreview,/غير محدد/);
 assert.doesNotMatch(neutralPreview,/محقق للمحك|يحتاج دعمًا من خط الأساس|خطة علاجية مقترحة|خطة إثرائية مقترحة/);
-assert.doesNotMatch(neutralPreview,/70٪/,'لا يجوز عودة محك 70٪ إلى الحزمة الجديدة');
+assert.doesNotMatch(neutralPreview,/محك الأداء[\s\S]{0,100}<b>70٪<\/b>/,'لا يجوز عودة 70٪ بوصفها محكًا افتراضيًا؛ ظهور 70٪ كنسبة طالب حقيقية مسموح');
 
 const manyScores=Array.from({length:40},(_,i)=>10+(i%11));
 const manyNames=Array.from({length:40},(_,i)=>`طالب ${i+1}`);
