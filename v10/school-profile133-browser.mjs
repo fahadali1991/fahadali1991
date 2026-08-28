@@ -7,6 +7,7 @@ const scenarios=[
  {name:'mobile',viewport:{width:390,height:844}},
  {name:'desktop',viewport:{width:1440,height:1000}}
 ];
+fs.mkdirSync('artifacts',{recursive:true});
 
 async function startAnalysis(page){
  await page.goto(base,{waitUntil:'networkidle'});
@@ -30,43 +31,47 @@ try{
  for(const scenario of scenarios){
   const context=await browser.newContext({viewport:scenario.viewport,locale:'ar-SA'});
   const page=await context.newPage();
-  await startAnalysis(page);
+  try{
+   await startAnalysis(page);
 
-  const suffix=scenario.name==='mobile'?'الجوال':'سطح المكتب';
-  const values={schoolName:`مدرسة حطين المتوسطة - ${suffix}`,educationOffice:'الإدارة العامة للتعليم بنجران',academicYear:'1448هـ',principalName:'مدير المدرسة'};
-  for(const [id,value] of Object.entries(values))await page.locator(`#${id}`).fill(value);
-  await page.waitForTimeout(450);
+   const suffix=scenario.name==='mobile'?'الجوال':'سطح المكتب';
+   const values={schoolName:`مدرسة حطين المتوسطة - ${suffix}`,educationOffice:'الإدارة العامة للتعليم بنجران',academicYear:'1448هـ',principalName:'مدير المدرسة'};
+   for(const [id,value] of Object.entries(values))await page.locator(`#${id}`).fill(value);
+   await page.waitForTimeout(550);
 
-  const status=page.locator('[data-school-profile-status133]');
-  await status.waitFor({state:'visible'});
-  assert.match(await status.textContent(),/محفوظة للاستخدام القادم/);
-  const saved=await profileFromDb(page);
-  assert.equal(saved?.schoolName,values.schoolName);
-  assert.equal(saved?.educationOffice,values.educationOffice);
-  assert.equal(saved?.academicYear,values.academicYear);
-  assert.equal(saved?.principalName,values.principalName);
+   const status=page.locator('[data-school-profile-status133]');
+   await status.waitFor({state:'visible'});
+   assert.match(await status.textContent(),/محفوظة للاستخدام القادم/);
+   const saved=await profileFromDb(page);
+   assert.equal(saved?.schoolName,values.schoolName);
+   assert.equal(saved?.educationOffice,values.educationOffice);
+   assert.equal(saved?.academicYear,values.academicYear);
+   assert.equal(saved?.principalName,values.principalName);
 
-  await page.locator('[data-ws109="home"]').click();
-  await page.waitForLoadState('networkidle');
-  const discard=page.locator('[data-action="discard-draft"]');
-  if(await discard.count())await discard.click();
-  await page.locator('[data-entry="analysis"]').click();
-  await page.locator('#raw').fill('تحليل نتائج رياضيات ثاني متوسط اختبار تشخيصي شعبة أ عدد الطلاب 8');
-  await page.locator('[data-action="analyze"]').click();
-  const host=page.locator('.analysisSchoolInfo122');await host.waitFor({state:'visible'});await page.waitForTimeout(350);
+   await page.locator('[data-ws109="home"]').click();
+   await page.waitForLoadState('networkidle');
+   const discard=page.locator('[data-action="discard-draft"]');
+   if(await discard.count())await discard.click();
+   await page.locator('[data-entry="analysis"]').click();
+   await page.locator('#raw').fill('تحليل نتائج رياضيات ثاني متوسط اختبار تشخيصي شعبة أ عدد الطلاب 8');
+   await page.locator('[data-action="analyze"]').click();
+   const host=page.locator('.analysisSchoolInfo122');await host.waitFor({state:'visible'});await page.waitForTimeout(450);
 
-  for(const [id,value] of Object.entries(values))assert.equal(await page.locator(`#${id}`).inputValue(),value,`${scenario.name}: ${id} should be reused from permanent school profile`);
-  const form=host.locator('.formGrid');
-  assert.equal(await form.isHidden(),true,`${scenario.name}: completed profile should collapse on a new analysis`);
-  await host.locator('[data-school-profile-toggle133]').click();
-  assert.equal(await form.isVisible(),true,`${scenario.name}: teacher can reopen school details for editing`);
+   for(const [id,value] of Object.entries(values))assert.equal(await page.locator(`#${id}`).inputValue(),value,`${scenario.name}: ${id} should be reused from permanent school profile`);
+   const form=host.locator('.formGrid');
+   assert.equal(await form.isHidden(),true,`${scenario.name}: completed profile should collapse on a new analysis`);
+   await host.locator('[data-school-profile-toggle133]').click();
+   assert.equal(await form.isVisible(),true,`${scenario.name}: teacher can reopen school details for editing`);
 
-  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
-  assert.ok(overflow<=1,`${scenario.name}: no horizontal overflow (${overflow}px)`);
+   const overflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
+   assert.ok(overflow<=1,`${scenario.name}: no horizontal overflow (${overflow}px)`);
 
-  fs.mkdirSync('artifacts',{recursive:true});
-  await page.screenshot({path:`artifacts/v133-school-profile-${scenario.name}.png`,fullPage:true});
-  await context.close();
+   await page.screenshot({path:`artifacts/v133-school-profile-${scenario.name}.png`,fullPage:true});
+  }catch(error){
+   const message=`${scenario.name}\n${error?.stack||error}`;fs.writeFileSync(`artifacts/v133-school-profile-${scenario.name}-error.txt`,message);
+   try{await page.screenshot({path:`artifacts/v133-school-profile-${scenario.name}-failure.png`,fullPage:true})}catch{}
+   throw error;
+  }finally{await context.close()}
  }
  console.log('V133A school profile browser PASS: first-entry persistence, new-analysis reuse, compact collapse/edit, mobile/desktop, no horizontal overflow.');
 }finally{await browser.close()}
