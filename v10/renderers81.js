@@ -4,13 +4,16 @@ import {esc} from './engine.js';
 const shortcuts=[
   ['program','برنامج / فعالية','توثيق البرامج والأنشطة'],
   ['analysis','تحليل نتائج','قراءة النتائج وبناء الإجراء'],
+  ['classification','تصنيف الطلاب','تصنيف مباشر من الدرجات'],
+  ['remedial','خطة علاجية','بناء خطة دعم للطلاب'],
+  ['enrichment','خطة إثرائية','بناء خطة للطلاب المتقدمين'],
   ['plan','خطة','بناء خطة منظمة'],
   ['minutes','اجتماع','توثيق الاجتماع والقرارات'],
   ['follow','متابعة','توثيق الرصد والمتابعة'],
   ['pd','تطوير مهني','توثيق النمو والتبادل المهني']
 ];
 const icon=(kind)=>{
-  const m={program:'<path d="M7 12h10M12 7v10"/>',analysis:'<path d="M5 18V10m5 8V6m5 12v-5m4 5V3"/>',plan:'<path d="M6 4h12v16H6zM9 8h6M9 12h6M9 16h4"/>',minutes:'<path d="M7 4h10v16H7zM10 8h4M10 12h4M10 16h3"/>',follow:'<path d="M5 12l4 4L19 6"/>',pd:'<path d="M8 7a4 4 0 1 0 8 0M5 20c.7-4 3-6 7-6s6.3 2 7 6"/>'};
+  const m={program:'<path d="M7 12h10M12 7v10"/>',analysis:'<path d="M5 18V10m5 8V6m5 12v-5m4 5V3"/>',classification:'<path d="M5 5h14v14H5zM8 9h8M8 13h5M8 17h7"/>',remedial:'<path d="M12 4v16M4 12h16"/>',enrichment:'<path d="M12 3l2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',plan:'<path d="M6 4h12v16H6zM9 8h6M9 12h6M9 16h4"/>',minutes:'<path d="M7 4h10v16H7zM10 8h4M10 12h4M10 16h3"/>',follow:'<path d="M5 12l4 4L19 6"/>',pd:'<path d="M8 7a4 4 0 1 0 8 0M5 20c.7-4 3-6 7-6s6.3 2 7 6"/>'};
   return `<svg viewBox="0 0 24 24" aria-hidden="true">${m[kind]||m.program}</svg>`;
 };
 
