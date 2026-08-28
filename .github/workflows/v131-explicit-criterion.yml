@@ -1,0 +1,69 @@
+name: V131 Explicit Criterion Gate
+on:
+  push:
+    branches: [v131-explicit-assessment-criterion]
+    paths:
+      - 'v10/analysis-data131.js'
+      - 'v10/analysis-decision131.js'
+      - 'v10/analysis-plans131.js'
+      - 'v10/analysis-criterion131-browser.mjs'
+      - 'v10/analysis-criterion131-fixture.html'
+      - 'v10/family-details109.js'
+      - 'v10/final76.js'
+      - 'tests-v127-analysis-decision.mjs'
+      - 'tests-v130-analysis-policy.mjs'
+      - 'tests-v131-explicit-criterion.mjs'
+      - '.github/workflows/v131-explicit-criterion.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v10/analysis-data131.js'
+      - 'v10/analysis-decision131.js'
+      - 'v10/analysis-plans131.js'
+      - 'v10/analysis-criterion131-browser.mjs'
+      - 'v10/analysis-criterion131-fixture.html'
+      - 'v10/family-details109.js'
+      - 'v10/final76.js'
+      - 'tests-v127-analysis-decision.mjs'
+      - 'tests-v130-analysis-policy.mjs'
+      - 'tests-v131-explicit-criterion.mjs'
+      - '.github/workflows/v131-explicit-criterion.yml'
+  workflow_dispatch:
+jobs:
+  criterion:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: V129 rules regression
+        run: node tests-v129-evaluation-rules.mjs
+      - name: V130 policy regression
+        run: node tests-v130-analysis-policy.mjs
+      - name: V131 explicit criterion unit tests
+        run: node tests-v131-explicit-criterion.mjs
+      - name: V131 syntax
+        run: node --check v10/analysis-data131.js && node --check v10/analysis-decision131.js && node --check v10/analysis-plans131.js && node --check v10/analysis-criterion131-browser.mjs && node --check tests-v131-explicit-criterion.mjs
+      - name: V131 state layer must not use sessionStorage
+        run: |
+          if grep -R "sessionStorage" v10/analysis-data131.js v10/analysis-decision131.js v10/analysis-plans131.js; then
+            echo "V131 must use canonical document state only"; exit 1
+          fi
+      - name: Install Chromium
+        run: npm install --no-save playwright && npx playwright install --with-deps chromium
+      - name: V131 mobile and desktop acceptance
+        run: |
+          mkdir -p artifacts
+          python3 -m http.server 4173 >/tmp/v131-http.log 2>&1 &
+          PID=$!
+          trap 'kill $PID || true' EXIT
+          sleep 1
+          node v10/analysis-criterion131-browser.mjs
+      - name: Upload V131 visuals
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v131-explicit-criterion-visuals
+          path: artifacts/
+          if-no-files-found: ignore
