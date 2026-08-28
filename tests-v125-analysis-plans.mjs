@@ -56,7 +56,10 @@ assert.match(sheet,/المذكر والمؤنث/);
 assert.match(sheet,/مقترحة ولم تُنفذ بعد/);
 
 const final76=fs.readFileSync('v10/final76.js','utf8');
-assert.match(final76,/analysisPlansPanel125/,'يجب أن تظهر الخطط في الشاشة النهائية لتحليل النتائج');
-assert.match(final76,/bindAnalysisPlans125/,'يجب ربط زر إنشاء الخطة بحالة التحليل الحالية');
+assert.match(final76,/analysisPlansPanel131/,'الشاشة النهائية يجب أن تمر عبر بوابة V131 قبل إظهار الخطط');
+assert.match(final76,/bindAnalysisPlans131/,'ربط الخطط يجب أن يمر عبر بوابة المحك الصريح');
+const gate131=fs.readFileSync('v10/analysis-plans131.js','utf8');
+assert.match(gate131,/analysisPlansPanel125/,'V125 تبقى مولد الخطط المعتمد عند وجود محك صريح');
+assert.match(gate131,/bindAnalysisPlans125/,'V125 تبقى مسؤولة عن ربط أزرار الخطة بعد اجتياز بوابة V131');
 
-console.log('V125 analysis plans PASS: actual-score targeting, optional names, no invented skill, disjoint remedial/enrichment, and no false impact claim.');
+console.log('V125 analysis plans regression PASS beneath V131 explicit-criterion gate.');
