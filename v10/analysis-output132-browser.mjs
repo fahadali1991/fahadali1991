@@ -19,6 +19,8 @@ try{
   assert.match(await page.locator('.analysisBundlePages132').innerText(),/خطة إثرائية مقترحة/);
   assert.match(await page.locator('.analysisBundlePages132').innerText(),/أحمد/);
   assert.match(await page.locator('.analysisBundlePages132').innerText(),/المذكر والمؤنث/);
+  assert.match(await page.locator('.analysisApproval113').innerText(),/مدير المدرسة/);
+  assert.match(await page.locator('.analysisApproval113').innerText(),/معلم اللغة العربية/);
 
   await page.locator('[data-analysis-output132="remedial"]').uncheck();
   await page.waitForTimeout(80);
@@ -37,10 +39,18 @@ try{
   await page.screenshot({path:`artifacts/v132-analysis-output-${label}.png`,fullPage:true});
   if(label==='desktop'){
    await page.emulateMedia({media:'print'});
+   const sheets=page.locator('.analysisBundleSheet132');assert.equal(await sheets.count(),4);
+   for(let i=0;i<4;i++){
+    const g=await sheets.nth(i).evaluate(el=>({scrollHeight:el.scrollHeight,clientHeight:el.clientHeight,top:el.getBoundingClientRect().top,bottom:el.getBoundingClientRect().bottom,footerBottom:el.querySelector('.bundleFooter132')?.getBoundingClientRect().bottom}));
+    assert.ok(g.scrollHeight<=g.clientHeight+3,`sheet ${i+1}: content overflows fixed A4 box: ${JSON.stringify(g)}`);
+    assert.ok(g.footerBottom<=g.bottom+1,`sheet ${i+1}: footer escaped A4 box`);
+   }
    const pdf=await page.pdf({path:'artifacts/v132-analysis-output-model.pdf',printBackground:true,preferCSSPageSize:true});
    assert.ok(pdf.length>20000,'النموذج الطباعي يجب أن ينتج PDF فعليًا ذا محتوى');
+   const pageCount=(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length;
+   assert.equal(pageCount,4,`النموذج الكامل يجب أن ينتج 4 صفحات PDF فعلية، لا ${pageCount}`);
   }
   await page.close();
  }
- console.log('V132 browser acceptance PASS: 4-page selectable model, mobile + desktop + printable PDF artifact.');
+ console.log('V132 browser acceptance PASS: selectable 4-page model, mobile + desktop + exact 4-page printable PDF.');
 }finally{await browser.close()}
