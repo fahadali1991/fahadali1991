@@ -15,6 +15,9 @@ assert.equal(s.metadata.familyDetails.actionStatus,'مخطط للتنفيذ','ا
 assert.match(s.metadata.familyDetails.action,/إعداد خطة علاجية/);
 assert.match(s.metadata.familyDetails.action,/إعداد خطة إثرائية/);
 assert.match(s.metadata.familyDetails.follow,/إعادة القياس/);
+const routedAfterOutputs=routeNextQuestion106(s,matrix106(s));
+assert.equal(routedAfterOutputs.done,true,'بعد اختيار المخرجات لا يجوز إعادة سؤال هل نُفذ إجراء بعد التحليل');
+assert.notEqual(routedAfterOutputs.question?.id,'actionStatus');
 
 const supplements=analysisSupplementPages128(s);
 assert.equal((supplements.match(/class="pdfSheet107/g)||[]).length,3,'العلاجية والإثرائية والتصنيف كل منها صفحة مستقلة');
@@ -49,4 +52,4 @@ const home=landing();for(const id of ['classification','remedial','enrichment'])
 assert.ok(ENTRY.classification&&ENTRY.remedial&&ENTRY.enrichment);
 assert.equal(INTENT_TO_TYPE.classification,'تحليل نتائج');assert.equal(INTENT_TO_TYPE.remedial,'خطة');assert.equal(INTENT_TO_TYPE.enrichment,'خطة');
 
-console.log('V128 analysis output pack PASS: one input -> selected outputs, four-page analysis pack, direct classification, and standalone student plans.');
+console.log('V128 analysis output pack PASS: one input -> selected outputs, old action-status question skipped, four-page analysis pack, direct classification, and standalone student plans.');
