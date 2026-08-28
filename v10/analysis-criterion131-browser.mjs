@@ -7,19 +7,24 @@ try{
  for(const [label,viewport] of cases){
   const page=await browser.newPage({viewport});
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  // Use a raw same-origin resource so the production app cannot redraw the isolated harness.
-  await page.goto('http://127.0.0.1:4173/v10/analysis-data131.js?v=131',{waitUntil:'domcontentloaded'});
-  await page.evaluate(async()=>{
-   const mod=await import('/v10/analysis-data131.js?v=131');
-   window.__s131={classification:{type:'تحليل نتائج'},stage:'متوسط',grades:['الأول المتوسط'],metadata:{analysis:{maxScore:'',masteryPercent:'70',scores:[],names:[],rawRows:'',entryMode:'paste'},familyMeta111:{assessmentType:'اختبار تشخيصي'},familyDetails:{subject94:'اللغة العربية'}}};
-   document.body.innerHTML='<main><div data-analysis-slot113></div><div data-adaptive-zone><input data-family-field="basis"></div></main>';
-   mod.bindAnalysisData131(window.__s131);mod.renderAnalysisSlot131();
+  await page.goto('http://127.0.0.1:4173/v10/analysis-criterion131-fixture.html',{waitUntil:'domcontentloaded'});
+  const diagnostics=await page.evaluate(async()=>{
+   try{
+    const mod=await import('/v10/analysis-data131.js?v=131');
+    window.__s131={classification:{type:'تحليل نتائج'},stage:'متوسط',grades:['الأول المتوسط'],metadata:{analysis:{maxScore:'',masteryPercent:'70',scores:[],names:[],rawRows:'',entryMode:'paste'},familyMeta111:{assessmentType:'اختبار تشخيصي'},familyDetails:{subject94:'اللغة العربية'}}};
+    mod.bindAnalysisData131(window.__s131);mod.renderAnalysisSlot131();
+    await new Promise(r=>setTimeout(r,20));
+    return{ok:true,slot:document.querySelector('[data-analysis-slot113]')?.innerHTML||'',body:document.body.innerText};
+   }catch(e){return{ok:false,error:String(e?.stack||e)}}
   });
-  await page.waitForSelector('[data-analysis-host113]');
+  assert.equal(diagnostics.ok,true,`${label}: fixture import/render failed ${diagnostics.error||''}`);
+  assert.ok(diagnostics.slot,`${label}: analysis slot remained empty; body=${diagnostics.body}`);
+  await page.waitForSelector('[data-analysis-host113]',{state:'visible',timeout:5000});
   const criterion=page.locator('[data-analysis-mastery120]');
   assert.equal(await criterion.inputValue(),'',`${label}: fresh legacy 70 seed must be cleared`);
-  assert.match(await criterion.locator('xpath=..').innerText(),/محك الأداء لهذا الاختبار/);
-  assert.match(await criterion.locator('xpath=..').innerText(),/اختياري/);
+  const criterionLabel=await criterion.locator('xpath=..').innerText();
+  assert.match(criterionLabel,/محك الأداء لهذا الاختبار/);
+  assert.match(criterionLabel,/اختياري/);
   await page.locator('[data-analysis-max113]').fill('٢٠');
   await page.locator('[data-analysis-rows113]').fill('أحمد ١٢\nسعد ١٦\nمحمد ١٨\nفهد ١٩');
   await page.waitForTimeout(150);
@@ -35,7 +40,7 @@ try{
   assert.match(neutral.plans,/لا توجد خطة آلية دون محك أداء/);
 
   await criterion.fill('٨٠');
-  await page.waitForTimeout(100);
+  await page.waitForTimeout(120);
   const explicit=await page.evaluate(async()=>{const d=await import('/v10/analysis-decision131.js?v=131');return{mastery:window.__s131.metadata.analysis.masteryPercent,source:window.__s131.metadata.analysis.criterionSource131,html:d.analysisDecisionPanel131(window.__s131)}});
   assert.equal(Number(explicit.mastery),80,`${label}: explicit criterion must persist`);
   assert.equal(explicit.source,'user');
