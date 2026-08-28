@@ -48,8 +48,8 @@ assert.match(unnamed,/متوسط الشعبة/);
 assert.doesNotMatch(unnamed,/بصري|سمعي|حركي/,'لا يجوز استنتاج نمط تعلم من الدرجات');
 
 const final76=fs.readFileSync('v10/final76.js','utf8');
-assert.match(final76,/analysisDecisionPanel127/,'يجب أن تظهر واجهة القرار V127 قبل الخطط');
-assert.ok(final76.indexOf('decision+plans')>=0,'التصنيف الثلاثي يجب أن يظهر قبل الخطط');
-assert.doesNotMatch(final76,/analysisStudentLevelsPanel126/,'واجهة V126 المزدحمة لا ينبغي أن تبقى في الشاشة النهائية');
+assert.match(final76,/analysisDecisionPanel130/,'واجهة القرار النهائية يجب أن تمر عبر طبقة السياسة V130');
+assert.ok(final76.indexOf('decision+plans')>=0,'التصنيف يجب أن يظل قبل الخطط');
+assert.doesNotMatch(final76,/analysisStudentLevelsPanel126/,'واجهة V126 المزدحمة لا ينبغي أن تعود إلى الشاشة النهائية');
 
-console.log('V127 analysis decision PASS: one input -> support/mastered/advanced, plan targeting, relative context, no learning-style invention.');
+console.log('V127 analysis decision regression PASS: legacy score grouping remains stable beneath the V130 policy-aware UI.');
