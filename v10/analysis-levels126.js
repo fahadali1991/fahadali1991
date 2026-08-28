@@ -1,5 +1,5 @@
 const clean=v=>String(v??'').replace(/\s+/g,' ').trim();
-const esc=v=>clean(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#039;'}[m]));
+const esc=v=>clean(v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
 const num=v=>{const n=Number(String(v??'').replace(/[٠-٩]/g,d=>'٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace('٫','.').replace(',','.'));return Number.isFinite(n)?n:null};
 function pctText(v){return `${Number(v).toFixed(1).replace(/\.0$/,'')}٪`}
 function rangeText(id,{mastery,enrichmentThreshold,priorityThreshold}){if(id==='enrichment')return `${enrichmentThreshold}٪ فأعلى`;if(id==='mastered')return mastery<enrichmentThreshold?`من ${mastery}٪ إلى أقل من ${enrichmentThreshold}٪`:`لا يوجد نطاق مستقل عند هذا الحد`;if(id==='near')return priorityThreshold<mastery?`من ${priorityThreshold}٪ إلى أقل من ${mastery}٪`:`لا يوجد نطاق مستقل عند هذا الحد`;return `أقل من ${priorityThreshold}٪`}
