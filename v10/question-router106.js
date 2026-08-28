@@ -13,7 +13,7 @@ const ORDER={
  'صيانة وتجهيزات':['reason','method','status','follow']
 };
 function answerKey(id){return id==='participation'?'observation':id}
-function resolved(ctx,id,matrix,state){if(id==='skillFocus')return Boolean(ctx.education.skill.value)||!(matrix.questions||[]).some(q=>q.id==='skillFocus');if(family(ctx)==='تحليل نتائج'&&id==='basis'&&state?.metadata?.familyMeta111?.assessmentType)return true;if(family(ctx)==='تحليل نتائج'&&id==='finding')return true;return has(ctx,answerKey(id))}
+function resolved(ctx,id,matrix,state){if(id==='skillFocus')return Boolean(ctx.education.skill.value)||!(matrix.questions||[]).some(q=>q.id==='skillFocus');if(family(ctx)==='تحليل نتائج'&&id==='basis'&&state?.metadata?.familyMeta111?.assessmentType)return true;if(family(ctx)==='تحليل نتائج'&&id==='finding')return true;if(family(ctx)==='تحليل نتائج'&&state?.metadata?.directEntry128==='classification'&&['cause','actionStatus','action','follow'].includes(id))return true;return has(ctx,answerKey(id))}
 function extras(id,f=''){
  if(id==='actionStatus'&&f==='تحليل نتائج')return{id:'actionStatus',q:'هل نُفذ إجراء بعد هذا التحليل؟',help:'اختر الحالة الحقيقية حتى لا تظهر الخطة المستقبلية وكأنها نُفذت.',opts:['نُفذ فعلًا','مخطط للتنفيذ','لم يحدد بعد'],max:1,kind:'Fact'};
  if(id==='owner')return{id:'owner',q:f==='خطة'?'من المسؤول عن تنفيذ إجراءات الخطة؟':'من المسؤول عن تنفيذ القرار أو الإجراء؟',help:'حدد المسؤولية الفعلية حتى تكون المتابعة قابلة للتنفيذ.',opts:['قائد المدرسة','وكيل المدرسة','معلم أو مجموعة معلمين','منسق أو لجنة','الموجه الطلابي','رائد النشاط','جهة أو شريك خارجي'],max:2,kind:'Fact'};
