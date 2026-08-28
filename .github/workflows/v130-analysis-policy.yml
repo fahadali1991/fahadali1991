@@ -1,0 +1,48 @@
+name: V130 Analysis Policy Gate
+on:
+  push:
+    branches: [v130-analysis-policy-integration]
+    paths:
+      - 'v10/analysis-decision130.js'
+      - 'v10/analysis-decision130-browser.mjs'
+      - 'v10/final76.js'
+      - 'tests-v130-analysis-policy.mjs'
+      - '.github/workflows/v130-analysis-policy.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'v10/analysis-decision130.js'
+      - 'v10/analysis-decision130-browser.mjs'
+      - 'v10/final76.js'
+      - 'tests-v130-analysis-policy.mjs'
+      - '.github/workflows/v130-analysis-policy.yml'
+  workflow_dispatch:
+jobs:
+  policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: V130 policy-aware analysis unit tests
+        run: node tests-v130-analysis-policy.mjs
+      - name: V130 syntax
+        run: node --check v10/analysis-decision130.js && node --check v10/analysis-decision130-browser.mjs && node --check tests-v130-analysis-policy.mjs
+      - name: Install Chromium
+        run: npm install --no-save playwright && npx playwright install --with-deps chromium
+      - name: V130 mobile and desktop acceptance
+        run: |
+          mkdir -p artifacts
+          python3 -m http.server 4173 >/tmp/v130-http.log 2>&1 &
+          PID=$!
+          trap 'kill $PID || true' EXIT
+          sleep 1
+          node v10/analysis-decision130-browser.mjs
+      - name: Upload V130 visuals
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v130-analysis-policy-visuals
+          path: artifacts/
+          if-no-files-found: ignore
