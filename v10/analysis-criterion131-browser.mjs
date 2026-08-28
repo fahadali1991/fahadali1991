@@ -7,9 +7,10 @@ try{
  for(const [label,viewport] of cases){
   const page=await browser.newPage({viewport});
   const errors=[];page.on('pageerror',e=>errors.push(e.message));
-  await page.goto('http://127.0.0.1:4173/home106.html?v=131',{waitUntil:'domcontentloaded'});
+  // Use a raw same-origin resource so the production app cannot redraw the isolated harness.
+  await page.goto('http://127.0.0.1:4173/v10/analysis-data131.js?v=131',{waitUntil:'domcontentloaded'});
   await page.evaluate(async()=>{
-   const mod=await import('./v10/analysis-data131.js?v=131');
+   const mod=await import('/v10/analysis-data131.js?v=131');
    window.__s131={classification:{type:'تحليل نتائج'},stage:'متوسط',grades:['الأول المتوسط'],metadata:{analysis:{maxScore:'',masteryPercent:'70',scores:[],names:[],rawRows:'',entryMode:'paste'},familyMeta111:{assessmentType:'اختبار تشخيصي'},familyDetails:{subject94:'اللغة العربية'}}};
    document.body.innerHTML='<main><div data-analysis-slot113></div><div data-adaptive-zone><input data-family-field="basis"></div></main>';
    mod.bindAnalysisData131(window.__s131);mod.renderAnalysisSlot131();
@@ -28,14 +29,14 @@ try{
   assert.equal(noCriterionState.source,'none');
   assert.match(noCriterionState.finding,/لم يحدد محك أداء/);
 
-  const neutral=await page.evaluate(async()=>{const d=await import('./v10/analysis-decision131.js?v=131');const p=await import('./v10/analysis-plans131.js?v=131');return{decision:d.analysisDecisionPanel131(window.__s131),plans:p.analysisPlansPanel131(window.__s131)}});
+  const neutral=await page.evaluate(async()=>{const d=await import('/v10/analysis-decision131.js?v=131');const p=await import('/v10/analysis-plans131.js?v=131');return{decision:d.analysisDecisionPanel131(window.__s131),plans:p.analysisPlansPanel131(window.__s131)}});
   assert.match(neutral.decision,/المؤشرات الكمية/);
   assert.doesNotMatch(neutral.decision,/محقق للإتقان/);
   assert.match(neutral.plans,/لا توجد خطة آلية دون محك أداء/);
 
   await criterion.fill('٨٠');
   await page.waitForTimeout(100);
-  const explicit=await page.evaluate(async()=>{const d=await import('./v10/analysis-decision131.js?v=131');return{mastery:window.__s131.metadata.analysis.masteryPercent,source:window.__s131.metadata.analysis.criterionSource131,html:d.analysisDecisionPanel131(window.__s131)}});
+  const explicit=await page.evaluate(async()=>{const d=await import('/v10/analysis-decision131.js?v=131');return{mastery:window.__s131.metadata.analysis.masteryPercent,source:window.__s131.metadata.analysis.criterionSource131,html:d.analysisDecisionPanel131(window.__s131)}});
   assert.equal(Number(explicit.mastery),80,`${label}: explicit criterion must persist`);
   assert.equal(explicit.source,'user');
   assert.match(explicit.html,/يحتاج دعمًا/);
