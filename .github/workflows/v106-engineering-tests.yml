@@ -3,6 +3,7 @@ on:
   push:
     branches: [v106-engineering-foundation, v106-adaptive-ui, v109-main-clean, v109-workspace-cleanup, v110-deep-acceptance-lab, v110-visible-description-fix, v110-2-acceptance-browser, v113-canonical-recovery, main]
     paths:
+      - 'index.html'
       - 'v10/**'
       - 'home106.html'
       - 'tests-v120-committee-fixes.mjs'
@@ -12,6 +13,7 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - 'index.html'
       - 'v10/**'
       - 'home106.html'
       - 'tests-v120-committee-fixes.mjs'
@@ -59,6 +61,13 @@ jobs:
         run: node tests-v122-analysis-contract.mjs
       - name: Install Chromium acceptance runtime
         run: npm install --no-save playwright && npx playwright install --with-deps chromium
+      - name: V124 root entrypoint — mobile and desktop must reach tested V123 app
+        run: |
+          python3 -m http.server 4173 >/tmp/school-engine-root124-http.log 2>&1 &
+          PID=$!
+          trap 'kill $PID || true' EXIT
+          sleep 1
+          node v10/root-entry124-tests.mjs
       - name: V110.2 real browser mobile and desktop journeys
         run: |
           python3 -m http.server 4173 >/tmp/school-engine-http.log 2>&1 &
@@ -81,7 +90,7 @@ jobs:
           path: artifacts/
           if-no-files-found: ignore
       - name: Browser module syntax checks
-        run: node --check v10/family-details106.js && node --check v10/family-details109.js && node --check v10/subject-selector109.js && node --check v10/matrix106.js && node --check v10/question-router106.js && node --check v10/source-contract109.js && node --check v10/document-repository106.js && node --check v10/storage-v53.js && node --check v10/workspace109.js && node --check v10/app103.js && node --check v10/pdf-schema107.js && node --check v10/pdf-layout107.js && node --check v10/pdf-model107.js && node --check v10/pdf-renderer107.js && node --check v10/pdf-analysis113.js && node --check v10/analysis-data113.js && node --check v10/canonical-ux113-tests.js && node --check v10/title108.js && node --check v10/title-page108.js && node --check v10/spelling108.js && node --check v10/goals76.js && node --check v10/generators106.js && node --check v10/deep-acceptance110-tests.js && node --check v10/description-texts80.js && node --check v10/description-variants88.js && node --check v10/visible-description110-tests.js && node --check v10/acceptance1102-tests.js && node --check v10/browser1102-tests.mjs && node --check v10/analysis-visual123-tests.mjs && node --check tests-v120-committee-fixes.mjs && node --check tests-v121-analysis-release.mjs && node --check tests-v122-analysis-contract.mjs
+        run: node --check v10/family-details106.js && node --check v10/family-details109.js && node --check v10/subject-selector109.js && node --check v10/matrix106.js && node --check v10/question-router106.js && node --check v10/source-contract109.js && node --check v10/document-repository106.js && node --check v10/storage-v53.js && node --check v10/workspace109.js && node --check v10/app103.js && node --check v10/pdf-schema107.js && node --check v10/pdf-layout107.js && node --check v10/pdf-model107.js && node --check v10/pdf-renderer107.js && node --check v10/pdf-analysis113.js && node --check v10/analysis-data113.js && node --check v10/canonical-ux113-tests.js && node --check v10/title108.js && node --check v10/title-page108.js && node --check v10/spelling108.js && node --check v10/goals76.js && node --check v10/generators106.js && node --check v10/deep-acceptance110-tests.js && node --check v10/description-texts80.js && node --check v10/description-variants88.js && node --check v10/visible-description110-tests.js && node --check v10/acceptance1102-tests.js && node --check v10/browser1102-tests.mjs && node --check v10/root-entry124-tests.mjs && node --check v10/analysis-visual123-tests.mjs && node --check tests-v120-committee-fixes.mjs && node --check tests-v121-analysis-release.mjs && node --check tests-v122-analysis-contract.mjs
       - name: Existing V85 regression tests
         run: node --experimental-default-type=module v10/run-context85-tests.js
       - name: Canonical and workspace layers must not use sessionStorage
