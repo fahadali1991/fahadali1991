@@ -15,7 +15,7 @@ async function runJourney({label,viewport,exerciseReload=false}){
  try{
   await page.goto(base,{waitUntil:'networkidle'});
   await page.locator('[data-entry="smart"]').first().click();
-  await page.locator('#raw').fill('سويت تحليل نتايج عربي اول متوسط ب 20 طالب الفصل الأول اختبار فترة');
+  await page.locator('#raw').fill('سويت تحليل نتايج عربي اول متوسط ب 20 طالب');
   await page.locator('[data-action="analyze"]').click();
   const fam=page.locator('[data-type]').filter({hasText:'تحليل نتائج'}).first();if(!(await fam.getAttribute('class'))?.includes('on'))await fam.click();
   if(!(await page.locator('[data-audience="الطلاب"].on').count()))await page.locator('[data-audience="الطلاب"]').click();
@@ -52,7 +52,7 @@ async function runJourney({label,viewport,exerciseReload=false}){
    const choice=host.locator('[data-family-meta-choice111]').first();assert.ok(await choice.count(),`${label}/${id}: missing metadata choice`);await choice.click();
    await host.locator('[data-family-meta-next111]').click();
   }
-  assert.deepEqual(seenMeta,expectedMetaOrder,`${label}: analysis metadata order mismatch: ${seenMeta.join(' > ')}`);
+  assert.deepEqual(seenMeta,expectedMetaOrder,`${label}: analysis metadata order mismatch when term and assessment are both missing: ${seenMeta.join(' > ')}`);
 
   const data=page.locator('[data-analysis-host113]').first();assert.ok(await data.isVisible(),`${label}: analysis data panel missing`);
   await data.locator('[data-analysis-max113]').fill('١٠');
