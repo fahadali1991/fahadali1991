@@ -32,7 +32,9 @@ const forty=analysisDecisionModel130(state({scores:[16,16,16,16,12,12,12,12,12,1
 assert.equal(forty.cohort.band,'reteach','أقل من 50٪ => إعادة تدريس أوسع');
 
 const final76=fs.readFileSync('v10/final76.js','utf8');
-assert.match(final76,/analysisDecisionPanel130/);
-assert.doesNotMatch(final76,/analysisDecisionPanel127\(s\)/,'لا ينبغي أن تتجاوز الشاشة النهائية طبقة السياسة الجديدة');
+assert.match(final76,/analysisDecisionPanel131/,'V131 هو بوابة التكامل النهائية بعد V130');
+const layer131=fs.readFileSync('v10/analysis-decision131.js','utf8');
+assert.match(layer131,/analysisDecisionModel130/,'V130 يجب أن يبقى طبقة السياسة عند وجود محك صريح');
+assert.doesNotMatch(final76,/analysisDecisionPanel127\(s\)/,'لا ينبغي أن تتجاوز الشاشة النهائية طبقات السياسة');
 
-console.log('V130 analysis policy PASS: diagnostic baseline, no system grade leakage, cohort teaching bands, and policy-aware final UI.');
+console.log('V130 analysis policy regression PASS beneath V131 explicit-criterion gate.');
