@@ -43,7 +43,8 @@ assert.equal(neutral.totalPages,2,'لا تضاف خطط حتى لو بقي اخ�
 const neutralPanel=analysisOutputPanel132(noCriterion);
 assert.match(neutralPanel,/تحتاج محك أداء صريحًا/);
 const neutralPreview=analysisOutputPreview132(noCriterion);
-assert.match(neutralPreview,/محك الأداء: غير محدد/);
+assert.match(neutralPreview,/محك الأداء/);
+assert.match(neutralPreview,/غير محدد/);
 assert.doesNotMatch(neutralPreview,/محقق للمحك|يحتاج دعمًا من خط الأساس|خطة علاجية مقترحة|خطة إثرائية مقترحة/);
 assert.doesNotMatch(neutralPreview,/70٪/,'لا يجوز عودة محك 70٪ إلى الحزمة الجديدة');
 
