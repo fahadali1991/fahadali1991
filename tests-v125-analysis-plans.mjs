@@ -56,14 +56,11 @@ assert.match(sheet,/المذكر والمؤنث/);
 assert.match(sheet,/مقترحة ولم تُنفذ بعد/);
 
 const final76=fs.readFileSync('v10/final76.js','utf8');
-const final133=fs.readFileSync('v10/analysis-final133.js','utf8');
-const output133=fs.readFileSync('v10/analysis-output133.js','utf8');
-assert.match(final76,/analysisFinalPanel133/,'الشاشة النهائية لتحليل النتائج يجب أن تمر عبر V133');
-assert.match(final76,/analysisOutputPanel133/,'مخرجات الخطط والطباعة يجب أن تمر عبر V133');
-for(const source of [final133,output133]){
- assert.match(source,/explicitCriterion131/,'V133 يجب أن يمنع الخطط الآلية دون محك أداء صريح');
- assert.match(source,/analysisPlanModels125/,'V125 يبقى مولد نموذج الخطط عند اجتياز بوابة المحك الصريح');
-}
-assert.doesNotMatch(final76,/analysisPlansPanel125|analysisPlansPanel131/,'لا تعاد لوحات الخطط القديمة إلى الشاشة النهائية؛ V133 يعرض الخطوة والخطط المشتقة ضمن إخراجه الموحد');
+const output134=fs.readFileSync('v10/analysis-output134.js','utf8');
+assert.match(final76,/analysisFinalPanel134/,'الشاشة النهائية لتحليل النتائج يجب أن تمر عبر V134');
+assert.match(final76,/analysisOutputPanel134/,'مخرجات الخطط والطباعة يجب أن تمر عبر V134');
+assert.match(output134,/explicitCriterion131/,'V134 يجب أن يمنع الخطط الآلية في التحليل الكامل دون مستوى إتقان مستهدف صريح');
+assert.match(output134,/analysisPlanModels125/,'V125 يبقى مولد نموذج الخطط عند اجتياز بوابة مستوى الإتقان المستهدف');
+assert.doesNotMatch(final76,/analysisPlansPanel125|analysisPlansPanel131/,'لا تعاد لوحات الخطط القديمة إلى الشاشة النهائية؛ V134 يعرض الخطط المشتقة ضمن إخراجه الموحد');
 
-console.log('V125 analysis plans regression PASS: targeting and no-false-impact remain intact under the V133 explicit-criterion handoff.');
+console.log('V125 analysis plans regression PASS: targeting and no-false-impact remain intact under the V134 explicit-target handoff.');
