@@ -1,5 +1,5 @@
 import {finalDocument76 as base} from './final-ui76.js?v=76';
-import {pdfPreview107,bindPdfPreview107} from './pdf-renderer107.js?v=120.1';
+import {pdfPreview107,bindPdfPreview107} from './pdf-renderer107.js?v=133';
 import {analysisOutputPanel133,bindAnalysisOutput133} from './analysis-output133.js?v=133';
 import {analysisFinalPanel133} from './analysis-final133.js?v=133';
 let bound=false;
