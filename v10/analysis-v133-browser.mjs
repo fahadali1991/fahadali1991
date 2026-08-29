@@ -71,7 +71,12 @@ async function runScenario(browser,{name,viewport}){
   const data=page.locator('[data-analysis-host113]').first();await data.waitFor({state:'visible'});
   await data.locator('[data-analysis-max113]').fill('٢٠');
   await data.locator('[data-analysis-mastery120]').fill('٨٠');
-  const expected=data.locator('[data-analysis-expected118]');if(await expected.count())await expected.fill('١٠');
+  const expected=data.locator('[data-analysis-expected118]');
+  if(await expected.count()){
+   assert.equal(await expected.getAttribute('type'),'text',`${name}: expected-count field must accept Arabic digits instead of HTML number-only parsing`);
+   await expected.fill('١٠');
+   assert.equal(await expected.inputValue(),'١٠',`${name}: Arabic expected-count digits were rejected`);
+  }
   await data.locator('[data-analysis-rows113]').fill(studentRows);
   await page.waitForTimeout(180);
   assert.match(await data.locator('.analysisLive114').textContent(),/10|١٠/,`${name}: accepted score count not visible`);
@@ -107,7 +112,7 @@ async function runScenario(browser,{name,viewport}){
   });
   assert.ok(geo.scrollHeight<=geo.clientHeight+3,`${name}: A4 analysis content clips: ${JSON.stringify(geo)}`);
   assert.ok(geo.logoTopMm!==null&&geo.logoTopMm>=14.5,`${name}: ministry logo top clear-space below 15mm: ${geo.logoTopMm}`);
-  assert.ok(Math.max(geo.logoRightMm??0,geo.logoLeftMm??0)>=14.5,`${name}: ministry logo side clear-space below 15mm`);
+  assert.ok(Math.min(geo.logoRightMm??Infinity,geo.logoLeftMm??Infinity)>=14.5,`${name}: ministry logo nearest side clear-space below 15mm: right=${geo.logoRightMm}, left=${geo.logoLeftMm}`);
   assert.ok((geo.footerBottomMm??0)>=4.5,`${name}: footer escaped print sheet`);
   const pdf=await page.pdf({format:'A4',printBackground:true,preferCSSPageSize:true,path:`artifacts/v133-analysis-${name}.pdf`});
   const pageCount=(pdf.toString('latin1').match(/\/Type\s*\/Page\b/g)||[]).length;assert.equal(pageCount,1,`${name}: default Chromium PDF should be one page, got ${pageCount}`);
@@ -117,10 +122,12 @@ async function runScenario(browser,{name,viewport}){
   await page.waitForTimeout(100);
   assert.equal(await page.locator('.analysisPages133 .analysisSheet133').count(),4,`${name}: selected derived package must be four pages`);
   const packageText=await page.locator('.analysisPages133').textContent();assert.match(packageText,/تصنيف الطلاب/);assert.match(packageText,/خطة علاجية/);assert.match(packageText,/خطة إثرائية/);
-  assert.doesNotMatch(packageText,/تم التحسن|ثبت التحسن|تحقق الأثر/,`${name}: unmeasured impact claim leaked into print`);
+  const positiveImpactClaim=/(?:تم|ثبت|أثبت|تأكد)\s+(?:التحسن|الأثر)|(?:تحقق|ثبت)\s+الأثر\s+(?:فعليًا|بالفعل|بنجاح)/;
+  assert.doesNotMatch(packageText,positiveImpactClaim,`${name}: positive unmeasured impact claim leaked into print`);
+  assert.match(packageText,/لا يسجل تحسن أو أثر|لا يثبت التحسن|لا يعد دليلًا على أثر|لا يثبت أثرًا إثرائيًا/,`${name}: impact-safety disclaimer missing`);
   assert.equal(errors.length,0,`${name}: browser errors: ${errors.join(' | ')}`);
  }catch(err){await fs.mkdir('artifacts',{recursive:true});await page.screenshot({path:`artifacts/v133-analysis-${name}-failure.png`,fullPage:true}).catch(()=>{});await fs.writeFile(`artifacts/v133-analysis-${name}-failure.txt`,String(err?.stack||err));throw err}finally{await context.close()}
 }
 
 const browser=await chromium.launch({headless:true});
-try{for(const scenario of scenarios)await runScenario(browser,scenario);console.log('V133 browser PASS: fast Analysis journey, policy result, one-page A4 default, optional derived pages, mobile/desktop and no overflow.')}finally{await browser.close()}
+try{for(const scenario of scenarios)await runScenario(browser,scenario);console.log('V133 browser PASS: fast Analysis journey, Arabic-number entry, policy result, one-page A4 default, optional derived pages, mobile/desktop and no overflow.')}finally{await browser.close()}
