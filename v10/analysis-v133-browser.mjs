@@ -122,7 +122,7 @@ async function runScenario(browser,{name,viewport}){
   await page.waitForTimeout(100);
   assert.equal(await page.locator('.analysisPages133 .analysisSheet133').count(),4,`${name}: selected derived package must be four pages`);
   const packageText=await page.locator('.analysisPages133').textContent();assert.match(packageText,/تصنيف الطلاب/);assert.match(packageText,/خطة علاجية/);assert.match(packageText,/خطة إثرائية/);
-  const positiveImpactClaim=/(?:تم|ثبت|أثبت|تأكد)\s+(?:التحسن|الأثر)|(?:تحقق|ثبت)\s+الأثر\s+(?:فعليًا|بالفعل|بنجاح)/;
+  const positiveImpactClaim=/(?:^|[\s:،؛.])(?:تم|ثبت|أثبت|تأكد)\s+(?:وجود\s+)?(?:التحسن|الأثر)|(?:^|[\s:،؛.])تحقق\s+الأثر\s+(?:فعليًا|بالفعل|بنجاح)/m;
   assert.doesNotMatch(packageText,positiveImpactClaim,`${name}: positive unmeasured impact claim leaked into print`);
   assert.match(packageText,/لا يسجل تحسن أو أثر|لا يثبت التحسن|لا يعد دليلًا على أثر|لا يثبت أثرًا إثرائيًا/,`${name}: impact-safety disclaimer missing`);
   assert.equal(errors.length,0,`${name}: browser errors: ${errors.join(' | ')}`);
