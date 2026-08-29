@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
       - name: V134 terminology, regulation, routing and output model
         run: node tests-v134-analysis-field-language.mjs
       - name: Syntax check V134 modules
@@ -21,6 +21,7 @@ jobs:
           node --check v10/analysis-target-level134.js
           node --check v10/analysis-context134.js
           node --check v10/evaluation-regulations134.js
+          node --check v10/analysis-v134-browser.mjs
           node --check v10/family-details109.js
           node --check v10/final76.js
       - name: No teacher-facing legacy terms in V134 output module
@@ -31,3 +32,20 @@ jobs:
           if(!src.includes('مستوى الإتقان المستهدف')) throw new Error('missing field-friendly target terminology');
           if(!src.includes('مستوى الأداء السابق')) throw new Error('missing prior performance terminology');
           NODE
+      - name: Install Chromium acceptance runtime
+        run: npm install --no-save playwright && npx playwright install --with-deps chromium
+      - name: V134 mobile desktop standalone and A4 acceptance
+        run: |
+          mkdir -p artifacts
+          python3 -m http.server 4173 >/tmp/v134-http.log 2>&1 &
+          PID=$!
+          trap 'kill $PID || true' EXIT
+          sleep 1
+          node v10/analysis-v134-browser.mjs
+      - name: Upload V134 review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v134-analysis-review-evidence
+          path: artifacts/
+          if-no-files-found: ignore
