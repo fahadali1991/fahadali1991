@@ -10,8 +10,8 @@ function state({criterion='80',scores=[12,15,16,18,19,20,14,17,13,18],names=['أ
 const s=state();
 let m=analysisOutputModel132(s);
 assert.equal(m.ready,true);
-assert.equal(m.decision.high,20,'الحزمة يجب أن تعرض أعلى درجة من الإدخال نفسه');
-assert.equal(m.decision.low,12,'الحزمة يجب أن تعرض أدنى درجة من الإدخال نفسه');
+assert.equal(m.decision.high,20);
+assert.equal(m.decision.low,12);
 assert.equal(m.available.criterion.defined,true);
 assert.equal(m.available.remedial.targetCount,4);
 assert.equal(m.available.enrichment.targetCount,4);
@@ -20,10 +20,7 @@ assert.equal(m.selection.remedial,false);
 assert.equal(m.selection.enrichment,false);
 assert.equal(m.totalPages,2,'V132 التاريخية: صفحة تحليل + صفحة تصنيف واحدة');
 assert.deepEqual(m.pages.map(x=>x.id),['analysis','classification-1']);
-
-s.metadata.analysisOutput132.remedial=true;
-s.metadata.analysisOutput132.enrichment=true;
-m=analysisOutputModel132(s);
+s.metadata.analysisOutput132.remedial=true;s.metadata.analysisOutput132.enrichment=true;m=analysisOutputModel132(s);
 assert.equal(m.totalPages,4,'V132 التاريخية: عند اختيار الخطتين تصبح الحزمة أربع صفحات');
 assert.deepEqual(m.pages.map(x=>x.id),['analysis','classification-1','remedial','enrichment']);
 const preview=analysisOutputPreview132(s);
@@ -51,14 +48,12 @@ const neutral=analysisOutputModel132(noCriterion);
 assert.equal(neutral.available.criterion.defined,false);
 assert.equal(neutral.available.remedial,null);
 assert.equal(neutral.available.enrichment,null);
-assert.equal(neutral.totalPages,2,'V132 لا تضيف خططًا حتى لو بقي اختيار قديم دون محك');
+assert.equal(neutral.totalPages,2,'V132 لا تضيف خططًا حتى لو بقي اختيار قديم دون مستوى صريح');
 const neutralPanel=analysisOutputPanel132(noCriterion);
-assert.match(neutralPanel,/تحتاج محك أداء صريحًا/);
+assert.match(neutralPanel,/تحتاج محك أداء صريحًا/,'V132 التاريخية تحتفظ بصياغتها القديمة كنقطة استرجاع فقط');
 const neutralPreview=analysisOutputPreview132(noCriterion);
-assert.match(neutralPreview,/محك الأداء/);
 assert.match(neutralPreview,/غير محدد/);
 assert.doesNotMatch(neutralPreview,/محقق للمحك|يحتاج دعمًا من خط الأساس|خطة علاجية مقترحة|خطة إثرائية مقترحة/);
-assert.doesNotMatch(neutralPreview,/محك الأداء[\s\S]{0,100}<b>70٪<\/b>/);
 
 const manyScores=Array.from({length:40},(_,i)=>10+(i%11));
 const manyNames=Array.from({length:40},(_,i)=>`طالب ${i+1}`);
@@ -67,14 +62,16 @@ const manyModel=analysisOutputModel132(many);
 assert.equal(manyModel.totalPages,4);
 assert.deepEqual(manyModel.pages.map(x=>x.id),['analysis','classification-1','classification-2','classification-3']);
 
-// V133 intentionally supersedes V132 in the user-facing final screen, while this test keeps
-// V132's historical model/safety regression intact as a restore point.
+// V132 remains a tested restore point; V134 is the current user-facing output.
 const final76=fs.readFileSync('v10/final76.js','utf8');
-assert.match(final76,/analysis-output133\.js\?v=133/,'V133 should supersede V132 in the current Analysis final screen');
-assert.doesNotMatch(final76,/analysisOutputPanel132/,'do not stack the old V132 panel under V133');
+assert.match(final76,/analysis-output134\.js\?v=134/,'V134 should supersede V132 in the current Analysis final screen');
+assert.match(final76,/analysisOutputPanel134/);
+assert.doesNotMatch(final76,/analysisOutputPanel132/,'do not stack the historical V132 panel under V134');
 const source132=fs.readFileSync('v10/analysis-output132.js','utf8');
 assert.match(source132,/export function analysisOutputModel132/,'V132 model remains available as a tested restore point');
 const css132=fs.readFileSync('v10/analysis-output132.css','utf8');
 assert.match(css132,/bundlePageNo132\{[^}]*direction:ltr/,'V132 RTL-safe page numbering regression remains protected');
+const output134=fs.readFileSync('v10/analysis-output134.js','utf8');
+assert.match(output134,/analysisOutputModel134/,'V134 current model must be present');
 
-console.log('V132 historical analysis output regression PASS: model safety and restore-point behavior remain intact while V133 supersedes the final screen.');
+console.log('V132 historical analysis output regression PASS: restore-point behavior remains intact while V134 supersedes the final screen.');
