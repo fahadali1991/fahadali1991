@@ -18,6 +18,7 @@ on:
       - 'tests-v130-analysis-policy.mjs'
       - 'tests-v131-explicit-criterion.mjs'
       - 'tests-v132-analysis-output.mjs'
+      - 'tests-v133-analysis-flow.mjs'
       - 'tests-v133-school-profile.mjs'
       - '.github/workflows/v133-analysis-review.yml'
   pull_request:
@@ -38,6 +39,7 @@ on:
       - 'tests-v130-analysis-policy.mjs'
       - 'tests-v131-explicit-criterion.mjs'
       - 'tests-v132-analysis-output.mjs'
+      - 'tests-v133-analysis-flow.mjs'
       - 'tests-v133-school-profile.mjs'
       - '.github/workflows/v133-analysis-review.yml'
   workflow_dispatch:
@@ -55,17 +57,32 @@ jobs:
           node tests-v130-analysis-policy.mjs
           node tests-v131-explicit-criterion.mjs
           node tests-v132-analysis-output.mjs
+      - name: V133 analysis flow unit
+        run: node tests-v133-analysis-flow.mjs
       - name: V133 school profile unit
         run: node tests-v133-school-profile.mjs
       - name: V133 syntax
         run: |
           node --check v10/school-profile133.js
           node --check v10/school-profile133-browser.mjs
+          node --check v10/analysis-final133.js
+          node --check v10/analysis-output133.js
+          node --check v10/analysis-decision131.js
+          node --check v10/analysis-plans131.js
+          node --check v10/family-details109.js
+          node --check v10/question-router106.js
+          node --check v10/final76.js
+          node --check tests-v133-analysis-flow.mjs
           node --check tests-v133-school-profile.mjs
+      - name: Active V133 criterion module URL guard
+        run: |
+          if grep -n "analysis-data131.js?v=131" v10/family-details109.js v10/analysis-decision131.js v10/analysis-plans131.js v10/analysis-final133.js v10/analysis-output133.js; then
+            echo "Active V133 Analysis path must instantiate analysis-data131 through one URL only"; exit 1
+          fi
       - name: Persistent profile storage guard
         run: |
           if grep -E "sessionStorage|localStorage" v10/school-profile133.js; then
-            echo "Permanent school profile must stay in repository IndexedDB meta store"; exit 1
+            echo "Permanent school profile must stay in IndexedDB"; exit 1
           fi
       - name: Install Chromium
         run: npm install --no-save playwright && npx playwright install --with-deps chromium
