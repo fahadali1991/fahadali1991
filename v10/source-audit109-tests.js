@@ -4,8 +4,13 @@ import {routeSequence106} from './question-router106.js';
 import {SOURCE_CONTRACT109} from './source-contract109.js';
 const base=(family,subtype='')=>({raw:'عمل مدرسي موثق',classification:{type:family,subtype},metadata:{familyDetails:{},semantic101:{}},audiences:['الطلاب'],stage:'متوسط',grades:['الصف الثاني المتوسط'],attachments:[],answers:{goals:[],evidence:[]}});
 for(const [family,contract] of Object.entries(SOURCE_CONTRACT109)){
- const s=base(family,family==='خطة'?'خطة تحسين':'');const m=matrix106(s),seq=routeSequence106(s,m,14);
- for(const id of contract.required)assert.ok(seq.includes(id),`${family}: missing source-backed question ${id}; got ${seq.join(',')}`);
+ const s=base(family,family==='خطة'?'خطة تحسين':'');const m=matrix106(s),seq=routeSequence106(s,m,14),defined=new Set(m.questions.map(x=>x.id));
+ for(const id of contract.required){
+  if(family==='تحليل نتائج'&&['cause','action','follow'].includes(id)){
+   assert.ok(defined.has(id),`${family}: post-result source-backed field ${id} must remain defined`);
+   assert.ok(!seq.includes(id),`${family}: ${id} must be deferred until after the quantitative result; got ${seq.join(',')}`);
+  }else assert.ok(seq.includes(id),`${family}: missing source-backed question ${id}; got ${seq.join(',')}`);
+ }
  for(const id of contract.derived||[])assert.ok(!seq.includes(id),`${family}: derived field ${id} must not be asked as a user question; got ${seq.join(',')}`);
  assert.equal(new Set(seq).size,seq.length,`${family}: duplicate questions ${seq.join(',')}`);
  assert.ok(seq.length<=8,`${family}: too many questions ${seq.length}`);
@@ -22,8 +27,9 @@ const analysisMatrix=matrix106(analysisState);
 const analysisFollow=analysisMatrix.questions.find(x=>x.id==='follow');
 const analysisSeq=routeSequence106(analysisState,analysisMatrix,14);
 assert.notEqual(analysisFollow.kind,'MeasuredResult','future remeasurement plan is not an achieved result');
+assert.equal(analysisFollow.kind,'FollowUpPlan','analysis follow-up remains a future plan field');
 assert.ok(!analysisSeq.includes('finding'),'analysis finding is derived from scores and must not be requested from the user');
-assert.ok(analysisSeq.includes('actionStatus'),'analysis must distinguish planned action from implemented action');
+for(const id of ['cause','actionStatus','action','follow'])assert.ok(!analysisSeq.includes(id),`analysis ${id} must not be requested before showing results`);
 const pd=matrix106(base('تطوير مهني')).questions.find(x=>x.id==='application');assert.ok(pd.opts.includes('لم يبدأ التطبيق بعد'),'professional development must not force a false application claim');
 for(const subtype of ['خطة علاجية','خطة إثرائية','خطة تحسين','خطة تشغيلية']){const s=base('خطة',subtype),m=matrix106(s);assert.ok(m.questions.find(x=>x.id==='basis')?.opts?.length,`${subtype}: missing basis choices`);assert.ok(m.questions.find(x=>x.id==='follow')?.opts?.length,`${subtype}: missing follow-up choices`)}
-console.log('V109/V121 source audit: source-backed questions passed; derived analysis findings are not re-asked.');
+console.log('V109/V133 source audit PASS: Analysis source fields remain defined, derived findings are not re-asked, and interpretation/action/follow-up are deferred until after results.');
