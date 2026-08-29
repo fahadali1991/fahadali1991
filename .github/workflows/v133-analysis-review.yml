@@ -88,9 +88,9 @@ jobs:
       - name: Active V133 criterion module URL guard
         run: |
           if grep -n "analysis-data131.js?v=131" v10/family-details109.js v10/analysis-decision131.js v10/analysis-plans131.js v10/analysis-final133.js v10/analysis-output133.js; then
-            echo "Active V133 Analysis path must instantiate analysis-data131 through one URL only"; exit 1
+            echo "Active Analysis path must instantiate analysis-data131 through one URL only"; exit 1
           fi
-      - name: Active V133 cache-bust chain guard
+      - name: Active Analysis cache-bust chain guard
         run: |
           grep -q "home106.html?v=133" index.html
           grep -q "v10/app103.js?v=133" home106.html
@@ -99,8 +99,8 @@ jobs:
           grep -q "family-details68.js?v=133" v10/app88.js
           grep -q "final76.js?v=133" v10/app88.js
           grep -q "family-details109.js?v=133" v10/family-details68.js
-          grep -q "analysis-output133.js?v=133" v10/final76.js
-          grep -q "analysis-final133.js?v=133" v10/final76.js
+          grep -q "analysis-output134.js?v=134" v10/final76.js
+          grep -q "analysisFinalPanel134" v10/final76.js
       - name: No temporary writer workflow ships
         run: test ! -e .github/workflows/v133-cache-bust-patch.yml
       - name: Persistent profile storage guard
@@ -118,7 +118,7 @@ jobs:
           trap 'kill $PID || true' EXIT
           sleep 1
           node v10/school-profile133-browser.mjs
-      - name: V133 full Analysis mobile desktop and print acceptance
+      - name: Historical V133 Analysis acceptance under current V134 UI
         run: |
           mkdir -p artifacts
           python3 -m http.server 4173 >/tmp/v133-analysis-http.log 2>&1 &
