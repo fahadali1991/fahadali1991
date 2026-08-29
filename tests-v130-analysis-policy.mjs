@@ -31,10 +31,15 @@ assert.equal(eighty.cohort.band,'continue_targeted_support','80٪ من الطل�
 const forty=analysisDecisionModel130(state({scores:[16,16,16,16,12,12,12,12,12,12],names:Array.from({length:10},(_,i)=>`ط${i+1}`),assessmentType:'تقويم تكويني'}));
 assert.equal(forty.cohort.band,'reteach','أقل من 50٪ => إعادة تدريس أوسع');
 
-const final76=fs.readFileSync('v10/final76.js','utf8');
-assert.match(final76,/analysisDecisionPanel131/,'V131 هو بوابة التكامل النهائية بعد V130');
 const layer131=fs.readFileSync('v10/analysis-decision131.js','utf8');
 assert.match(layer131,/analysisDecisionModel130/,'V130 يجب أن يبقى طبقة السياسة عند وجود محك صريح');
+const final133=fs.readFileSync('v10/analysis-final133.js','utf8');
+const output133=fs.readFileSync('v10/analysis-output133.js','utf8');
+assert.match(final133,/analysisDecisionModel131/,'شاشة V133 يجب أن تمر عبر بوابة V131 ثم سياسة V130');
+assert.match(output133,/analysisDecisionModel131/,'طباعة V133 يجب أن تقرأ قرار V131 نفسه');
+const final76=fs.readFileSync('v10/final76.js','utf8');
+assert.match(final76,/analysisFinalPanel133/,'V133 هي واجهة Analysis النهائية الحالية');
+assert.match(final76,/analysisOutputPanel133/,'V133 هي حزمة الطباعة الحالية');
 assert.doesNotMatch(final76,/analysisDecisionPanel127\(s\)/,'لا ينبغي أن تتجاوز الشاشة النهائية طبقات السياسة');
 
-console.log('V130 analysis policy regression PASS beneath V131 explicit-criterion gate.');
+console.log('V130 analysis policy regression PASS beneath V131 model and V133 final/output integration.');
