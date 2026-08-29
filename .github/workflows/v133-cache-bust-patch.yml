@@ -1,0 +1,49 @@
+name: V133 Cache Bust Patch
+on:
+  push:
+    branches: [v133-analysis-deep-review]
+    paths:
+      - '.github/workflows/v133-cache-bust-patch.yml'
+permissions:
+  contents: write
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: v133-analysis-deep-review
+      - name: Patch active V133 module URLs
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          changes={
+            'index.html':[("home106.html?v=123","home106.html?v=133"),("pages-20260828-v124","pages-20260829-v133")],
+            'home106.html':[("v10/app103.js?v=120.1","v10/app103.js?v=133")],
+            'v10/app103.js':[("./app89.js?v=120.1","./app89.js?v=133")],
+            'v10/app89.js':[("./app88.js?v=120.1","./app88.js?v=133")],
+            'v10/app88.js':[("./family-details68.js?v=120.1","./family-details68.js?v=133"),("./final76.js?v=120.1","./final76.js?v=133")],
+            'v10/family-details68.js':[("./family-details109.js?v=120.1","./family-details109.js?v=133")],
+            'v10/family-details109.js':[("./family-details106.js?v=120.1","./family-details106.js?v=133")],
+            'v10/analysis-final133.js':[("./analysis-decision131.js?v=131","./analysis-decision131.js?v=133")],
+            'v10/analysis-output133.js':[("./analysis-decision131.js?v=131","./analysis-decision131.js?v=133")],
+          }
+          for name,repls in changes.items():
+            p=Path(name); text=p.read_text()
+            for old,new in repls:
+              if old not in text:
+                raise SystemExit(f'missing expected cache token in {name}: {old}')
+              text=text.replace(old,new)
+            p.write_text(text)
+          PY
+      - name: Commit cache-bust patch
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add index.html home106.html v10/app103.js v10/app89.js v10/app88.js v10/family-details68.js v10/family-details109.js v10/analysis-final133.js v10/analysis-output133.js
+          if git diff --cached --quiet; then
+            echo 'No cache-bust changes needed.'
+            exit 0
+          fi
+          git commit -m 'V133 cache-bust active Analysis module chain'
+          git push origin HEAD:v133-analysis-deep-review
