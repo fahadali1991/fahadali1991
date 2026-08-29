@@ -45,7 +45,8 @@ const neutralPanel=analysisOutputPanel133(noCriterion);
 assert.match(neutralPanel,/تحتاج محك أداء صريحًا/);
 const neutralPreview=analysisOutputPreview133(noCriterion);
 assert.match(neutralPreview,/غير محدد/);
-assert.doesNotMatch(neutralPreview,/محقق للمحك|يحتاج دعمًا من خط الأساس|خطة علاجية/);
+assert.doesNotMatch(neutralPreview,/محقق للمحك|يحتاج دعمًا من خط الأساس/);
+assert.doesNotMatch(neutralPreview,/analysisPlanPrint133|خطة علاجية مقترحة|خطة إثرائية مقترحة/,'يجوز شرح أن الخطة الآلية غير متاحة، لكن لا يجوز إنشاء صفحة خطة فعلية بلا محك');
 
 const diagnostic=analysisFinalPanel133(state());
 assert.match(diagnostic,/خط أساس تشخيصي/);
