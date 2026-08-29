@@ -39,11 +39,17 @@ assert.equal(cDecision.groupMap.support.count,1);
 assert.equal(cDecision.cohort.band,'differentiate','3 من 4 = 75٪، لذلك القرار على مستوى الشعبة تعليم متمايز');
 assert.match(analysisPlansPanel131(withCriterion),/الخطط المقترحة بناءً على نتائج التحليل/,'عند وجود محك صريح تعود الخطط المعتمدة');
 
-const final76=fs.readFileSync('v10/final76.js','utf8');
-assert.match(final76,/analysisDecisionPanel131/);
-assert.match(final76,/analysisPlansPanel131/);
 const details109=fs.readFileSync('v10/family-details109.js','utf8');
+assert.match(details109,/analysis-data131\.js\?v=133/,'واجهة الدرجات في V133 يجب أن تستخدم نسخة واحدة من بوابة المحك');
 assert.match(details109,/bindAnalysisData131/);
 assert.doesNotMatch(details109,/bindAnalysisData113\(state\)/,'واجهة الدرجات يجب أن تمر عبر V131');
+const final133=fs.readFileSync('v10/analysis-final133.js','utf8');
+const output133=fs.readFileSync('v10/analysis-output133.js','utf8');
+assert.match(final133,/analysisDecisionModel131/);
+assert.match(output133,/analysisDecisionModel131/);
+const final76=fs.readFileSync('v10/final76.js','utf8');
+assert.match(final76,/analysisFinalPanel133/);
+assert.match(final76,/analysisOutputPanel133/);
+assert.doesNotMatch(final76,/analysisDecisionPanel131\(s\)\+.*analysisPlansPanel131/,'لا تعيد V133 تكديس واجهة V131 القديمة فوق النتيجة الجديدة');
 
-console.log('V131 explicit criterion PASS: blank criterion stays neutral; explicit criterion enables decisions and plans.');
+console.log('V131 explicit criterion PASS: blank criterion stays neutral; explicit criterion enables decisions/plans; V133 consumes the same V131 model.');
