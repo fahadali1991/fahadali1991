@@ -65,6 +65,7 @@ jobs:
         run: |
           node --check v10/school-profile133.js
           node --check v10/school-profile133-browser.mjs
+          node --check v10/analysis-v133-browser.mjs
           node --check v10/analysis-final133.js
           node --check v10/analysis-output133.js
           node --check v10/analysis-decision131.js
@@ -86,14 +87,22 @@ jobs:
           fi
       - name: Install Chromium
         run: npm install --no-save playwright && npx playwright install --with-deps chromium
-      - name: V133 mobile and desktop school-profile acceptance
+      - name: V133 school-profile mobile and desktop acceptance
         run: |
           mkdir -p artifacts
-          python3 -m http.server 4173 >/tmp/v133-http.log 2>&1 &
+          python3 -m http.server 4173 >/tmp/v133-profile-http.log 2>&1 &
           PID=$!
           trap 'kill $PID || true' EXIT
           sleep 1
           node v10/school-profile133-browser.mjs
+      - name: V133 full Analysis mobile desktop and print acceptance
+        run: |
+          mkdir -p artifacts
+          python3 -m http.server 4173 >/tmp/v133-analysis-http.log 2>&1 &
+          PID=$!
+          trap 'kill $PID || true' EXIT
+          sleep 1
+          node v10/analysis-v133-browser.mjs
       - name: Upload V133 review evidence
         if: always()
         uses: actions/upload-artifact@v4
