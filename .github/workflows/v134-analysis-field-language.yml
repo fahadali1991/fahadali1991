@@ -1,0 +1,33 @@
+name: V134 Analysis Field Language Gate
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: V134 terminology, regulation, routing and output model
+        run: node tests-v134-analysis-field-language.mjs
+      - name: Syntax check V134 modules
+        run: |
+          node --check v10/analysis-output134.js
+          node --check v10/analysis-target-level134.js
+          node --check v10/analysis-context134.js
+          node --check v10/evaluation-regulations134.js
+          node --check v10/family-details109.js
+          node --check v10/final76.js
+      - name: No teacher-facing legacy terms in V134 output module
+        run: |
+          node - <<'NODE'
+          const fs=require('fs');
+          const src=fs.readFileSync('v10/analysis-output134.js','utf8');
+          if(!src.includes('مستوى الإتقان المستهدف')) throw new Error('missing field-friendly target terminology');
+          if(!src.includes('مستوى الأداء السابق')) throw new Error('missing prior performance terminology');
+          NODE
