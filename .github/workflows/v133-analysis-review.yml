@@ -25,6 +25,7 @@ on:
       - 'tests-v133-analysis-flow.mjs'
       - 'tests-v133-school-profile.mjs'
       - '.github/workflows/v133-analysis-review.yml'
+      - '.github/workflows/v133-cache-bust-patch.yml'
   pull_request:
     branches: [main]
     paths:
@@ -50,6 +51,7 @@ on:
       - 'tests-v133-analysis-flow.mjs'
       - 'tests-v133-school-profile.mjs'
       - '.github/workflows/v133-analysis-review.yml'
+      - '.github/workflows/v133-cache-bust-patch.yml'
   workflow_dispatch:
 jobs:
   review:
@@ -99,6 +101,8 @@ jobs:
           grep -q "family-details109.js?v=133" v10/family-details68.js
           grep -q "analysis-output133.js?v=133" v10/final76.js
           grep -q "analysis-final133.js?v=133" v10/final76.js
+      - name: No temporary writer workflow ships
+        run: test ! -e .github/workflows/v133-cache-bust-patch.yml
       - name: Persistent profile storage guard
         run: |
           if grep -E "sessionStorage|localStorage" v10/school-profile133.js; then
