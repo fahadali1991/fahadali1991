@@ -17,7 +17,7 @@ function neutralFinding(state){
  const a=analysisState113(state),scores=(a.scores||[]).map(finiteNumber120).filter(x=>x!==null),max=finiteNumber120(a.maxScore)||0;
  if(!scores.length||!max)return'';
  const avg=scores.reduce((x,y)=>x+y,0)/scores.length,achievement=avg/max*100;
- return `شمل التحليل ${scores.length} طالبًا، وبلغ متوسط الدرجات ${avg.toFixed(2)} من ${max} بنسبة تحصيل ${achievement.toFixed(1)}٪. لم يحدد محك أداء لهذا الاختبار؛ لذلك تقتصر القراءة على المؤشرات الكمية دون إصدار حكم إتقان أو تدخل آلي.`;
+ return `شمل التحليل ${scores.length} طالبًا، وبلغ متوسط الدرجات ${avg.toFixed(2)} من ${max} بنسبة تحصيل ${achievement.toFixed(1)}٪. لم يحدد المعلم مستوى الإتقان المستهدف لهذا الاختبار؛ لذلك تقتصر القراءة على المؤشرات الكمية دون إصدار حكم إتقان أو تدخل آلي.`;
 }
 
 function initializeCriterionSource(state){
@@ -39,7 +39,7 @@ function syncNoCriterion(state){
 function patchReadyCard(host,state){
  const b=host.querySelector('.analysisDataReady113 b');if(!b)return;
  const c=explicitCriterion131(state),old=b.textContent;
- const next=!c.defined?old.replace(/ · حد الإتقان:\s*70(?:\.0)?٪/,' · محك الأداء: غير محدد').replace(/ · حد الإتقان:\s*[^·]+/,' · محك الأداء: غير محدد'):old.replace('حد الإتقان:','محك الأداء:');
+ const next=!c.defined?old.replace(/ · حد الإتقان:\s*70(?:\.0)?٪/,' · مستوى الإتقان المستهدف: غير محدد').replace(/ · حد الإتقان:\s*[^·]+/,' · مستوى الإتقان المستهدف: غير محدد').replace(/ · محك الأداء:\s*[^·]+/,' · مستوى الإتقان المستهدف: غير محدد'):old.replace('حد الإتقان:','مستوى الإتقان المستهدف:').replace('محك الأداء:','مستوى الإتقان المستهدف:');
  if(next!==old)b.textContent=next;
 }
 
@@ -48,11 +48,11 @@ function patchEditor(host,state){
  if(expected){expected.setAttribute('type','text');expected.setAttribute('inputmode','numeric');expected.removeAttribute('min');expected.removeAttribute('step')}
  if(!input)return;
  const label=input.closest('label'),title=label?.querySelector(':scope > span'),help=label?.querySelector(':scope > small');
- setHtml(title,'محك الأداء لهذا الاختبار (%) <small>(اختياري)</small>');
- setText(help,'إذا كان للاختبار محك محدد فأدخله. إذا لم يوجد فاتركه فارغًا؛ سيستمر التحليل دون حكم إتقان أو خطة تدخل آلية.');
+ setHtml(title,'مستوى الإتقان المستهدف <small>(اختياري)</small>');
+ setText(help,'يمكنك تحديده كنسبة مئوية لهذا الاختبار. إذا لم يكن للاختبار مستوى مستهدف محدد فاتركه فارغًا؛ سيستمر التحليل دون تصنيف علاج أو إثراء آلي.');
  if(input.placeholder!=='مثال: 80')input.placeholder='مثال: 80';
  const c=explicitCriterion131(state);if(!c.defined&&input.value==='70')input.value='';
- const intro=host.querySelector('.questionHelp');setText(intro,'سيُحسب عدد الطلاب والمؤشرات الكمية من الدرجات. محك الأداء اختياري ولا يضع النظام نسبة افتراضية نيابة عن المعلم.');
+ const intro=host.querySelector('.questionHelp');setText(intro,'سيُحسب عدد الطلاب والمؤشرات الكمية من الدرجات. مستوى الإتقان المستهدف اختياري، ولا يضع النظام نسبة افتراضية نيابة عن المعلم.');
 }
 
 export function patchAnalysisData131(){
