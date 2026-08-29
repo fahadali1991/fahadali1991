@@ -29,12 +29,14 @@ async function completeMeta(page){
  }
 }
 async function ensureSubject(page){
+ const block=page.locator('.subjectBlock109').first();
+ if(await block.count()&&/اللغة العربية/.test(await block.textContent()))return;
  const hidden=page.locator('[data-family-field="subject94"]').first();
  if(await hidden.count()&&/العربية/.test(await hidden.inputValue()))return;
+ const edit=page.locator('[data-subject-edit109]').first();if(await edit.count())await edit.click();
  const arabic=page.locator('[data-subject109]').filter({hasText:/العربية|عربي|لغتي/}).first();
  if(await arabic.count())await arabic.click();
- assert.ok(await page.locator('[data-family-field="subject94"]').count(),'subject field missing');
- assert.match(await page.locator('[data-family-field="subject94"]').first().inputValue(),/العربية/,'Arabic alias was not normalized');
+ const confirmed=page.locator('.subjectBlock109').first();assert.match(await confirmed.textContent(),/اللغة العربية/,'Arabic alias was not normalized');
 }
 async function finishAdaptive(page){
  const seen=[];
