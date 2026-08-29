@@ -3,6 +3,12 @@ on:
   push:
     branches: [v133-analysis-deep-review]
     paths:
+      - 'index.html'
+      - 'home106.html'
+      - 'v10/app103.js'
+      - 'v10/app89.js'
+      - 'v10/app88.js'
+      - 'v10/family-details68.js'
       - 'v10/school-profile133.js'
       - 'v10/school-profile133-browser.mjs'
       - 'v10/analysis-**'
@@ -12,8 +18,6 @@ on:
       - 'v10/goals76.js'
       - 'v10/title-page71.js'
       - 'v10/evidence85.js'
-      - 'v10/app88.js'
-      - 'home106.html'
       - 'tests-v129-evaluation-rules.mjs'
       - 'tests-v130-analysis-policy.mjs'
       - 'tests-v131-explicit-criterion.mjs'
@@ -24,6 +28,12 @@ on:
   pull_request:
     branches: [main]
     paths:
+      - 'index.html'
+      - 'home106.html'
+      - 'v10/app103.js'
+      - 'v10/app89.js'
+      - 'v10/app88.js'
+      - 'v10/family-details68.js'
       - 'v10/school-profile133.js'
       - 'v10/school-profile133-browser.mjs'
       - 'v10/analysis-**'
@@ -33,8 +43,6 @@ on:
       - 'v10/goals76.js'
       - 'v10/title-page71.js'
       - 'v10/evidence85.js'
-      - 'v10/app88.js'
-      - 'home106.html'
       - 'tests-v129-evaluation-rules.mjs'
       - 'tests-v130-analysis-policy.mjs'
       - 'tests-v131-explicit-criterion.mjs'
@@ -80,6 +88,17 @@ jobs:
           if grep -n "analysis-data131.js?v=131" v10/family-details109.js v10/analysis-decision131.js v10/analysis-plans131.js v10/analysis-final133.js v10/analysis-output133.js; then
             echo "Active V133 Analysis path must instantiate analysis-data131 through one URL only"; exit 1
           fi
+      - name: Active V133 cache-bust chain guard
+        run: |
+          grep -q "home106.html?v=133" index.html
+          grep -q "v10/app103.js?v=133" home106.html
+          grep -q "app89.js?v=133" v10/app103.js
+          grep -q "app88.js?v=133" v10/app89.js
+          grep -q "family-details68.js?v=133" v10/app88.js
+          grep -q "final76.js?v=133" v10/app88.js
+          grep -q "family-details109.js?v=133" v10/family-details68.js
+          grep -q "analysis-output133.js?v=133" v10/final76.js
+          grep -q "analysis-final133.js?v=133" v10/final76.js
       - name: Persistent profile storage guard
         run: |
           if grep -E "sessionStorage|localStorage" v10/school-profile133.js; then
