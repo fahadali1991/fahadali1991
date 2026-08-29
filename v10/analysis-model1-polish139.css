@@ -1,0 +1,10 @@
+/* V139 — governing-reference polish: keep approved structure, remove title-line collision */
+.analysisHeader134{position:relative!important}
+.analysisTitle134{position:relative!important;z-index:2!important}
+.analysisTitle134 h1{display:inline-block!important;position:relative!important;z-index:3!important;background:#fff!important;padding:0 3mm!important;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.analysisTitle134 small{position:relative!important;z-index:3!important;background:#fff!important;display:inline-block!important;padding:0 2mm!important}
+.analysisHeader134::after{content:"";position:absolute;right:0;left:0;bottom:0;height:2px;background:var(--m1-teal,#0da9a6);z-index:1}
+@media print{
+ .analysisTitle134 h1,.analysisTitle134 small{background:#fff!important}
+ .analysisHeader134::after{background:#0da9a6!important}
+}
