@@ -10,7 +10,6 @@ function state({criterion='80',criterionMode='percent',criterionScore='',scores=
  return {classification:{type:'تحليل نتائج'},stage,grades:[grade],metadata:{directEntry134:direct,schoolName:'مدرسة حطين المتوسطة',educationOffice:'الإدارة العامة للتعليم بنجران',academicYear:'1448هـ',principalName:'مدير المدرسة',executorName:'معلم اللغة العربية',analysis:{maxScore,masteryPercent:criterion,criterionMode134:criterionMode,criterionScore134:criterionScore,resultScope134:scope,scores,names,rawRows:'',entryMode:'paste'},familyMeta111:{assessmentType,period:'الفصل الدراسي الأول',section:'ب'},familyDetails:{subject94:subject,skillFocus:'المذكر والمؤنث'}}};
 }
 
-// Field language: no teacher-facing legacy terminology in generated output.
 const s=state();
 let model=analysisOutputModel134(s);
 assert.equal(model.ready,true);
@@ -26,7 +25,6 @@ assert.match(html,/الإجراء المقترح/);
 assert.match(html,/المتابعة وإعادة القياس/);
 assert.match(html,/توزيع مستويات الأداء/);
 
-// Full analysis can derive all optional pages from the same input.
 s.metadata.analysisOutput134={classification:true,remedial:true,enrichment:true};
 model=analysisOutputModel134(s);
 assert.deepEqual(model.pages.map(x=>x.id),['analysis','classification-1','remedial','enrichment']);
@@ -37,14 +35,13 @@ assert.match(html,/الخطة العلاجية/);
 assert.match(html,/الخطة الإثرائية/);
 assert.match(html,/معدة للتنفيذ - لم تُنفذ بعد/);
 assert.match(html,/المذكر والمؤنث/);
-assert.doesNotMatch(html,/تحسن الطلاب|تحقق الأثر|ثبت التحسن/);
+assert.doesNotMatch(html,/أثبتت النتائج تحسن|تحسن الطلاب بعد تنفيذ|حقق التدخل أثرًا|أثبتت الخطة أثرًا/,'V134 must not make a positive impact claim before remeasurement');
+assert.match(html,/لا (?:يسجل|يثبت)[^.<]{0,80}(?:تحسن|أثر)/,'V134 should explicitly protect against premature impact claims');
 
-// Target can be expressed as a score while the engine uses the normalized percentage.
 const scoreTarget=state({criterion:'80',criterionMode:'score',criterionScore:'16'});
 assert.equal(targetLevelDisplay134(scoreTarget),'16 من 20 (80٪)');
 assert.match(analysisOutputPreview134(scoreTarget),/16 من 20 \(80٪\)/);
 
-// No target level => quantitative analysis only; no automatic plans.
 const neutral=state({criterion:'',criterionMode:'none'});
 neutral.metadata.analysisOutput134={classification:true,remedial:true,enrichment:true};
 model=analysisOutputModel134(neutral);
@@ -55,7 +52,6 @@ assert.match(html,/غير محدد/);
 assert.doesNotMatch(html,/الخطة العلاجية|الخطة الإثرائية/);
 assert.doesNotMatch(html,/(^|[>\s])المحك([<\s]|$)|خط الأساس/);
 
-// Regulatory success note appears only for a system-result scope.
 const systemResult=state({criterion:'',criterionMode:'none',scope:'subject_period',assessmentType:'اختبار نهائي',maxScore:'100',scores:[60,70,80,90],names:['أ','ب','ج','د']});
 const reg=regulatorySuccessNote134(systemResult);
 assert.equal(reg.applies,true);
@@ -66,7 +62,6 @@ assert.ok(reg.requirements.some(x=>/8 درجات من 40/.test(x)));
 assert.match(reg.source.title,/الإجراءات التنفيذية/);
 assert.equal(regulatorySuccessNote134(state()).applies,false,'single assessment must not receive system pass/fail rule');
 
-// Standalone pages: only the requested document is printed.
 for(const direct of ['classification','remedial','enrichment']){
  const x=state({direct});
  const mm=analysisOutputModel134(x);
@@ -78,7 +73,6 @@ for(const direct of ['classification','remedial','enrichment']){
  assert.doesNotMatch(out,/صفحة التحليل الأساسية ثابتة/);
 }
 
-// Natural-language understanding and spelling variants.
 for(const phrase of ['حللت اختبار الفترة','سويت تحليل نتيجة الاختبار','حللت نتايج الطلاب','راجعت النتائج']){
  const u=understand84(phrase);
  assert.equal(u.primary,'تحليل نتائج',`must understand: ${phrase}`);
@@ -93,7 +87,6 @@ const directEnrichment=analyze101('خطة إثرائية','enrichment');
 assert.equal(directEnrichment.classification.type,'تحليل نتائج');
 assert.equal(directEnrichment.metadata.directEntry134,'enrichment');
 
-// Integration guard.
 const final76=fs.readFileSync('v10/final76.js','utf8');
 assert.match(final76,/analysis-output134\.js\?v=134/);
 assert.match(final76,/analysisFinalPanel134/);
