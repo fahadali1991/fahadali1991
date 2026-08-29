@@ -44,7 +44,9 @@ function patchReadyCard(host,state){
 }
 
 function patchEditor(host,state){
- const input=host.querySelector('[data-analysis-mastery120]');if(!input)return;
+ const input=host.querySelector('[data-analysis-mastery120]'),expected=host.querySelector('[data-analysis-expected118]');
+ if(expected){expected.setAttribute('type','text');expected.setAttribute('inputmode','numeric');expected.removeAttribute('min');expected.removeAttribute('step')}
+ if(!input)return;
  const label=input.closest('label'),title=label?.querySelector(':scope > span'),help=label?.querySelector(':scope > small');
  setHtml(title,'محك الأداء لهذا الاختبار (%) <small>(اختياري)</small>');
  setText(help,'إذا كان للاختبار محك محدد فأدخله. إذا لم يوجد فاتركه فارغًا؛ سيستمر التحليل دون حكم إتقان أو خطة تدخل آلية.');
