@@ -14,13 +14,52 @@
 .outputOption134:has(input[data-analysis-output134="classification"]){border-right:4px solid var(--a147-mastered)}.outputOption134:has(input[data-analysis-output134="remedial"]){border-right:4px solid var(--a147-support)}.outputOption134:has(input[data-analysis-output134="enrichment"]){border-right:4px solid var(--a147-advanced)}
 .directPlanInput147{margin:12px 0;border:1px solid var(--a147-line);border-radius:15px;padding:14px;background:#fbfdfc}.directPlanInput147 h2{margin:3px 0 10px;color:var(--a147-ink)}.directPlanManual147{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.directPlanManual147[hidden]{display:none}.directPlanManual147 label:first-child{grid-column:1/-1}.directPlanManual147 label{display:block}.directPlanManual147 span{display:block;font-weight:800;color:#31574d;margin-bottom:5px}.directPlanManual147 textarea,.directPlanManual147 input{width:100%;box-sizing:border-box;border:1px solid #ccdcd6;border-radius:10px;padding:10px;background:#fff;font:inherit}.directPlanManual147 small{display:block;color:#768681;margin-top:5px}.manualPlanSummary147{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.manualPlanSummary147>div{border:1px solid var(--a147-line);border-radius:12px;padding:11px;background:#f8fbfa}.manualPlanSummary147 span{display:block;font-size:11px;color:#74837e}.manualPlanSummary147 b{color:var(--a147-ink)}
 .planProgress147{margin-top:2mm}.planProgressChoices147{display:grid;grid-template-columns:repeat(5,1fr);gap:1mm}.planProgressChoices147 span{border:1px solid #d8e4e0;border-radius:5px;padding:1.3mm;text-align:center;font-size:5.4pt;color:#3f5751;background:#fafcfc}.planProgressChoices147 span:before{content:'□';margin-left:1mm}.planNotes147{margin-top:1.4mm!important;border-bottom:1px dotted #8d9d98;padding-bottom:1mm}
+.guideLink147{border-right:3px solid #0da9a6;background:#f7fbfa;padding:1.8mm 2.2mm;margin:2mm 0;font-size:6pt;line-height:1.5}.guideLink147 b{display:block;color:#15445a;margin-bottom:.6mm}.guideLink147 span{color:#556963}
 @media(max-width:760px){.analysisDonutWrap147,.analysisNextGrid147,.directPlanManual147,.manualPlanSummary147{grid-template-columns:1fr}.analysisDonutSvg147{max-width:160px}.analysisNext147{width:100%}.directPlanManual147 label:first-child{grid-column:auto}}
 @media print{
  .analysisBands147 em,.analysisDecisionRows147 i,.analysisDonutSvg147 *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
  .analysisJourney147,.directPlanInput147{display:none!important}
- .analysisDonutWrap147{grid-template-columns:31mm 1fr;gap:3mm}.analysisDonutSvg147{max-width:31mm}.donutTotal147{font-size:18px}.donutLabel147{font-size:8px}
- .analysisBands147 .analysisBar134.support em{filter:grayscale(1);background-color:#444!important}
- .analysisBands147 .analysisBar134.mastered em{filter:grayscale(1);background-color:#aaa!important}
- .analysisBands147 .analysisBar134.advanced em{filter:grayscale(1);background-color:#727272!important}
+
+ /* A4 is a document first: larger readable type, stronger hierarchy, fuller page use. */
+ .analysisSheet134{font-size:7.25pt!important;line-height:1.48!important;color:#233a34!important;padding:12mm 12.5mm 10mm!important;box-sizing:border-box!important}
+ .analysisSheet134 .analysisHeader134{min-height:20mm!important;margin-bottom:2mm!important;padding-bottom:2mm!important;border-bottom:1px solid #c8ddd7!important}
+ .analysisSheet134 .analysisOfficialLogo114{transform:scale(1.08);transform-origin:right top}
+ .analysisSheet134 .analysisSchool134 b{font-size:8.3pt!important}.analysisSheet134 .analysisSchool134 span{font-size:6.2pt!important;line-height:1.4!important}
+ .analysisSheet134 .analysisTitle134{margin:1.4mm 0 2.5mm!important}.analysisSheet134 .analysisTitle134 h1{font-size:15.5pt!important;line-height:1.15!important;letter-spacing:0!important}.analysisSheet134 .analysisTitle134 small{font-size:6.2pt!important;letter-spacing:.15mm!important}
+ .analysisSheet134 .analysisPage134{top:9mm!important;left:10mm!important;width:7mm!important;height:7mm!important;font-size:6.2pt!important}
+ .analysisSheet134 h2{font-size:8.2pt!important;line-height:1.35!important}.analysisSheet134 p{font-size:6.7pt!important;line-height:1.6!important}
+ .analysisSheet134 .analysisBlock134{padding:2.6mm!important;border-radius:2.2mm!important}
+ .analysisSheet134 .analysisBlock134>h2{padding-bottom:1.4mm!important;margin-bottom:1.7mm!important}
+
+ /* Analysis page: fewer visual islands, larger decision zone, balanced vertical rhythm. */
+ .mainAnalysis134 .analysisMeta134{gap:1.2mm!important;margin-bottom:2mm!important}.mainAnalysis134 .analysisMeta134>div{padding:1.7mm 2mm!important;min-height:9mm!important}.mainAnalysis134 .analysisMeta134 span{font-size:5.8pt!important}.mainAnalysis134 .analysisMeta134 b{font-size:6.8pt!important}
+ .mainAnalysis134 .analysisMetrics134{gap:1.2mm!important;margin-bottom:2.5mm!important}.mainAnalysis134 .analysisMetrics134>div{padding:2mm 1.4mm!important;min-height:12mm!important}.mainAnalysis134 .analysisMetrics134 span{font-size:5.6pt!important}.mainAnalysis134 .analysisMetrics134 b{font-size:10.5pt!important;margin-top:.7mm!important}
+ .mainAnalysis134 .analysisMainGrid134{grid-template-columns:1.15fr 1fr!important;gap:2mm!important;margin-bottom:2.3mm!important}.mainAnalysis134 .analysisBands134{min-height:55mm!important}.mainAnalysis134 .analysisDecision134{min-height:55mm!important}
+ .analysisBands147 .analysisBar134{grid-template-columns:29mm 1fr 18mm!important;gap:2mm!important;margin:3mm 0!important;align-items:center!important}.analysisBands147 .analysisBar134 span{font-size:6.6pt!important;font-weight:800!important}.analysisBands147 .analysisBar134 b{font-size:6.6pt!important}.analysisBands147 .analysisBar134 i{height:5.3mm!important;border-radius:2mm!important}
+ .analysisDonutWrap147{grid-template-columns:35mm 1fr!important;gap:4mm!important;min-height:43mm!important}.analysisDonutSvg147{max-width:35mm!important}.donutTotal147{font-size:22px!important}.donutLabel147{font-size:9px!important}.analysisDecisionRows147>div{padding:2.1mm 0!important;grid-template-columns:4mm 1fr auto!important}.analysisDecisionRows147>div span,.analysisDecisionRows147>div b{font-size:6.4pt!important}.analysisDecisionRows147 i{width:3.2mm!important;height:3.2mm!important}
+ .mainAnalysis134 .analysisTwo134{gap:2mm!important;margin:2.2mm 0!important}.mainAnalysis134 .analysisTwo134 .analysisBlock134{min-height:29mm!important}
+ .mainAnalysis134 .analysisGuard134{font-size:6.2pt!important;line-height:1.55!important;padding:2.4mm 3mm!important;margin-top:2mm!important}
+
+ /* Classification: let the table own the page; notes become supporting, not dominant. */
+ .classificationSheet134 .analysisClassTop134{gap:2mm!important;margin-bottom:2.4mm!important}.classificationSheet134 .classSummaryGrid134{gap:1.5mm!important}.classificationSheet134 .classSum134{padding:2.2mm!important;min-height:13mm!important}.classificationSheet134 .classSum134 span{font-size:6pt!important}.classificationSheet134 .classSum134 b{font-size:11pt!important}
+ .classificationSheet134 .analysisClassTable134{font-size:6.5pt!important}.classificationSheet134 .analysisClassTable134 .head>*{padding:2.2mm 1.4mm!important;font-size:6.2pt!important}.classificationSheet134 .analysisClassTable134 .row>*{padding:2.4mm 1.4mm!important;line-height:1.45!important}.classificationSheet134 .analysisClassTable134 .row{min-height:9.2mm!important}
+ .classificationSheet134 .analysisGuard134{font-size:6.1pt!important;padding:2.2mm 2.6mm!important;margin-top:2.5mm!important}.classificationSheet134 .guideLink147{font-size:5.8pt!important;margin-top:2.2mm!important}
+
+ /* Plans: enlarge instructional content, reduce the feeling of a compressed dashboard. */
+ .planSheet134 .planStatus134{padding:1.8mm 2.3mm!important;margin-bottom:2mm!important}.planSheet134 .planStatus134 span{font-size:5.7pt!important}.planSheet134 .planStatus134 b{font-size:6.7pt!important}
+ .planSheet134 .planMeta134{gap:1.4mm!important;margin-bottom:2.3mm!important}.planSheet134 .planMeta134>div{padding:2mm!important;min-height:12mm!important}.planSheet134 .planMeta134 span{font-size:5.7pt!important}.planSheet134 .planMeta134 b{font-size:6.8pt!important}
+ .planSheet134 .planStudents134{gap:1.2mm!important}.planSheet134 .planStudents134>span{padding:1.6mm 1.8mm!important;min-height:9mm!important}.planSheet134 .planStudents134 b{font-size:6.4pt!important}.planSheet134 .planStudents134 small{font-size:5.6pt!important}
+ .planSheet134 .analysisTwo134{gap:2mm!important;margin:2mm 0!important}.planSheet134 .analysisTwo134 .analysisBlock134{min-height:24mm!important}
+ .planSheet134 .planSteps134{gap:1mm!important}.planSheet134 .planSteps134>div{padding:2mm!important;min-height:12mm!important}.planSheet134 .planSteps134>div>b{width:6mm!important;height:6mm!important;font-size:6.5pt!important}.planSheet134 .planSteps134>div>span{font-size:6.45pt!important;line-height:1.5!important}
+ .planProgress147{margin-top:2.2mm!important}.planProgressChoices147{gap:1.2mm!important}.planProgressChoices147 span{padding:1.8mm 1mm!important;font-size:5.8pt!important;min-height:8.5mm!important;display:flex;align-items:center;justify-content:center}.planNotes147{font-size:6pt!important;margin-top:2mm!important}
+ .planSheet134 .analysisGuard134{font-size:6pt!important;line-height:1.55!important;padding:2.2mm 2.7mm!important;margin-top:2mm!important}.planSheet134 .guideLink147{font-size:5.65pt!important;margin-top:2mm!important}
+
+ /* Signatures/footer get deliberate breathing room instead of floating in empty space. */
+ .analysisSheet134 .analysisSign134{margin-top:4mm!important;min-height:18mm!important;align-items:end!important}.analysisSheet134 .analysisSign134 span{font-size:5.6pt!important}.analysisSheet134 .analysisSign134 b{font-size:6.3pt!important}.analysisSheet134 .analysisFooter134{font-size:5.3pt!important;padding-top:1.8mm!important;margin-top:2.5mm!important}
+
+ /* Same visual document, naturally legible when printed in grayscale. */
+ .analysisBands147 .analysisBar134.support em{filter:grayscale(1);background-color:#3e3e3e!important;background-image:repeating-linear-gradient(135deg,#111 0 1px,transparent 1px 3.2mm)!important}
+ .analysisBands147 .analysisBar134.mastered em{filter:grayscale(1);background-color:#b7b7b7!important;background-image:none!important}
+ .analysisBands147 .analysisBar134.advanced em{filter:grayscale(1);background-color:#777!important;background-image:radial-gradient(#222 .45mm,transparent .55mm)!important;background-size:2.1mm 2.1mm!important}
  .planProgressChoices147 span{background:#fff!important;border-color:#777!important;color:#111!important}
 }
