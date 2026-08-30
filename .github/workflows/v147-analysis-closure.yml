@@ -20,6 +20,8 @@ jobs:
           node --check v10/analysis-documents147.js
           node --check v10/analysis-render147.js
           node --check v10/analysis-journey147.js
+          node --check v10/analysis-v147-browser.mjs
+          node --check v10/family-details109.js
           node --check v10/final76.js
       - name: Existing Analysis policy regression
         run: |
@@ -39,6 +41,7 @@ jobs:
           trap 'kill $PID || true' EXIT
           sleep 1
           node v10/analysis-v134-browser.mjs
+          node v10/analysis-v147-browser.mjs
       - name: Upload V147 review evidence
         if: always()
         uses: actions/upload-artifact@v4
