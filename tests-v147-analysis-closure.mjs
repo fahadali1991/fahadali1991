@@ -12,7 +12,7 @@ for(const id of ['analysis','classification','remedial','enrichment'])assert.mat
 for(const label of ['يحتاج دعمًا','محقق للإتقان','مرشح للإثراء'])assert.match(docs,new RegExp(label),`semantic label missing: ${label}`);
 assert.match(docs,/availableAnalysisDocuments147/);
 assert.match(journey,/ماذا تريد أن تنشئ بعد ذلك/);
-assert.match(journey,/لا نطلب منك إعادة إدخال البيانات الموجودة/);
+assert.match(journey,/لن نطلب منك إعادة إدخال البيانات الموجودة/);
 assert.match(journey,/directEntry134=id/,'next document must inherit current state rather than restart');
 assert.match(render,/نسبة الطلاب في كل مستوى/);
 assert.match(render,/pattern id="p-support147"/);
