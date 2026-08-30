@@ -19,16 +19,22 @@ function gradient146(m){
  const rows=semanticRows146(m),total=Number(m?.total||0)||1;let at=0;
  return rows.map(r=>{const from=at;at+=r.count/total*100;return`${r.color} ${from}% ${at}%`}).join(',');
 }
-function harmonize146(html,m){
+function recolorDecision146(html,m){
  let out=String(html||'');
- out=out.replace(/<section class="analysisBlock134 analysisBands134">[\s\S]*?<\/section>/,bands146(m));
  out=out.replace(/background:conic-gradient\([^\"]+\)/,`background:conic-gradient(${gradient146(m)})`);
  const colors=[COLORS.support,COLORS.mastered,COLORS.advanced];let i=0;
  out=out.replace(/<i style="background:[^"]+"><\/i>/g,x=>i<colors.length?`<i style="background:${colors[i++]}"></i>`:x);
  return out;
 }
+function harmonize146(html,m){
+ let out=String(html||'');
+ out=out.replace(/<section class="analysisBlock134 analysisBands134">[\s\S]*?<\/section>/,bands146(m));
+ return recolorDecision146(out,m);
+}
 export function analysisFinalPanel146(state){
  const legacy=analysisFinalPanel134(state),model=analysisOutputModel134(state);
- if(!model?.ready||model.mode!=='analysis'||!model.criterion?.defined)return legacy;
- return harmonize146(legacy,model.decision);
+ if(!model?.ready||!model.criterion?.defined)return legacy;
+ if(model.mode==='analysis')return harmonize146(legacy,model.decision);
+ if(model.mode==='classification')return recolorDecision146(legacy,model.decision);
+ return legacy;
 }
