@@ -1,8 +1,9 @@
 import {finalDocument76 as base} from './final-ui76.js?v=76';
 import {pdfPreview107,bindPdfPreview107} from './pdf-renderer107.js?v=133';
-import {analysisOutputPanel134,bindAnalysisOutput134} from './analysis-output134.js?v=134';
+import {analysisOutputPanel134,bindAnalysisOutput134,analysisFinalPanel134} from './analysis-output134.js?v=134';
 import {analysisFinalPanel146} from './analysis-final146.js?v=146';
 import './analysis-polish134.js?v=134';
+void analysisFinalPanel134;
 let bound=false;
 export function finalDocument76(s){
  if(!bound){bindPdfPreview107(s);bound=true}else bindPdfPreview107(s);
