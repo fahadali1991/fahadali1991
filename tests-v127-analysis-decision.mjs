@@ -50,8 +50,11 @@ assert.match(unnamed,/متوسط الشعبة/);
 assert.doesNotMatch(unnamed,/بصري|سمعي|حركي/,'لا يجوز استنتاج نمط تعلم من الدرجات');
 
 const final76=fs.readFileSync('v10/final76.js','utf8');
-assert.match(final76,/analysisDecisionPanel131/,'واجهة القرار النهائية تمر عبر بوابة المحك الصريح V131');
-assert.ok(final76.indexOf('decision+plans')>=0,'التصنيف يجب أن يظل قبل الخطط');
-assert.doesNotMatch(final76,/analysisStudentLevelsPanel126/,'واجهة V126 المزدحمة لا ينبغي أن تعود إلى الشاشة النهائية');
+const final134=fs.readFileSync('v10/analysis-output134.js','utf8');
+assert.match(final76,/analysisFinalPanel134/,'واجهة التحليل النهائية يجب أن تمر عبر V134');
+assert.match(final76,/analysisOutputPanel134/,'إخراج التحليل المشتق يجب أن يمر عبر V134');
+assert.match(final134,/analysisDecisionModel131/,'V134 يجب أن يستهلك نموذج القرار المحمي بمستوى الإتقان الصريح في V131');
+assert.match(final134,/explicitCriterion131/,'V134 يجب أن يتحقق من مستوى الإتقان المستهدف قبل الحكم الآلي');
+assert.doesNotMatch(final76,/analysisDecisionPanel127|analysisDecisionPanel131|analysisStudentLevelsPanel126/,'لا ينبغي إعادة لوحات القرار القديمة إلى الشاشة النهائية');
 
-console.log('V127 analysis decision regression PASS: grouping + score extremes remain available beneath V130/V131 policy gates.');
+console.log('V127 analysis decision regression PASS: legacy grouping remains correct while V134 consumes the V131 explicit-target model.');

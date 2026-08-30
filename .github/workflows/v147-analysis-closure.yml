@@ -1,0 +1,53 @@
+name: V147 Analysis Closure Gate
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: V147 architecture and visual contract
+        run: node tests-v147-analysis-closure.mjs
+      - name: V147 syntax
+        run: |
+          node --check v10/analysis-documents147.js
+          node --check v10/analysis-render147.js
+          node --check v10/analysis-journey147.js
+          node --check v10/analysis-guide-link147.js
+          node --check v10/analysis-print-pattern147.js
+          node --check v10/analysis-v147-browser.mjs
+          node --check v10/family-details109.js
+          node --check v10/final76.js
+      - name: Existing Analysis policy regression
+        run: |
+          node tests-v129-evaluation-rules.mjs
+          node tests-v130-analysis-policy.mjs
+          node tests-v131-explicit-criterion.mjs
+          node tests-v132-analysis-output.mjs
+          node tests-v133-analysis-flow.mjs
+          node tests-v134-analysis-field-language.mjs
+      - name: Install Chromium acceptance runtime
+        run: npm install --no-save playwright && npx playwright install --with-deps chromium
+      - name: Existing mobile desktop standalone and A4 acceptance
+        run: |
+          mkdir -p artifacts
+          python3 -m http.server 4173 >/tmp/v147-http.log 2>&1 &
+          PID=$!
+          trap 'kill $PID || true' EXIT
+          sleep 1
+          node v10/analysis-v134-browser.mjs
+          node v10/analysis-v147-browser.mjs
+      - name: Upload V147 review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v147-analysis-closure-evidence
+          path: artifacts/
+          if-no-files-found: ignore

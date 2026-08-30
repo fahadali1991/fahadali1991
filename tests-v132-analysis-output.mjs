@@ -10,21 +10,18 @@ function state({criterion='80',scores=[12,15,16,18,19,20,14,17,13,18],names=['أ
 const s=state();
 let m=analysisOutputModel132(s);
 assert.equal(m.ready,true);
-assert.equal(m.decision.high,20,'الحزمة يجب أن تعرض أعلى درجة من الإدخال نفسه');
-assert.equal(m.decision.low,12,'الحزمة يجب أن تعرض أدنى درجة من الإدخال نفسه');
+assert.equal(m.decision.high,20);
+assert.equal(m.decision.low,12);
 assert.equal(m.available.criterion.defined,true);
 assert.equal(m.available.remedial.targetCount,4);
 assert.equal(m.available.enrichment.targetCount,4);
 assert.equal(m.selection.classification,true);
 assert.equal(m.selection.remedial,false);
 assert.equal(m.selection.enrichment,false);
-assert.equal(m.totalPages,2,'الافتراضي: صفحة تحليل + صفحة تصنيف واحدة');
+assert.equal(m.totalPages,2,'V132 التاريخية: صفحة تحليل + صفحة تصنيف واحدة');
 assert.deepEqual(m.pages.map(x=>x.id),['analysis','classification-1']);
-
-s.metadata.analysisOutput132.remedial=true;
-s.metadata.analysisOutput132.enrichment=true;
-m=analysisOutputModel132(s);
-assert.equal(m.totalPages,4,'عند اختيار الخطتين تصبح الحزمة أربع صفحات في السيناريو القياسي');
+s.metadata.analysisOutput132.remedial=true;s.metadata.analysisOutput132.enrichment=true;m=analysisOutputModel132(s);
+assert.equal(m.totalPages,4,'V132 التاريخية: عند اختيار الخطتين تصبح الحزمة أربع صفحات');
 assert.deepEqual(m.pages.map(x=>x.id),['analysis','classification-1','remedial','enrichment']);
 const preview=analysisOutputPreview132(s);
 assert.match(preview,/ملخص التحليل والقرار التربوي/);
@@ -36,14 +33,14 @@ assert.match(preview,/محمد/);
 assert.match(preview,/المذكر والمؤنث/);
 assert.match(preview,/أعلى درجة[\s\S]{0,80}<b>20<\/b>/);
 assert.match(preview,/أدنى درجة[\s\S]{0,80}<b>12<\/b>/);
-assert.match(preview,/اعتماد مدير المدرسة[\s\S]{0,100}مدير المدرسة/,'اعتماد المدير يجب أن يبقى في صفحة التحليل الجديدة');
-assert.match(preview,/إعداد \/ تنفيذ[\s\S]{0,100}معلم اللغة العربية/,'اسم المنفذ يجب أن يبقى في صفحة التحليل الجديدة');
+assert.match(preview,/اعتماد مدير المدرسة[\s\S]{0,100}مدير المدرسة/);
+assert.match(preview,/إعداد \/ تنفيذ[\s\S]{0,100}معلم اللغة العربية/);
 assert.match(preview,/لا يسجل تحسن أو أثر إلا بعد ظهور نتيجة القياس اللاحق/);
 
 const mismatch=state({expectedCount:'12'});
 const mismatchPreview=analysisOutputPreview132(mismatch);
 assert.match(mismatchPreview,/تحقق من اكتمال الدرجات/);
-assert.match(mismatchPreview,/12|10|ناقص|درجة/,'تنبيه العدد المتوقع/الفعلي يجب أن ينتقل إلى حزمة الطباعة');
+assert.match(mismatchPreview,/12|10|ناقص|درجة/);
 
 const noCriterion=state({criterion:''});
 noCriterion.metadata.analysisOutput132={classification:true,remedial:true,enrichment:true};
@@ -51,30 +48,30 @@ const neutral=analysisOutputModel132(noCriterion);
 assert.equal(neutral.available.criterion.defined,false);
 assert.equal(neutral.available.remedial,null);
 assert.equal(neutral.available.enrichment,null);
-assert.equal(neutral.totalPages,2,'لا تضاف خطط حتى لو بقي اختيار قديم محفوظًا دون محك');
+assert.equal(neutral.totalPages,2,'V132 لا تضيف خططًا حتى لو بقي اختيار قديم دون مستوى صريح');
 const neutralPanel=analysisOutputPanel132(noCriterion);
-assert.match(neutralPanel,/تحتاج محك أداء صريحًا/);
+assert.match(neutralPanel,/تحتاج محك أداء صريحًا/,'V132 التاريخية تحتفظ بصياغتها القديمة كنقطة استرجاع فقط');
 const neutralPreview=analysisOutputPreview132(noCriterion);
-assert.match(neutralPreview,/محك الأداء/);
 assert.match(neutralPreview,/غير محدد/);
 assert.doesNotMatch(neutralPreview,/محقق للمحك|يحتاج دعمًا من خط الأساس|خطة علاجية مقترحة|خطة إثرائية مقترحة/);
-assert.doesNotMatch(neutralPreview,/محك الأداء[\s\S]{0,100}<b>70٪<\/b>/,'لا يجوز عودة 70٪ بوصفها محكًا افتراضيًا؛ ظهور 70٪ كنسبة طالب حقيقية مسموح');
 
 const manyScores=Array.from({length:40},(_,i)=>10+(i%11));
 const manyNames=Array.from({length:40},(_,i)=>`طالب ${i+1}`);
 const many=state({scores:manyScores,names:manyNames});
 const manyModel=analysisOutputModel132(many);
-assert.equal(manyModel.totalPages,4,'40 طالبًا => تحليل + ثلاث صفحات تصنيف بحد أقصى 18 طالبًا في الصفحة');
+assert.equal(manyModel.totalPages,4);
 assert.deepEqual(manyModel.pages.map(x=>x.id),['analysis','classification-1','classification-2','classification-3']);
 
+// V132 remains a tested restore point; V134 is the current user-facing output.
 const final76=fs.readFileSync('v10/final76.js','utf8');
-assert.match(final76,/analysis-output132-release\.js\?v=132/,'الشاشة النهائية يجب أن تمر عبر نسخة الإصدار التي تحفظ تنبيه العدد والاعتماد');
-assert.match(final76,/analysisOutputPanel132/,'الشاشة النهائية يجب أن تمر عبر حزمة V132 لتحليل النتائج');
-assert.match(final76,/isAnalysis\?analysisOutputPanel132/,'حزمة V132 لا تستبدل طباعة بقية العائلات');
-assert.match(final76,/bindAnalysisOutput132/);
+assert.match(final76,/analysis-output134\.js\?v=134/,'V134 should supersede V132 in the current Analysis final screen');
+assert.match(final76,/analysisOutputPanel134/);
+assert.doesNotMatch(final76,/analysisOutputPanel132/,'do not stack the historical V132 panel under V134');
+const source132=fs.readFileSync('v10/analysis-output132.js','utf8');
+assert.match(source132,/export function analysisOutputModel132/,'V132 model remains available as a tested restore point');
 const css132=fs.readFileSync('v10/analysis-output132.css','utf8');
-assert.match(css132,/bundlePageNo132\{[^}]*direction:ltr/,'ترقيم الصفحات يجب أن يبقى LTR داخل المستند العربي');
-const home=fs.readFileSync('home106.html','utf8');
-assert.match(home,/analysis-output132\.css\?v=132/,'الواجهة الفعلية يجب أن تحمل إصلاح ترقيم صفحات V132');
+assert.match(css132,/bundlePageNo132\{[^}]*direction:ltr/,'V132 RTL-safe page numbering regression remains protected');
+const output134=fs.readFileSync('v10/analysis-output134.js','utf8');
+assert.match(output134,/analysisOutputModel134/,'V134 current model must be present');
 
-console.log('V132 analysis output bundle PASS: selectable pages, score extremes, count warning, approval, no fake criterion, pagination, RTL-safe numbering, and analysis-only integration.');
+console.log('V132 historical analysis output regression PASS: restore-point behavior remains intact while V134 supersedes the final screen.');

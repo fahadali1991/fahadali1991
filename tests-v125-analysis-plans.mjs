@@ -56,10 +56,11 @@ assert.match(sheet,/المذكر والمؤنث/);
 assert.match(sheet,/مقترحة ولم تُنفذ بعد/);
 
 const final76=fs.readFileSync('v10/final76.js','utf8');
-assert.match(final76,/analysisPlansPanel131/,'الشاشة النهائية يجب أن تمر عبر بوابة V131 قبل إظهار الخطط');
-assert.match(final76,/bindAnalysisPlans131/,'ربط الخطط يجب أن يمر عبر بوابة المحك الصريح');
-const gate131=fs.readFileSync('v10/analysis-plans131.js','utf8');
-assert.match(gate131,/analysisPlansPanel125/,'V125 تبقى مولد الخطط المعتمد عند وجود محك صريح');
-assert.match(gate131,/bindAnalysisPlans125/,'V125 تبقى مسؤولة عن ربط أزرار الخطة بعد اجتياز بوابة V131');
+const output134=fs.readFileSync('v10/analysis-output134.js','utf8');
+assert.match(final76,/analysisFinalPanel134/,'الشاشة النهائية لتحليل النتائج يجب أن تمر عبر V134');
+assert.match(final76,/analysisOutputPanel134/,'مخرجات الخطط والطباعة يجب أن تمر عبر V134');
+assert.match(output134,/explicitCriterion131/,'V134 يجب أن يمنع الخطط الآلية في التحليل الكامل دون مستوى إتقان مستهدف صريح');
+assert.match(output134,/analysisPlanModels125/,'V125 يبقى مولد نموذج الخطط عند اجتياز بوابة مستوى الإتقان المستهدف');
+assert.doesNotMatch(final76,/analysisPlansPanel125|analysisPlansPanel131/,'لا تعاد لوحات الخطط القديمة إلى الشاشة النهائية؛ V134 يعرض الخطط المشتقة ضمن إخراجه الموحد');
 
-console.log('V125 analysis plans regression PASS beneath V131 explicit-criterion gate.');
+console.log('V125 analysis plans regression PASS: targeting and no-false-impact remain intact under the V134 explicit-target handoff.');

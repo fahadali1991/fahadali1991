@@ -1,0 +1,135 @@
+name: V133 Analysis Deep Review Gate
+on:
+  push:
+    branches: [v133-analysis-deep-review]
+    paths:
+      - 'index.html'
+      - 'home106.html'
+      - 'v10/app103.js'
+      - 'v10/app89.js'
+      - 'v10/app88.js'
+      - 'v10/family-details68.js'
+      - 'v10/school-profile133.js'
+      - 'v10/school-profile133-browser.mjs'
+      - 'v10/analysis-**'
+      - 'v10/final76.js'
+      - 'v10/family-details*.js'
+      - 'v10/question-router106.js'
+      - 'v10/goals76.js'
+      - 'v10/title-page71.js'
+      - 'v10/evidence85.js'
+      - 'tests-v129-evaluation-rules.mjs'
+      - 'tests-v130-analysis-policy.mjs'
+      - 'tests-v131-explicit-criterion.mjs'
+      - 'tests-v132-analysis-output.mjs'
+      - 'tests-v133-analysis-flow.mjs'
+      - 'tests-v133-school-profile.mjs'
+      - '.github/workflows/v133-analysis-review.yml'
+      - '.github/workflows/v133-cache-bust-patch.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'index.html'
+      - 'home106.html'
+      - 'v10/app103.js'
+      - 'v10/app89.js'
+      - 'v10/app88.js'
+      - 'v10/family-details68.js'
+      - 'v10/school-profile133.js'
+      - 'v10/school-profile133-browser.mjs'
+      - 'v10/analysis-**'
+      - 'v10/final76.js'
+      - 'v10/family-details*.js'
+      - 'v10/question-router106.js'
+      - 'v10/goals76.js'
+      - 'v10/title-page71.js'
+      - 'v10/evidence85.js'
+      - 'tests-v129-evaluation-rules.mjs'
+      - 'tests-v130-analysis-policy.mjs'
+      - 'tests-v131-explicit-criterion.mjs'
+      - 'tests-v132-analysis-output.mjs'
+      - 'tests-v133-analysis-flow.mjs'
+      - 'tests-v133-school-profile.mjs'
+      - '.github/workflows/v133-analysis-review.yml'
+      - '.github/workflows/v133-cache-bust-patch.yml'
+  workflow_dispatch:
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Analysis policy regression
+        run: |
+          node tests-v129-evaluation-rules.mjs
+          node tests-v130-analysis-policy.mjs
+          node tests-v131-explicit-criterion.mjs
+          node tests-v132-analysis-output.mjs
+      - name: V133 analysis flow unit
+        run: node tests-v133-analysis-flow.mjs
+      - name: V133 school profile unit
+        run: node tests-v133-school-profile.mjs
+      - name: V133 syntax
+        run: |
+          node --check v10/school-profile133.js
+          node --check v10/school-profile133-browser.mjs
+          node --check v10/analysis-v133-browser.mjs
+          node --check v10/analysis-final133.js
+          node --check v10/analysis-output133.js
+          node --check v10/analysis-decision131.js
+          node --check v10/analysis-plans131.js
+          node --check v10/family-details109.js
+          node --check v10/question-router106.js
+          node --check v10/final76.js
+          node --check tests-v133-analysis-flow.mjs
+          node --check tests-v133-school-profile.mjs
+      - name: Active V133 criterion module URL guard
+        run: |
+          if grep -n "analysis-data131.js?v=131" v10/family-details109.js v10/analysis-decision131.js v10/analysis-plans131.js v10/analysis-final133.js v10/analysis-output133.js; then
+            echo "Active Analysis path must instantiate analysis-data131 through one URL only"; exit 1
+          fi
+      - name: Active Analysis cache-bust chain guard
+        run: |
+          grep -q "home106.html?v=133" index.html
+          grep -q "v10/app103.js?v=133" home106.html
+          grep -q "app89.js?v=133" v10/app103.js
+          grep -q "app88.js?v=133" v10/app89.js
+          grep -q "family-details68.js?v=133" v10/app88.js
+          grep -q "final76.js?v=133" v10/app88.js
+          grep -q "family-details109.js?v=133" v10/family-details68.js
+          grep -q "analysis-output134.js?v=134" v10/final76.js
+          grep -q "analysisFinalPanel134" v10/final76.js
+      - name: No temporary writer workflow ships
+        run: test ! -e .github/workflows/v133-cache-bust-patch.yml
+      - name: Persistent profile storage guard
+        run: |
+          if grep -E "sessionStorage|localStorage" v10/school-profile133.js; then
+            echo "Permanent school profile must stay in IndexedDB"; exit 1
+          fi
+      - name: Install Chromium
+        run: npm install --no-save playwright && npx playwright install --with-deps chromium
+      - name: V133 school-profile mobile and desktop acceptance
+        run: |
+          mkdir -p artifacts
+          python3 -m http.server 4173 >/tmp/v133-profile-http.log 2>&1 &
+          PID=$!
+          trap 'kill $PID || true' EXIT
+          sleep 1
+          node v10/school-profile133-browser.mjs
+      - name: Current Analysis mobile desktop and print acceptance
+        run: |
+          mkdir -p artifacts
+          python3 -m http.server 4173 >/tmp/v134-analysis-under-v133.log 2>&1 &
+          PID=$!
+          trap 'kill $PID || true' EXIT
+          sleep 1
+          node v10/analysis-v134-browser.mjs
+      - name: Upload V133 review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: v133-analysis-review-evidence
+          path: artifacts/
+          if-no-files-found: ignore
