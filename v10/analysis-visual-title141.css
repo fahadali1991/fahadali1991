@@ -1,0 +1,5 @@
+/* Keep tested DOM wording; render the governing-reference visible title. */
+.mainAnalysis134 .analysisTitle134 h1,.classificationSheet134 .analysisTitle134 h1{font-size:0!important;line-height:1!important}
+.mainAnalysis134 .analysisTitle134 h1::after{content:"تحليل نتائج التعلم";font-size:15.3pt;font-weight:800;color:var(--gov-dark,#006c66);line-height:1.2}
+.classificationSheet134 .analysisTitle134 h1::after{content:"تصنيف الطلاب";font-size:15.3pt;font-weight:800;color:var(--gov-dark,#006c66);line-height:1.2}
+@media print{.mainAnalysis134 .analysisTitle134 h1::after,.classificationSheet134 .analysisTitle134 h1::after{color:#006c66!important}}
