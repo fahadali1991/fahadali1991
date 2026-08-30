@@ -2,12 +2,12 @@
 :root{--analysis-support146:#b84b47;--analysis-mastered146:#16876f;--analysis-advanced146:#3d7eb9}
 
 /* Live analysis and printed analysis share the exact same three meanings. */
-.analysisResult134 .analysisBar134.support em,
-.mainAnalysis134 .analysisBar134.support em{background:var(--analysis-support146)!important;background-image:none!important}
-.analysisResult134 .analysisBar134.mastered em,
-.mainAnalysis134 .analysisBar134.mastered em{background:var(--analysis-mastered146)!important;background-image:none!important}
-.analysisResult134 .analysisBar134.advanced em,
-.mainAnalysis134 .analysisBar134.advanced em{background:var(--analysis-advanced146)!important;background-image:none!important}
+.analysisResult134 .analysisBands134 .analysisBar134.support em,
+.mainAnalysis134 .analysisBands134 .analysisBar134.support em{background:var(--analysis-support146)!important;background-image:none!important}
+.analysisResult134 .analysisBands134 .analysisBar134.mastered em,
+.mainAnalysis134 .analysisBands134 .analysisBar134.mastered em{background:var(--analysis-mastered146)!important;background-image:none!important}
+.analysisResult134 .analysisBands134 .analysisBar134.advanced em,
+.mainAnalysis134 .analysisBands134 .analysisBar134.advanced em{background:var(--analysis-advanced146)!important;background-image:none!important}
 
 .analysisResult134 .analysisDecisionRows134>div:nth-child(1) i,
 .mainAnalysis134 .analysisDecisionRows134>div:nth-child(1) i{background:var(--analysis-support146)!important}
