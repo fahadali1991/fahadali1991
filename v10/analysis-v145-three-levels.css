@@ -1,9 +1,14 @@
 /* V145 — one semantic palette across distribution, ratio and decision indicators. */
 :root{--v145-support:#b84b47;--v145-mastered:#16876f;--v145-advanced:#3d7eb9}
-.mainAnalysis134 .analysisBands134 .analysisBar134.support em{background-color:var(--v145-support)!important;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.22) 0 1.2mm,transparent 1.2mm 2.4mm)!important}
-.mainAnalysis134 .analysisBands134 .analysisBar134.mastered em{background-color:var(--v145-mastered)!important;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.18) 0 .7mm,transparent .7mm 2.1mm)!important}
-.mainAnalysis134 .analysisBands134 .analysisBar134.advanced em{background-color:var(--v145-advanced)!important;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.2) 0 .9mm,transparent .9mm 2.2mm)!important}
-.mainAnalysis134 .analysisBands134 .analysisBar134.support span,.mainAnalysis134 .analysisBands134 .analysisBar134.support b{color:#6f2825!important}
-.mainAnalysis134 .analysisBands134 .analysisBar134.mastered span,.mainAnalysis134 .analysisBands134 .analysisBar134.mastered b{color:#0f5a4b!important}
-.mainAnalysis134 .analysisBands134 .analysisBar134.advanced span,.mainAnalysis134 .analysisBands134 .analysisBar134.advanced b{color:#294f75!important}
-@media print{.mainAnalysis134 .analysisBands134 .analysisBar134.support em,.mainAnalysis134 .analysisBands134 .analysisBar134.mastered em,.mainAnalysis134 .analysisBands134 .analysisBar134.advanced em{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}
+/* Prefer semantic classes when present. */
+.mainAnalysis134 .analysisBands134 .analysisBar134.support em{background:var(--v145-support)!important}
+.mainAnalysis134 .analysisBands134 .analysisBar134.mastered em{background:var(--v145-mastered)!important}
+.mainAnalysis134 .analysisBands134 .analysisBar134.advanced em{background:var(--v145-advanced)!important}
+/* Acceptance fallback: V145 distribution is exactly three ordered decision levels. */
+.mainAnalysis134 .analysisBands134>div>.analysisBar134:nth-child(1) em{background:var(--v145-support)!important;background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.22) 0 1.2mm,transparent 1.2mm 2.4mm)!important}
+.mainAnalysis134 .analysisBands134>div>.analysisBar134:nth-child(2) em{background:var(--v145-mastered)!important;background-image:repeating-linear-gradient(0deg,rgba(255,255,255,.18) 0 .7mm,transparent .7mm 2.1mm)!important}
+.mainAnalysis134 .analysisBands134>div>.analysisBar134:nth-child(3) em{background:var(--v145-advanced)!important;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.2) 0 .9mm,transparent .9mm 2.2mm)!important}
+.mainAnalysis134 .analysisBands134>div>.analysisBar134:nth-child(1) span,.mainAnalysis134 .analysisBands134>div>.analysisBar134:nth-child(1) b{color:#6f2825!important}
+.mainAnalysis134 .analysisBands134>div>.analysisBar134:nth-child(2) span,.mainAnalysis134 .analysisBands134>div>.analysisBar134:nth-child(2) b{color:#0f5a4b!important}
+.mainAnalysis134 .analysisBands134>div>.analysisBar134:nth-child(3) span,.mainAnalysis134 .analysisBands134>div>.analysisBar134:nth-child(3) b{color:#294f75!important}
+@media print{.mainAnalysis134 .analysisBands134 .analysisBar134 em{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}}
