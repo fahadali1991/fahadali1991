@@ -1,0 +1,34 @@
+/* V146 — closure layer: one semantic language from live analysis to print and derivatives. */
+:root{--analysis-support146:#b84b47;--analysis-mastered146:#16876f;--analysis-advanced146:#3d7eb9}
+
+/* Live analysis and printed analysis share the exact same three meanings. */
+.analysisResult134 .analysisBar134.support em,
+.mainAnalysis134 .analysisBar134.support em{background:var(--analysis-support146)!important;background-image:none!important}
+.analysisResult134 .analysisBar134.mastered em,
+.mainAnalysis134 .analysisBar134.mastered em{background:var(--analysis-mastered146)!important;background-image:none!important}
+.analysisResult134 .analysisBar134.advanced em,
+.mainAnalysis134 .analysisBar134.advanced em{background:var(--analysis-advanced146)!important;background-image:none!important}
+
+.analysisResult134 .analysisDecisionRows134>div:nth-child(1) i,
+.mainAnalysis134 .analysisDecisionRows134>div:nth-child(1) i{background:var(--analysis-support146)!important}
+.analysisResult134 .analysisDecisionRows134>div:nth-child(2) i,
+.mainAnalysis134 .analysisDecisionRows134>div:nth-child(2) i{background:var(--analysis-mastered146)!important}
+.analysisResult134 .analysisDecisionRows134>div:nth-child(3) i,
+.mainAnalysis134 .analysisDecisionRows134>div:nth-child(3) i{background:var(--analysis-advanced146)!important}
+
+/* Derivative documents inherit the same educational meaning. */
+.analysisPlanCard125.remedial125{border-right-color:var(--analysis-support146)!important}
+.analysisPlanCard125.enrichment125{border-right-color:var(--analysis-advanced146)!important}
+.outputOption134:has(input[data-analysis-output134="remedial"]){border-right:4px solid var(--analysis-support146)}
+.outputOption134:has(input[data-analysis-output134="enrichment"]){border-right:4px solid var(--analysis-advanced146)}
+.planSheet134.remedial .model1PlanTable137 h2,.planSheet134.remedial .model1Targets137 h2{border-right-color:var(--analysis-support146)!important}
+.planSheet134.enrichment .model1PlanTable137 h2,.planSheet134.enrichment .model1Targets137 h2{border-right-color:var(--analysis-advanced146)!important}
+
+/* Direct labels keep the document understandable even when hue is unavailable. */
+.analysisBands146 .analysisBar134 span,.analysisBands146 .analysisBar134 b{font-weight:800}
+@media print{
+ .analysisBands146 .analysisBar134 em{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+ .analysisBands146 .analysisBar134.support em{border:1px solid #333!important}
+ .analysisBands146 .analysisBar134.mastered em{border:1px solid #777!important}
+ .analysisBands146 .analysisBar134.advanced em{border:1px solid #aaa!important}
+}
