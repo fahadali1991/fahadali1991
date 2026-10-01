@@ -403,3 +403,142 @@
   .analysisBands147 .analysisBar134.mastered span::before{content:"■"!important}
   .analysisBands147 .analysisBar134.advanced span::before{content:"◆"!important}
 }
+
+/* V149.1 — compact the legacy vertical-bar footprint and give the live web result the same three-panel language. */
+.mainAnalysis134.analysisV149 .analysisBands147>div,
+.analysisResult134 .analysisBands147>div{
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:flex-start!important;
+  align-items:stretch!important;
+  align-content:start!important;
+  grid-template-columns:none!important;
+  grid-auto-rows:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  padding:1.2mm .8mm .6mm!important;
+  gap:0!important;
+  border:0!important;
+  background:none!important;
+}
+.mainAnalysis134.analysisV149 .analysisBands147 .analysisBar134,
+.analysisResult134 .analysisBands147 .analysisBar134{
+  display:grid!important;
+  flex-direction:initial!important;
+  justify-content:initial!important;
+  align-items:center!important;
+  height:auto!important;
+  min-height:0!important;
+}
+.mainAnalysis134.analysisV149 .analysisBands147 .analysisBar134 i,
+.analysisResult134 .analysisBands147 .analysisBar134 i{
+  display:block!important;
+  align-items:initial!important;
+  width:auto!important;
+  margin:0!important;
+}
+.mainAnalysis134.analysisV149 .analysisBands147 .analysisBar134 em,
+.analysisResult134 .analysisBands147 .analysisBar134 em{
+  display:block!important;
+  height:100%!important;
+  margin:0!important;
+}
+.mainAnalysis134.analysisV149 .analysisMainGrid134{
+  align-items:start!important;
+}
+.mainAnalysis134.analysisV149 .analysisMainGrid134>.analysisBlock134{
+  min-height:0!important;
+  height:auto!important;
+  align-self:start!important;
+}
+.mainAnalysis134.analysisV149 .analysisBands147 .analysisBar134{
+  margin:2.15mm 0!important;
+}
+.analysisRatio149{
+  justify-content:flex-start!important;
+  align-items:stretch!important;
+}
+.mainAnalysis134.analysisV149 .analysisRatio149 .analysisDonutSvg147{
+  max-width:31mm!important;
+  margin:2.4mm auto 1.2mm!important;
+}
+.mainAnalysis134.analysisV149 .analysisDecision149 .analysisDecisionRows147{
+  gap:1.05mm!important;
+}
+.mainAnalysis134.analysisV149 .analysisDecision149 .analysisDecisionRows147>div{
+  min-height:8.2mm!important;
+  padding:1.25mm 1.5mm!important;
+}
+.analysisResult134 .analysisScreenGrid134{
+  display:grid!important;
+  grid-template-columns:minmax(0,1.3fr) minmax(160px,.72fr) minmax(210px,.95fr)!important;
+  gap:10px!important;
+  align-items:start!important;
+}
+.analysisResult134 .analysisScreenGrid134>.analysisBlock134{
+  min-width:0!important;
+  height:auto!important;
+  min-height:0!important;
+}
+.analysisResult134 .analysisBands147 .analysisBar134{
+  grid-template-columns:minmax(120px,.95fr) minmax(120px,1.8fr) minmax(78px,.65fr)!important;
+  margin:10px 0!important;
+}
+.analysisResult134 .analysisBands147 .analysisBar134 i{
+  height:14px!important;
+}
+.analysisResult134 .analysisBands147 .analysisBar134 span::before{
+  display:inline-block;
+  width:1.25em;
+  margin-left:.4em;
+  text-align:center;
+  font-weight:900;
+}
+.analysisResult134 .analysisBands147 .analysisBar134.support span::before{content:"●";color:var(--a149-support)}
+.analysisResult134 .analysisBands147 .analysisBar134.mastered span::before{content:"■";color:var(--a149-mastered)}
+.analysisResult134 .analysisBands147 .analysisBar134.advanced span::before{content:"◆";color:var(--a149-advanced)}
+.analysisRatioScreen149 .analysisDonutSvg147{
+  width:100%!important;
+  max-width:145px!important;
+  margin:12px auto 4px!important;
+}
+.analysisDecisionScreen149 .analysisDecisionRows147{
+  display:grid!important;
+  gap:7px!important;
+  padding:3px 0 0!important;
+}
+.analysisDecisionScreen149 .analysisDecisionRows147>div{
+  display:grid!important;
+  grid-template-columns:14px minmax(0,1fr) auto!important;
+  gap:8px!important;
+  align-items:center!important;
+  padding:9px!important;
+  border:1px solid var(--a149-line)!important;
+  border-right-width:4px!important;
+  border-radius:10px!important;
+  background:#fff!important;
+}
+.analysisDecisionScreen149 .analysisDecisionRows147>div.support{background:#fff7f6!important;border-right-color:var(--a149-support)!important}
+.analysisDecisionScreen149 .analysisDecisionRows147>div.mastered{background:#f5fbf9!important;border-right-color:var(--a149-mastered)!important}
+.analysisDecisionScreen149 .analysisDecisionRows147>div.advanced{background:#f5f9fd!important;border-right-color:var(--a149-advanced)!important}
+.analysisDecisionScreen149 .analysisDecisionRows147>div.target{grid-template-columns:1fr auto!important;border-right-color:#8b9c96!important;background:#fafcfc!important}
+.analysisDecisionScreen149 .analysisDecisionRows147 i{width:12px!important;height:12px!important;border:1px solid rgba(0,0,0,.24)!important}
+.analysisDecisionScreen149 .analysisDecisionRows147 .support i{border-radius:50%!important;background:var(--a149-support)!important}
+.analysisDecisionScreen149 .analysisDecisionRows147 .mastered i{border-radius:2px!important;background:var(--a149-mastered)!important}
+.analysisDecisionScreen149 .analysisDecisionRows147 .advanced i{border-radius:2px!important;background:var(--a149-advanced)!important;transform:rotate(45deg)!important}
+@media screen and (max-width:760px){
+  .analysisResult134 .analysisScreenGrid134{grid-template-columns:1fr!important}
+  .analysisResult134 .analysisBands147 .analysisBar134{
+    grid-template-columns:minmax(96px,.95fr) minmax(80px,1.55fr) minmax(64px,.65fr)!important;
+    gap:7px!important;
+    margin:8px 0!important;
+  }
+  .analysisRatioScreen149 .analysisDonutSvg147{max-width:132px!important}
+}
+@media print{
+  .mainAnalysis134.analysisV149 .analysisMainGrid134{align-items:start!important}
+  .mainAnalysis134.analysisV149 .analysisMainGrid134>.analysisBlock134{min-height:0!important;height:auto!important;align-self:start!important}
+  .mainAnalysis134.analysisV149 .analysisBands147>div{height:auto!important;min-height:0!important}
+  .mainAnalysis134.analysisV149 .analysisBands147 .analysisBar134{margin:2mm 0!important}
+  .mainAnalysis134.analysisV149 .analysisRatio149 .analysisDonutSvg147{max-width:30mm!important;margin:2mm auto 1mm!important}
+}
