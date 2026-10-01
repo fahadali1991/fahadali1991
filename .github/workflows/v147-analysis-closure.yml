@@ -26,7 +26,7 @@ jobs:
           node --check v10/analysis-print-pattern147.js
           node --check v10/analysis-v147-browser.mjs
           node --check v10/analysis-v149-visual.js
-          node --check v10/analysis-v149-browser.mjs
+          node --check v10/analysis-v149-browser.mjs\n          node --check v10/analysis-v150-committee-browser.mjs
           node --check v10/family-details109.js
           node --check v10/final76.js
       - name: Existing Analysis policy regression
@@ -48,7 +48,7 @@ jobs:
           sleep 1
           node v10/analysis-v134-browser.mjs
           node v10/analysis-v147-browser.mjs
-          node v10/analysis-v149-browser.mjs
+          node v10/analysis-v149-browser.mjs\n          node v10/analysis-v150-committee-browser.mjs
       - name: Upload V147 review evidence
         if: always()
         uses: actions/upload-artifact@v4
