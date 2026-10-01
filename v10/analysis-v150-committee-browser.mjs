@@ -120,7 +120,7 @@ try{
  const mo=await mp.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
  assert.ok(mo<=4,'390px mobile horizontal overflow '+mo+'px');
  assert.equal(await mp.locator('.analysisScreenGrid134').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,'mobile visual panels must stack');
- assert.equal(await mp.locator('.analysisMetrics134').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),3,'mobile KPIs must be readable 3×2');
+ assert.equal(await mp.locator('.analysisResult134 .analysisMetrics134').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),3,'mobile KPIs must be readable 3×2');
  assert.equal(await mp.locator('.analysisScreenGrid134>.analysisBlock134').count(),3,'mobile must keep all three analysis panels');
  await mp.screenshot({path:'artifacts/v150-committee-mobile.png',fullPage:true});
  assert.equal(mobileErrors.length,0,'mobile browser errors: '+mobileErrors.join(' | '));
