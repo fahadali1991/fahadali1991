@@ -40,9 +40,13 @@ try{
   assert.equal(await page.locator('.mainAnalysis134 .analysisMainGrid134>.analysisBlock134').count(),3,'analysis grid must have distribution + ratio + decision');
   assert.equal(await page.locator('.mainAnalysis134 .analysisRatio149').count(),1,'ratio panel missing');
   assert.equal(await page.locator('.mainAnalysis134 .analysisDecision149').count(),1,'decision panel missing');
+  assert.equal(await page.locator('.analysisResult134 .analysisScreenGrid134>.analysisBlock134').count(),3,'live Analysis must also have three visual panels');
+  assert.equal(await page.locator('.analysisResult134 .analysisRatioScreen149').count(),1,'live ratio panel missing');
   assert.equal(await page.locator('.mainAnalysis134 .analysisBar134.support').getAttribute('data-symbol149'),'●');
   assert.equal(await page.locator('.mainAnalysis134 .analysisBar134.mastered').getAttribute('data-symbol149'),'■');
   assert.equal(await page.locator('.mainAnalysis134 .analysisBar134.advanced').getAttribute('data-symbol149'),'◆');
+  const barWidths=await page.locator('.mainAnalysis134 .analysisBands147 .analysisBar134 em').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().width));
+  assert.ok(Math.max(...barWidths)-Math.min(...barWidths)>8,'semantic bar widths must reflect different percentages');
   assert.equal(await page.locator('.mainAnalysis134').evaluate(el=>getComputedStyle(el).direction),'rtl');
   await fs.mkdir('artifacts',{recursive:true});
   await page.screenshot({path:'artifacts/v149-analysis-desktop.png',fullPage:true});
@@ -56,6 +60,7 @@ try{
   const mobileOverflow=await page.evaluate(()=>document.documentElement.scrollWidth-document.documentElement.clientWidth);
   assert.ok(mobileOverflow<=4,'mobile Analysis must not create horizontal page overflow');
   assert.equal(await page.locator('.analysisScreenGrid134').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,'mobile analysis grid must collapse to one column');
+  assert.equal(await page.locator('.analysisScreenGrid134>.analysisBlock134').count(),3,'mobile must preserve all three analysis panels');
   await page.screenshot({path:'artifacts/v149-analysis-mobile.png',fullPage:true});
 
   await page.setViewportSize({width:1440,height:1100});
