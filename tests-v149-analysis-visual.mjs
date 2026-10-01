@@ -18,5 +18,7 @@ assert.match(css,/@media print[\s\S]*filter:none!important[\s\S]*background-colo
 assert.match(js,/analysisRatio149/,'V149 must split the ratio visual from the decision cards');
 assert.match(js,/analysisDecision149/,'V149 must create a dedicated decision panel');
 assert.match(js,/analysisDocMeta149/,'V149 must create the third header zone');
+assert.match(js,/splitScreenDecision149/,'screen Analysis must use the same split visual language');
+assert.match(js,/setProperty\('width',width,'important'\)/,'dynamic bar widths must override legacy vertical-chart CSS');
 assert.doesNotMatch(js,/analysisDecisionModel|explicitCriterion|masteryPercent\s*=/,'visual layer must not recalculate or rewrite assessment logic');
 console.log('V149 visual contract PASS: existing logic preserved, three-zone RTL header, three-panel analysis, and colour+shape print language are wired.');
