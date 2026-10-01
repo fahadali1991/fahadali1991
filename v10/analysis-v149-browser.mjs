@@ -42,6 +42,8 @@ try{
   assert.equal(await page.locator('.mainAnalysis134 .analysisDecision149').count(),1,'decision panel missing');
   assert.equal(await page.locator('.analysisResult134 .analysisScreenGrid134>.analysisBlock134').count(),3,'live Analysis must also have three visual panels');
   assert.equal(await page.locator('.analysisResult134 .analysisRatioScreen149').count(),1,'live ratio panel missing');
+  const liveTitleStyle=await page.locator('.analysisResult134 .analysisScreenGrid134>.analysisBlock134>h2').first().evaluate(el=>({fontSize:parseFloat(getComputedStyle(el).fontSize),color:getComputedStyle(el).color,text:el.textContent.trim()}));
+  assert.ok(liveTitleStyle.text.length>0&&liveTitleStyle.fontSize>=12,'live Analysis panel titles must be visible');
   assert.equal(await page.locator('.mainAnalysis134 .analysisBar134.support').getAttribute('data-symbol149'),'●');
   assert.equal(await page.locator('.mainAnalysis134 .analysisBar134.mastered').getAttribute('data-symbol149'),'■');
   assert.equal(await page.locator('.mainAnalysis134 .analysisBar134.advanced').getAttribute('data-symbol149'),'◆');
@@ -61,6 +63,7 @@ try{
   assert.ok(mobileOverflow<=4,'mobile Analysis must not create horizontal page overflow');
   assert.equal(await page.locator('.analysisScreenGrid134').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),1,'mobile analysis grid must collapse to one column');
   assert.equal(await page.locator('.analysisScreenGrid134>.analysisBlock134').count(),3,'mobile must preserve all three analysis panels');
+  assert.equal(await page.locator('.analysisMetrics134').evaluate(el=>getComputedStyle(el).gridTemplateColumns.split(' ').length),3,'mobile KPI cards must use a readable three-column grid');
   await page.screenshot({path:'artifacts/v149-analysis-mobile.png',fullPage:true});
 
   await page.setViewportSize({width:1440,height:1100});
