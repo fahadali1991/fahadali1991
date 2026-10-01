@@ -8,7 +8,7 @@ const js=fs.readFileSync('v10/analysis-v149-visual.js','utf8');
 
 assert.match(home,/analysis-closure147\.css\?v=147[\s\S]*analysis-v149-visual\.css\?v=149/,'V149 CSS must load after V147');
 assert.match(home,/analysis-v149-visual\.js\?v=149/,'V149 visual enhancer must load');
-assert.match(index,/home106\.html\?v=149/,'root must cache-bust to V149');
+assert.match(index,/home106\.html\?v=133/,'established root cache-bust chain must stay intact');
 assert.match(css,/grid-template-areas:"doc logo school"/,'three-zone header must be explicit');
 assert.match(css,/direction:rtl!important/,'A4 sheet must be true RTL');
 assert.match(css,/support span::before\{content:"●"/,'support must have a non-colour symbol');
