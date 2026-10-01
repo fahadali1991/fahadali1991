@@ -14,7 +14,8 @@ jobs:
         with:
           node-version: 22
       - name: V147 architecture and visual contract
-        run: node tests-v147-analysis-closure.mjs
+        run: |
+          node tests-v147-analysis-closure.mjs
           node tests-v149-analysis-visual.mjs
       - name: V147 syntax
         run: |
