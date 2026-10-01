@@ -62,6 +62,28 @@ function splitDecision149(sheet){
   decision.replaceWith(ratio,cards);
   sheet.dataset.v149Split='1';
 }
+function splitScreenDecision149(result){
+  if(!result||result.dataset.v149ScreenSplit)return;
+  const grid=q(result,'.analysisScreenGrid134');
+  const decision=grid&&q(grid,'.analysisDecision147');
+  if(!grid||!decision)return;
+  const wrap=q(decision,'.analysisDonutWrap147');
+  const donut=wrap&&q(wrap,'.analysisDonutSvg147');
+  const rows=wrap&&q(wrap,'.analysisDecisionRows147');
+  if(!donut||!rows)return;
+  const ratio=document.createElement('section');
+  ratio.className='analysisBlock134 analysisRatio149 analysisRatioScreen149';
+  const ratioTitle=document.createElement('h2');
+  ratioTitle.textContent='نسبة الطلاب في كل مستوى';
+  ratio.append(ratioTitle,donut);
+  const cards=document.createElement('section');
+  cards.className='analysisBlock134 analysisDecision149 analysisDecisionScreen149';
+  const cardsTitle=document.createElement('h2');
+  cardsTitle.textContent='مؤشرات القرار';
+  cards.append(cardsTitle,rows);
+  decision.replaceWith(ratio,cards);
+  result.dataset.v149ScreenSplit='1';
+}
 function semanticMarkers149(sheet){
   const symbols={support:'●',mastered:'■',advanced:'◆'};
   Object.entries(symbols).forEach(([id,symbol])=>{
@@ -70,6 +92,13 @@ function semanticMarkers149(sheet){
       el.dataset.level149=id;
       const marker=q(el,'i');
       if(marker)marker.setAttribute('aria-hidden','true');
+      const bar=q(el,'em');
+      if(bar){
+        const width=bar.style.width;
+        if(width)bar.style.setProperty('width',width,'important');
+        bar.style.setProperty('height','100%','important');
+        bar.style.setProperty('margin','0','important');
+      }
     });
   });
 }
@@ -80,7 +109,14 @@ function enhance149(sheet){
   semanticMarkers149(sheet);
   sheet.dataset.v149Ready='1';
 }
-function run149(){document.querySelectorAll('.analysisSheet134').forEach(enhance149)}
+function run149(){
+  document.querySelectorAll('.analysisSheet134').forEach(enhance149);
+  document.querySelectorAll('.analysisResult134').forEach(result=>{
+    splitScreenDecision149(result);
+    semanticMarkers149(result);
+    result.dataset.v149ScreenReady='1';
+  });
+}
 if(typeof document!=='undefined'){
   new MutationObserver(run149).observe(document.documentElement,{childList:true,subtree:true});
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',run149,{once:true});
