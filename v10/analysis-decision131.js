@@ -1,6 +1,6 @@
 import {analysisDecisionModel130,analysisDecisionPanel130} from './analysis-decision130.js?v=130';
 import {analysisState113} from './analysis-data113.js?v=120.1';
-import {explicitCriterion131} from './analysis-data131.js?v=131';
+import {explicitCriterion131} from './analysis-data131.js?v=133';
 import {finiteNumber120} from './input-normalization120.js?v=120.1';
 
 const clean=v=>String(v??'').replace(/\s+/g,' ').trim();

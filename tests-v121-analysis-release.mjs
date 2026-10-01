@@ -37,18 +37,10 @@ assert.match(preview,/2 سطر مرفوض/);
 
 const matrix={questions:[{id:'cause',q:'سبب؟',opts:['سبب مدعوم','لا يوجد'],max:1},{id:'action',q:'إجراء؟',opts:['إعادة تدريس'],max:1},{id:'follow',q:'متابعة؟',opts:['اختبار لاحق'],max:1}]};
 const flow=state();
-let q=routeNextQuestion106(flow,matrix);
-assert.equal(q.gap,'cause','لا يعاد سؤال أساس الاختبار أو النتيجة المحسوبة');
-flow.metadata.familyDetails.cause='لا يوجد';
-q=routeNextQuestion106(flow,matrix);
-assert.equal(q.gap,'actionStatus');
-flow.metadata.familyDetails.actionStatus='مخطط للتنفيذ';
-q=routeNextQuestion106(flow,matrix);
-assert.equal(q.gap,'action');
-assert.ok(q.question.opts.every(x=>x.startsWith('مخطط: ')));
-flow.metadata.familyDetails.action=q.question.opts[0];
-flow.metadata.familyDetails.follow='اختبار قصير لاحق';
-assert.equal(routeNextQuestion106(flow,matrix).done,true,'التحليل العددي لا يطلب إثبات أثر لمجرد ذكر الإتقان في النتيجة المشتقة');
+const routed=routeNextQuestion106(flow,matrix);
+assert.equal(routed.done,true,'V133 لا يعيد أسئلة السبب والإجراء والمتابعة قبل عرض النتيجة الكمية');
+assert.equal(routed.gap,'','لا يوجد سؤال تفسيري قبل النتيجة');
+assert.ok(matrix.questions.some(x=>x.id==='cause')&&matrix.questions.some(x=>x.id==='action')&&matrix.questions.some(x=>x.id==='follow'),'حقول التفسير والإجراء والمتابعة تبقى معرفة للاستخدام بعد النتيجة عند الحاجة');
 
 const model={plan:{print:{mode:'compact'}},sections:[{def:{id:'title'},data:{title:'تحليل نتائج الاختبار'}}],context:{education:{subject:{value:'اللغة العربية'},stage:{value:'متوسط'},grades:['الأول المتوسط']},execution:{executor:{value:'المعلم'}}}};
 const body=analysisBody113(model,s);
@@ -61,12 +53,12 @@ assert.doesNotMatch(body,/بين 50٪ و70٪/);
 const narrativeState=state();
 Object.assign(narrativeState.metadata.familyDetails,{finding:'شمل التحليل 4 طلاب.',actionStatus:'مخطط للتنفيذ',action:'مخطط: إعداد خطة علاجية',follow:'اختبار قصير لاحق'});
 const narrative=mediumText80(narrativeState);
-assert.match(narrative,/خُطط للإجراء التالي: إعداد خطة علاجية/);
-assert.doesNotMatch(narrative,/اتُّخذت إجراءات شملت مخطط/);
+assert.match(narrative,/خُطط للإجراء التالي: إعداد خطة علاجية/,'إذا أضاف المعلم إجراءً بعد النتيجة يجب أن يبقى المخطط منفصلًا عن المنفذ');
+assert.doesNotMatch(narrative,/اتُّخذت إجراءات شملت مخطط/,'لا يحول الإجراء المخطط إلى تنفيذ فعلي');
 assert.doesNotMatch(narrative,/وأظهرت النتائج شمل التحليل/);
 const bullets=bulletText80(narrativeState).join(' ');
 assert.doesNotMatch(bullets,/\.\./,'صيغة النقاط لا تضيف علامة ترقيم مزدوجة');
-assert.match(bullets,/حالة الإجراء: مخطط للتنفيذ/);
+assert.match(bullets,/حالة الإجراء: مخطط للتنفيذ/,'حالة التنفيذ تبقى صريحة عند توثيق إجراء بعد النتيجة');
 
 const contextual=state();
 contextual.raw='تحليل نتائج عربي الأول المتوسط الفصل الأول';
@@ -80,4 +72,4 @@ const app88=await import('node:fs').then(fs=>fs.readFileSync(new URL('./v10/app8
 assert.match(app88,/cleanEra/,'تنسيق التاريخ ينظف رمز الحقبة قبل إضافته مرة واحدة');
 assert.doesNotMatch(app88,/return`\$\{h\} هـ هـ/,'لا يكرر رمز السنة الهجرية');
 
-console.log('V121/V122 analysis release contract PASS: mastery, content-driven next steps, execution state, import preview and reduced questions.');
+console.log('V121/V133 analysis release contract PASS: mastery, content-driven next steps, deferred interpretation, planned-vs-executed safety, import preview and no false impact.');

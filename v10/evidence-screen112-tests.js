@@ -4,16 +4,16 @@ import {suggestEvidenceTargets112} from './evidence-reference112.js';
 
 function state(family,raw='',extra={}){return{raw,topic:'',classification:{type:family,subtype:''},metadata:{contextEvidence85:[],generatedDescription:'',selectedTitle:'',workTitle:'',familyDetails:{},...extra.metadata},answers:{goals:[],evidence:extra.evidence||[]},attachments:extra.attachments||[],audiences:['الطلاب'],stage:'متوسط',grades:['الثاني المتوسط']}}
 
-const analysis=state('تحليل نتائج','حللت نتائج الاختبارات وحددت فجوة الأداء وأسبابها');
+const analysis=state('تحليل نتائج','حللت نتائج الاختبارات وحددت فجوة الأداء وأسبابها',{metadata:{analysis:{maxScore:'20',masteryPercent:'80',scores:[12,18,19],names:['أحمد','محمد','علي']},familyDetails:{subject94:'اللغة العربية'}}});
 const aTargets=suggestEvidenceTargets112(analysis,{limit:6});
 assert.ok(aTargets.some(x=>x.id===91),'analysis should include result-analysis evidence target');
 assert.ok(aTargets.some(x=>x.id===93),'analysis should include performance-gap evidence target');
 const aHtml=evidencePage(analysis);
-for(const text of ['الشواهد الموجودة الآن','الشواهد المناسبة لهذا العمل','سلسلة توثيق تحليل النتائج','شواهد مرجعية إضافية','مرجع: جدول حصر الشواهد'])assert.ok(aHtml.includes(text),`evidence screen missing ${text}`);
+for(const text of ['الشواهد الموجودة الآن','الشواهد المناسبة لهذا العمل','ما الذي يقوّي هذه الوثيقة؟','شواهد مرجعية إضافية','مرجع: جدول حصر الشواهد'])assert.ok(aHtml.includes(text),`evidence screen missing ${text}`);
 assert.ok(aHtml.includes('شواهد تقارير فجوة الأداء وأسبابها لمعالجتها بالشكل الصحيح'),'visible analysis strengthening card missing');
 assert.ok(aHtml.includes('ليست حكمًا رسميًا بتحقق مؤشر'),'official-indicator disclaimer missing');
 assert.ok(!aHtml.includes('تحقق المؤشر رسميًا'),'screen must not claim official indicator fulfillment');
-assert.ok(aHtml.includes('لا يعتبر وجود خطة علاجية أو إثرائية أثرًا بحد ذاته'),'analysis evidence chain must preserve the effect-quality rule');
+assert.ok(aHtml.includes('لا تعتبر الخطة أو المتابعة أثرًا دون تنفيذ وقياس فعلي'),'analysis evidence chain must preserve the effect-quality rule');
 
 const pd=state('تطوير مهني','نفذت زيارة تبادلية لنقل الخبرات بين المعلمين',{evidence:['شهادة أو محضر النشاط بحسب الحالة']});
 const pdHtml=evidencePage(pd);
@@ -31,4 +31,4 @@ assert.ok(fHtml.includes('✓ صور التنفيذ'),'selected evidence current
 assert.ok(fHtml.includes('1 مرفق'),'attachment current summary missing');
 assert.ok(fHtml.includes('✓ رابط شاهد'),'link current summary missing');
 
-console.log('V112/V117 evidence screen PASS: current evidence, analysis evidence chain, source-grounded strengthening and official-status disclaimer verified.');
+console.log('V112/V117 evidence screen PASS: current evidence, Analysis strengthening chain, source-grounded suggestions and no false impact/indicator claim.');

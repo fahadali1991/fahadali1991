@@ -10,7 +10,7 @@ const firstPos=(text,arr)=>{let p=Infinity;for(const x of arr){const i=text.inde
 const DIALECT={
  exec:['نفذت','نفذنا','نفذ','سويت','سوينا','سوى','عملت','عملنا','سوينا لهم','اقمت','اقمنا','نظمت','نظمنا','فعلت','فعلنا','جهزت','جهزنا','طبقنا','طبقت'],
  meet:['عقدت','عقدنا','اجتمعت','اجتمعنا','جلسنا','جلست','تقابلنا','سويت اجتماع','سوينا اجتماع','كان عندنا اجتماع'],
- analyze:['حللت','حللنا','سويت تحليل','سوينا تحليل','عملت تحليل','عملنا تحليل','شفت النتائج','شفنا النتائج','شفت درجات','شفنا درجات','شفت الدرجات','شفنا الدرجات','راجعت النتائج','راجعنا النتائج','راجعت درجات','راجعنا درجات','قريت النتائج','قرينا النتائج','شيكت على النتائج','طلعت النتائج','حللنا بيانات','قارنا نتائج','قارنّا نتائج'],
+ analyze:['حللت','حللنا','حللت اختبار','حللنا اختبار','حللت الاختبار','حللنا الاختبار','حللت النتيجه','حللت النتائج','حللت نتايج','حللنا نتايج','سويت تحليل','سوينا تحليل','سويت تحليل نتيجه','سويت تحليل نتائج','سويت تحليل نتايج','عملت تحليل','عملنا تحليل','عملت تحليل نتيجه','عملنا تحليل نتائج','شفت النتائج','شفنا النتائج','شفت نتايج','شفنا نتايج','شفت درجات','شفنا درجات','شفت الدرجات','شفنا الدرجات','راجعت النتيجه','راجعت النتائج','راجعنا النتائج','راجعت نتايج','راجعنا نتايج','راجعت درجات','راجعنا درجات','قريت النتيجه','قريت النتائج','قرينا النتائج','شيكت على النتائج','شيكت على النتايج','طلعت النتيجه','طلعت النتائج','طلعت نتايج','حللنا بيانات','قارنا نتائج','قارنا نتايج','قارنّا نتائج'],
  plan:['اعددت','اعددنا','سويت خطه','سوينا خطه','حطيت خطه','حطينا خطه','جهزت خطه','جهزنا خطه','بنيت خطه','بنينا خطه','رتبت خطه','رتبنا خطه'],
  follow:['تابعت','تابعنا','شيكت','شيكنا','رصدت','رصدنا','شفت مين','شفنا مين','قمت بمتابعه','تمت متابعه','سوينا متابعه','سويت متابعه','متابعه اسبوعيه','متابعه يوميه','مشينا على','راقبت','راقبنا'],
  pd:['حضرت','حضرنا','اخذت دوره','اخذنا دوره','دخلت ورشه','دخلنا ورشه','قدمت ورشه','قدمنا ورشه','نفذت ورشه','نفذنا ورشه','سويت تدريب للمعلمين','سوينا تدريب للمعلمين','لقاء مهني','برنامج نمو مهني','مجتمع تعلم مهني']
@@ -19,8 +19,8 @@ const DIALECT={
 const ENTITIES={
  program:['برنامج','فعاليه','نشاط','مبادره','مسابقه','حمله','يوم عالمي','اليوم العالمي','اسبوع','احتفاء','تفعيل مناسبه','يوم اللغه العربيه','يوم الاعاقه','يوم التاسيس','اليوم الوطني'],
  meeting:['اجتماع','محضر','لقاء اداري','لجنه','اجتماع مع'],
- analysis:['تحليل نتائج','تحليل للنتائج','نتائج الاختبار','درجات الطلاب','نتائج الطلاب','النتائج','الدرجات','اختبار تشخيصي','اختبار فتره','بيانات تحصيليه'],
- plan:['خطه','خطة علاجية','خطه علاجيه','خطه اثرائيه','خطة تحسين','خطة تنفيذية'],
+ analysis:['تحليل نتيجه','تحليل النتيجه','تحليل نتائج','تحليل نتايج','تحليل للنتائج','نتيجه الاختبار','نتائج الاختبار','نتايج الاختبار','درجات الطلاب','نتائج الطلاب','نتايج الطلاب','النتيجه','النتائج','النتايج','الدرجات','اختبار تشخيصي','اختبار فتره','بيانات تحصيليه','تصنيف الطلاب','تصنيف مستويات الطلاب'],
+ plan:['خطه','خطة علاجية','خطه علاجيه','خطة علاجيه','خطة إثرائية','خطه اثرائيه','خطة اثرائيه','خطة تحسين','خطة تنفيذية'],
  follow:['غياب','تاخر','تأخر','حضور','انضباط','مواظبه','حالات','تكليفات','متابعه تنفيذ','الرصد','الحضور والانصراف'],
  pd:['تطوير مهني','نمو مهني','برنامج تدريبي','دوره','ورشه','مجتمع تعلم مهني','مجتمع مهني','تبادل خبرات','احتياج تدريبي']
 };
@@ -59,6 +59,10 @@ function scoreSemantic(raw){
  for(const type of TYPES){const n=occurrences(text,ENTITY_BY_TYPE[type]);if(n)add(type,Math.min(16,n*5),`ظهرت ${n} قرينة موضوعية مرتبطة بالعائلة`)}
  for(const [type,arr] of Object.entries(ACTIONS)){const n=occurrences(text,arr);if(n){add(type,Math.min(18,n*8),`ظهر فعل رئيسي مرتبط بالعائلة`);if(occurrences(text,ENTITY_BY_TYPE[type]))add(type,10,'اجتمع الفعل مع كيان من العائلة نفسها')}}
 
+ if(has(text,'صنفت الطلاب','صنف الطلاب','تصنيف الطلاب','تصنيف مستويات الطلاب'))add('تحليل نتائج',18,'طلب تصنيف الطلاب مرتبط مباشرة بقراءة النتائج');
+ if(has(text,'خطه علاجيه','خطة علاجية','خطة علاجيه'))add('خطة',18,'خطة علاجية صريحة');
+ if(has(text,'خطه اثرائيه','خطة إثرائية','خطة اثرائيه'))add('خطة',18,'خطة إثرائية صريحة');
+
  // لا نعطي «سويت/سوينا» وحدهما وزن برنامج؛ يلزم وجود كيان برنامج/فعالية فعلي.
  if(occurrences(text,ENTITIES.program)&&occurrences(text,DIALECT.exec))add('برنامج / فعالية',12,'فعل تنفيذ مع برنامج/فعالية أو نشاط');
  if(has(text,'اليوم العالمي','يوم عالمي','اليوم الوطني','يوم التاسيس','اسبوع التوعيه','تفعيل مناسبه','احتفاء'))add('برنامج / فعالية',12,'مناسبة توعوية أو وطنية');
@@ -90,7 +94,7 @@ function subtype(type,text){
  if(type==='برنامج / فعالية')return has(text,'مسابقه')?'مسابقة':has(text,'مبادره')?'مبادرة':has(text,'حمله')?'حملة':has(text,'فعاليه','يوم عالمي','اليوم العالمي','تفعيل','احتفاء')?'فعالية':has(text,'نشاط')?'نشاط':'برنامج';
  if(type==='اجتماع / متابعة إدارية')return has(text,'حل مشكله','معالجه مشكله')?'اجتماع حل مشكلة':has(text,'تخطيط','خطه قادمه')?'اجتماع تخطيط':has(text,'نتائج','درجات')?'اجتماع مراجعة نتائج':'اجتماع متابعة';
  if(type==='تحليل نتائج')return has(text,'متابعه تقدم')?'متابعة تقدم':'تحليل نتائج';
- if(type==='خطة')return has(text,'علاجي','علاجيه')?'خطة علاجية':has(text,'اثرائي','اثرائيه','متفوق')?'خطة إثرائية':has(text,'تطوير مهني','نمو مهني')?'خطة تطوير مهني':has(text,'تحسين')?'خطة تحسين':has(text,'متابعه')?'خطة متابعة':'خطة تنفيذية';
+ if(type==='خطة')return has(text,'علاجي','علاجيه','علاجية')?'خطة علاجية':has(text,'اثرائي','اثرائيه','إثرائية','اثراء','إثراء','متفوق')?'خطة إثرائية':has(text,'تطوير مهني','نمو مهني')?'خطة تطوير مهني':has(text,'تحسين')?'خطة تحسين':has(text,'متابعه')?'خطة متابعة':'خطة تنفيذية';
  if(type==='إجراء متابعة')return has(text,'غياب')?'متابعة غياب':has(text,'تاخر','تأخر')?'متابعة تأخر':has(text,'انضباط','مواظبه')?'متابعة انضباط':'متابعة حضور';
  if(type==='تطوير مهني')return has(text,'مجتمع تعلم','مجتمع مهني')?'مجتمع تعلم مهني':has(text,'ورشه')?'ورشة':has(text,'دوره','تدريب','برنامج تدريبي')?'تدريب':'لقاء تبادل خبرات';
  return'';
@@ -99,7 +103,8 @@ function subtype(type,text){
 export function understand84(raw){return scoreSemantic(raw)}
 export function analyze(raw,entryIntent='smart'){
  const s=base.analyze(raw,entryIntent),u=scoreSemantic(raw);s.metadata=s.metadata||{};s.metadata.understanding84=u;s.metadata.secondaryEvents84=u.secondary;
- if(entryIntent==='analysis'){base.setType(s,'تحليل نتائج');base.setSubtype(s,subtype('تحليل نتائج',u.text)||'تحليل نتائج');s.classification.detected='تحليل نتائج';s.classification.confidence=100;s.classification.conflict=false;s.classification.autoDecision='direct-entry84';s.classification.ranked84=[{type:'تحليل نتائج',score:100}];return s}
+ if(entryIntent==='analysis'||entryIntent==='classification'){base.setType(s,'تحليل نتائج');base.setSubtype(s,'تحليل نتائج');s.classification.detected='تحليل نتائج';s.classification.confidence=100;s.classification.conflict=false;s.classification.autoDecision='direct-entry84';s.classification.ranked84=[{type:'تحليل نتائج',score:100}];s.metadata.directEntry134=entryIntent;return s}
+ if(entryIntent==='remedial'||entryIntent==='enrichment'){base.setType(s,'خطة');base.setSubtype(s,entryIntent==='remedial'?'خطة علاجية':'خطة إثرائية');s.classification.detected='خطة';s.classification.confidence=100;s.classification.conflict=false;s.classification.autoDecision='direct-entry84';s.classification.ranked84=[{type:'خطة',score:100}];s.metadata.directEntry134=entryIntent;return s}
  if(u.primary){base.setType(s,u.primary);const st=subtype(u.primary,u.text);if(st)base.setSubtype(s,st);s.classification.detected=u.primary;s.classification.confidence=u.confidence;s.classification.conflict=false;s.classification.autoDecision='semantic84';s.classification.ranked84=u.ranked.slice(0,3)}
  else{s.classification.type='';s.classification.subtype='';s.classification.domain='';s.classification.confidence=u.confidence;s.classification.conflict=false;s.classification.autoDecision='uncertain84';s.classification.ranked84=u.ranked.slice(0,3);s.titleSuggestions=[];s.metadata.workTitle=''}
  return s;

@@ -1,0 +1,5 @@
+/* V145 approval-final — keep tested DOM contract while showing the governing title exactly once. */
+.mainAnalysis134 .analysisTitle134 h1{font-size:0!important;line-height:1!important;margin:.6mm 0 0!important;background:transparent!important;padding:0!important}
+.mainAnalysis134 .analysisTitle134 h1::after{content:"تحليل نتائج التعلم"!important;display:block!important;font-size:16pt!important;line-height:1.1!important;font-weight:800!important;color:var(--v145-dark,#006c66)!important}
+.mainAnalysis134 .analysisTitle134 small{background:transparent!important;padding:0!important}
+@media print{.mainAnalysis134 .analysisTitle134 h1{font-size:0!important}.mainAnalysis134 .analysisTitle134 h1::after{font-size:16pt!important;color:#006c66!important}}
