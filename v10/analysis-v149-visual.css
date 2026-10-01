@@ -542,3 +542,38 @@
   .mainAnalysis134.analysisV149 .analysisBands147 .analysisBar134{margin:2mm 0!important}
   .mainAnalysis134.analysisV149 .analysisRatio149 .analysisDonutSvg147{max-width:30mm!important;margin:2mm auto 1mm!important}
 }
+
+/* V149.3 — live-screen readability: visible section titles and practical KPI density on phones. */
+.analysisResult134 .analysisScreenGrid134>.analysisBlock134{
+  padding:0 12px 12px!important;
+  border:1px solid var(--a149-line)!important;
+  border-radius:12px!important;
+  background:#fff!important;
+  overflow:hidden!important;
+}
+.analysisResult134 .analysisScreenGrid134>.analysisBlock134>h2{
+  display:block!important;
+  margin:0 -12px 10px!important;
+  padding:10px 12px 9px!important;
+  min-height:auto!important;
+  font-size:13px!important;
+  line-height:1.35!important;
+  font-weight:800!important;
+  color:var(--a149-navy)!important;
+  background:#f6faf9!important;
+  border:0!important;
+  border-bottom:2px solid var(--a149-teal)!important;
+  text-align:right!important;
+}
+@media screen and (max-width:760px){
+  .analysisResult134 .analysisMetrics134{
+    grid-template-columns:repeat(3,minmax(0,1fr))!important;
+    gap:7px!important;
+  }
+  .analysisResult134 .analysisMetrics134>div{
+    min-height:64px!important;
+    padding:8px 5px!important;
+  }
+  .analysisResult134 .analysisMetrics134 span{font-size:10px!important}
+  .analysisResult134 .analysisMetrics134 b{font-size:15px!important}
+}
