@@ -94,7 +94,9 @@ function semanticMarkers149(sheet){
       if(marker)marker.setAttribute('aria-hidden','true');
       const bar=q(el,'em');
       if(bar){
-        const width=bar.style.width;
+        const inlineWidth=bar.style.getPropertyValue('width');
+        const inlineHeight=bar.style.getPropertyValue('height');
+        const width=(inlineWidth==='100%'&&inlineHeight&&inlineHeight!=='100%')?inlineHeight:inlineWidth;
         if(width)bar.style.setProperty('width',width,'important');
         bar.style.setProperty('height','100%','important');
         bar.style.setProperty('margin','0','important');
