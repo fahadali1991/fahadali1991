@@ -1,0 +1,211 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>شاشة وش سويت</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<!-- PROTOTYPE — throwaway. Question: what should the teacher's "وش سوّيت؟" picker look like?
+     Three structurally different variants, switched via #a / #b / #c and the floating bar.
+     Mapping data below is a draft for the prototype only; it gets reviewed against the guides before real use. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+/* Layout: one narrow phone column; each variant owns its own structure below a shared teacher strip. */
+:root{
+  --paper:#f6f8f6; --surface:#ffffff; --ink:#18231f; --muted:#5d6b66; --line:#dbe3df;
+  --accent:#0f6b5c; --accent-soft:#e2f0ec; --mark:#f2c14e; --mark-ink:#3d2e00;
+  --display:"Readex Pro","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --body:"IBM Plex Sans Arabic",system-ui,sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#101614; --surface:#18201d; --ink:#e7eeeb; --muted:#9aa8a2; --line:#2b3632;
+  --accent:#4fbfa8; --accent-soft:#1d2f2a; --mark:#e9b949; --mark-ink:#241a00; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#101614; --surface:#18201d; --ink:#e7eeeb; --muted:#9aa8a2; --line:#2b3632;
+  --accent:#4fbfa8; --accent-soft:#1d2f2a; --mark:#e9b949; --mark-ink:#241a00; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 120px}
+.wrap{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
+h1,h2{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance}
+h1{font-size:1.6rem;line-height:1.3} h2{font-size:1.1rem}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+svg.ic{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+.teacher{display:flex;align-items:center;gap:12px;font-size:.9rem;color:var(--muted)}
+.teacher b{color:var(--ink);font-weight:600}
+.teacher .tag{margin-inline-start:auto;font-size:.75rem;border:1px dashed var(--line);border-radius:99px;padding:2px 10px}
+.avatar{width:38px;height:38px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-family:var(--display);font-weight:700}
+
+.support{display:flex;flex-direction:column;gap:8px}
+.support .row{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-size:.8rem;border-radius:8px;padding:3px 9px;background:var(--accent-soft);color:var(--accent);font-weight:500}
+.pill.code{background:transparent;border:1px solid var(--line);color:var(--muted);font-variant-numeric:tabular-nums;direction:ltr}
+.lbl{font-size:.8rem;color:var(--muted)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:var(--surface);border-radius:99px;padding:8px 14px;font-size:.95rem}
+.chip[aria-pressed="true"]{border-color:var(--accent);background:var(--accent);color:var(--surface)}
+.primary{background:var(--accent);color:var(--surface);border:0;border-radius:12px;padding:14px;font-weight:600;font-size:1rem;width:100%}
+.primary:disabled{opacity:.35;cursor:default}
+
+/* ---------- A: icon grid + bottom sheet ---------- */
+.gridA{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tileA{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-weight:500;min-height:108px;justify-content:center}
+.tileA svg.ic{width:36px;height:36px;color:var(--accent)}
+.tileA[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.sheet{position:fixed;inset:auto 0 0 0;background:var(--surface);border-top:1px solid var(--line);border-radius:20px 20px 0 0;
+  padding:16px max(16px,env(safe-area-inset-right,0px)) calc(84px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  box-shadow:0 -8px 30px rgb(0 0 0 / .12);transform:translateY(105%);transition:transform .25s ease;max-height:72vh;overflow:auto}
+.sheet.open{transform:none}
+.sheet .in{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.grab{width:40px;height:4px;border-radius:4px;background:var(--line);margin:0 auto}
+
+/* ---------- B: conversation ---------- */
+.chat{display:flex;flex-direction:column;gap:12px}
+.bub{max-width:88%;padding:12px 14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.bub.sys{align-self:flex-start;border-start-start-radius:4px}
+.bub.me{align-self:flex-end;background:var(--accent);color:var(--surface);border-color:var(--accent);border-start-end-radius:4px;flex-direction:row;align-items:center;gap:8px}
+.bub.me svg.ic{width:22px;height:22px}
+.optsB{display:flex;flex-direction:column;gap:6px}
+.optB{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);background:var(--paper);border-radius:12px;padding:10px 12px;text-align:start}
+.optB svg.ic{color:var(--accent)}
+.summary{border-inline-start:4px solid var(--mark);padding-inline-start:12px}
+
+/* ---------- C: grouped by place, linkage-first list ---------- */
+.tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
+.tab{white-space:nowrap;border:0;background:transparent;padding:8px 12px;border-radius:10px;color:var(--muted);font-weight:500}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.listC{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.rowC{display:flex;gap:12px;align-items:flex-start;padding:14px;border:0;border-bottom:1px solid var(--line);background:transparent;text-align:start;width:100%}
+.rowC:last-child{border-bottom:0}
+.rowC svg.ic{color:var(--accent);margin-top:2px}
+.rowC .t{font-weight:600}
+.rowC .s{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.rowC .s span{font-size:.72rem;color:var(--muted);background:var(--paper);border-radius:6px;padding:1px 7px}
+.rowC[aria-pressed="true"]{background:var(--accent-soft)}
+.detailC{display:flex;flex-direction:column;gap:12px;padding:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.dock{position:fixed;inset:auto 0 0 0;background:var(--ink);color:var(--paper);
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(70px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.dock .in{max-width:480px;margin:0 auto;display:flex;align-items:center;gap:12px;font-size:.9rem}
+.dock .in b{color:var(--mark)}
+.dock button{margin-inline-start:auto;background:var(--mark);color:var(--mark-ink);border:0;border-radius:10px;padding:8px 14px;font-weight:600}
+.dock button:disabled{opacity:.4}
+
+/* ---------- prototype chrome (not part of the design) ---------- */
+.state{font-size:.75rem;color:var(--muted);border:1px dashed var(--line);border-radius:10px;padding:8px 10px;font-variant-numeric:tabular-nums}
+.switch{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
+  display:flex;align-items:center;gap:4px;background:#111;color:#fff;border-radius:99px;padding:4px;box-shadow:0 6px 20px rgb(0 0 0 / .35);font-size:.85rem;white-space:nowrap}
+.switch button{background:#2a2a2a;color:#fff;border:0;border-radius:99px;width:38px;height:38px;font-size:1.1rem}
+.switch span{padding:0 10px}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
+</style>
+
+<div class="wrap" id="app" dir="rtl"></div>
+<div class="switch" dir="ltr" aria-label="مبدّل النماذج (للتجربة فقط)">
+  <button type="button" id="prev" aria-label="النموذج السابق">‹</button>
+  <span id="vlabel"></span>
+  <button type="button" id="next" aria-label="النموذج التالي">›</button>
+</div>
+
+<script>
+const I={
+ lesson:'<rect x="3" y="4" width="18" height="12" rx="1"/><path d="M8 20l4-4 4 4"/>',
+ bulb:'<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',
+ trophy:'<path d="M8 4h8v5a4 4 0 0 1-8 0V4zM8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4M12 13v4M8 21h8M9 17h6"/>',
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>',
+ family:'<circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="2"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 20c0-2 1-4 3-4s3 2 3 4"/>',
+ chart:'<path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/>',
+ plus:'<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
+ star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+ swap:'<path d="M7 7h11l-3-3M17 17H6l3 3"/>',
+ cap:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/>'
+};
+const ic=k=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${I[k]}</svg>`;
+// Element weights come from the MoE teacher evaluation form; indicator codes from the ETEC guide (appendix A).
+const W={"أداء الواجبات الوظيفية":10,"التفاعل مع المجتمع المهني":10,"التفاعل مع أولياء الأمور":10,"التنويع في استراتيجيات التدريس":10,"تحسين نتائج المتعلمين":10,"إعداد وتنفيذ خطة التعلم":10,"توظيف تقنيات ووسائل التعلم":10,"تهيئة بيئة تعليمية":5,"الإدارة الصفية":5,"تحليل نتائج المتعلمين":10,"تنوع أساليب التقويم":10};
+const ACTS=[
+ {id:"lesson",n:"درس تطبيقي",ic:"lesson",place:"class",q:"وش نوع الدرس؟",opts:["درس نموذجي","درس بتقنية رقمية","درس في مصادر التعلم","درس تطبيقي عملي"],el:["إعداد وتنفيذ خطة التعلم","التنويع في استراتيجيات التدريس","توظيف تقنيات ووسائل التعلم"],ind:["2-1-1-2","2-1-1-3","2-1-1-4"]},
+ {id:"strategy",n:"استراتيجية تدريس",ic:"bulb",place:"class",q:"أي استراتيجية؟",opts:["التعلم التعاوني","العصف الذهني","الصف المقلوب","لعب الأدوار","خرائط المفاهيم"],el:["التنويع في استراتيجيات التدريس","تهيئة بيئة تعليمية"],ind:["2-1-1-3","2-1-1-7"]},
+ {id:"contest",n:"مسابقة",ic:"trophy",place:"students",q:"وش مجال المسابقة؟",opts:["قراءة","حفظ وتلاوة","رياضيات ذهنية","علوم وتجارب","مسابقة صفية سريعة"],el:["تهيئة بيئة تعليمية","تحسين نتائج المتعلمين"],ind:["2-1-1-9","1-1-2-5"]},
+ {id:"workshop",n:"ورشة أو برنامج",ic:"gear",place:"students",q:"لمن الورشة؟",opts:["للطلاب","للمعلمين","لأولياء الأمور"],el:["أداء الواجبات الوظيفية","تهيئة بيئة تعليمية"],ind:["2-1-1-5","1-1-2-4"]},
+ {id:"parents",n:"تواصل مع أولياء الأمور",ic:"family",place:"family",q:"كيف كان التواصل؟",opts:["اجتماع أولياء أمور","رسائل وتقارير دورية","اتصال فردي","زيارة للمدرسة"],el:["التفاعل مع أولياء الأمور"],ind:["1-1-3-2","2-1-2-4"]},
+ {id:"results",n:"اختبار وتحليل نتائج",ic:"chart",place:"class",q:"وش نوع التقويم؟",opts:["تشخيصي","تكويني","ختامي","تحليل نتائج نافس"],el:["تحليل نتائج المتعلمين","تنوع أساليب التقويم"],ind:["2-1-2-1","2-1-2-3"]},
+ {id:"remedial",n:"خطة علاجية",ic:"plus",place:"students",q:"وش المهارة المستهدفة؟",opts:["القراءة","الكتابة","العمليات الحسابية","الفهم القرائي"],el:["تحسين نتائج المتعلمين","تحليل نتائج المتعلمين"],ind:["2-1-1-1","2-1-1-6"]},
+ {id:"gifted",n:"إثراء للموهوبين",ic:"star",place:"students",q:"وش نوع الإثراء؟",opts:["مشروع بحثي","مسابقة خارجية","برنامج إثرائي","نادي"],el:["تحسين نتائج المتعلمين","التنويع في استراتيجيات التدريس"],ind:["1-1-2-5","2-1-1-1"]},
+ {id:"visits",n:"تبادل زيارات أو مجتمع مهني",ic:"swap",place:"growth",q:"وش النشاط؟",opts:["زيارة صفية متبادلة","مجتمع تعلم مهني","درس تطبيقي للزملاء"],el:["التفاعل مع المجتمع المهني"],ind:["1-1-4-5"]},
+ {id:"course",n:"دورة أو تطوير مهني",ic:"cap",place:"growth",q:"وش نوع التطوير؟",opts:["دورة تدريبية","ورشة حضورية","شهادة مهنية","قراءة وبحث"],el:["التفاعل مع المجتمع المهني"],ind:["1-1-4-5","1-1-4-4"]}
+];
+const PLACES=[["class","داخل الفصل"],["students","مع الطلاب"],["family","مع الأسرة"],["growth","نموّي المهني"]];
+const VARIANTS={a:"شبكة أيقونات",b:"محادثة",c:"حسب المكان"};
+let S={act:null,opt:null,taps:0,tab:"class"};
+const app=document.getElementById('app');
+const act=()=>ACTS.find(a=>a.id===S.act);
+const tap=()=>{S.taps++};
+
+const teacher=`<div class="teacher"><div class="avatar">ن</div><div><b>أ. نورة العتيبي</b><br>لغتي، الصف الخامس</div><span class="tag">بيانات مثال</span></div>`;
+const support=a=>`<div class="support">
+  <span class="lbl">يدعم من الأداء الوظيفي</span>
+  <div class="row">${a.el.map(e=>`<span class="pill">${e} (${W[e]}%)</span>`).join('')}</div>
+  <span class="lbl">يرتبط بمؤشرات دليل الهيئة</span>
+  <div class="row">${a.ind.map(c=>`<span class="pill code">${c}</span>`).join('')}</div></div>`;
+const chips=a=>`<div class="chips">${a.opts.map(o=>`<button type="button" class="chip" data-opt="${o}" aria-pressed="${S.opt===o}">${o}</button>`).join('')}</div>`;
+const state=()=>`<div class="state">حالة النموذج: النشاط = ${act()?act().n:'—'} | التفصيل = ${S.opt||'—'} | الضغطات حتى الآن = ${S.taps}</div>`;
+
+function A(){
+  const a=act();
+  return `${teacher}<h1>وش سوّيت؟</h1>
+  <div class="gridA">${ACTS.map(x=>`<button type="button" class="tileA" data-act="${x.id}" aria-pressed="${S.act===x.id}">${ic(x.ic)}<span>${x.n}</span></button>`).join('')}</div>
+  ${state()}
+  <div class="sheet ${a?'open':''}" role="dialog" aria-label="تفاصيل النشاط"><div class="in">
+   <div class="grab"></div>
+   ${a?`<h2>${a.q}</h2>${chips(a)}${support(a)}<button type="button" class="primary" ${S.opt?'':'disabled'}>التالي: الصور</button>`:''}
+  </div></div>`;
+}
+function B(){
+  const a=act();
+  let h=`${teacher}<div class="chat">
+   <div class="bub sys"><p>هلا أ. نورة، وش سوّيتي اليوم؟</p>
+    ${a?'':`<div class="optsB">${ACTS.map(x=>`<button type="button" class="optB" data-act="${x.id}">${ic(x.ic)}<span>${x.n}</span></button>`).join('')}</div>`}</div>`;
+  if(a){
+    h+=`<div class="bub me">${ic(a.ic)}<span>${a.n}</span></div>
+     <div class="bub sys"><p>${a.q}</p>${S.opt?'':chips(a)}</div>`;
+    if(S.opt){
+      h+=`<div class="bub me"><span>${S.opt}</span></div>
+       <div class="bub sys"><div class="summary"><p><b>تمام.</b> بجهّز تقرير «${a.n}: ${S.opt}» للصف الخامس.</p></div>${support(a)}
+       <button type="button" class="primary">أرفق الصور</button>
+       <button type="button" class="chip" data-reset="1">ابدأ من جديد</button></div>`;
+    }
+  }
+  return h+`</div>${state()}`;
+}
+function C(){
+  const a=act(), list=ACTS.filter(x=>x.place===S.tab);
+  return `${teacher}<h1>وش سوّيت؟</h1>
+  <div class="tabs" role="tablist">${PLACES.map(([k,v])=>`<button type="button" class="tab" role="tab" data-tab="${k}" aria-selected="${S.tab===k}">${v}</button>`).join('')}</div>
+  <div class="listC">${list.map(x=>`<button type="button" class="rowC" data-act="${x.id}" aria-pressed="${S.act===x.id}">${ic(x.ic)}<div><div class="t">${x.n}</div><div class="s">${x.el.map(e=>`<span>${e}</span>`).join('')}</div></div></button>`).join('')}</div>
+  ${a&&a.place===S.tab?`<div class="detailC"><h2>${a.q}</h2>${chips(a)}${support(a)}</div>`:''}
+  ${state()}
+  <div class="dock"><div class="in"><span>${a?`اختيارك يدعم <b>${a.el.length}</b> من عناصر الأداء`:'اختر نشاط من القائمة'}</span><button type="button" ${a&&S.opt?'':'disabled'}>التالي</button></div></div>`;
+}
+const R={a:A,b:B,c:C};
+const cur=()=>{const h=location.hash.slice(1);return R[h]?h:'a'};
+function render(){const v=cur();app.innerHTML=R[v]();document.getElementById('vlabel').textContent=`${v.toUpperCase()} (${VARIANTS[v]})`;}
+app.addEventListener('click',e=>{
+  const t=e.target.closest('button'); if(!t) return;
+  if(t.dataset.act){ if(S.act!==t.dataset.act){S.opt=null;} S.act=t.dataset.act; tap(); }
+  else if(t.dataset.opt){ S.opt=t.dataset.opt; tap(); }
+  else if(t.dataset.tab){ S.tab=t.dataset.tab; tap(); }
+  else if(t.dataset.reset){ S={act:null,opt:null,taps:0,tab:"class"}; }
+  else return;
+  render();
+});
+const keys=Object.keys(R);
+function go(d){const i=(keys.indexOf(cur())+d+keys.length)%keys.length;S={act:null,opt:null,taps:0,tab:"class"};location.hash=keys[i];}
+document.getElementById('prev').onclick=()=>go(-1);
+document.getElementById('next').onclick=()=>go(1);
+addEventListener('keydown',e=>{if(e.target.closest('input,textarea,[contenteditable]'))return;if(e.key==='ArrowLeft')go(-1);if(e.key==='ArrowRight')go(1);});
+addEventListener('hashchange',()=>{S={act:null,opt:null,taps:0,tab:"class"};render();});
+render();
+</script>
