@@ -1,0 +1,265 @@
+<title>دراسة لجنة التقارير</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+/* Layout: a single reading column for a decision memo; summary verdict first, evidence after. */
+:root{
+  --paper:#f5f7f6; --surface:#ffffff; --ink:#18231f; --muted:#5b6964; --line:#d9e2de;
+  --accent:#0f6b5c; --accent-soft:#e1efeb; --mark:#f2c14e; --mark-ink:#3d2e00; --warn:#b4232a; --warn-soft:#f9e5e4;
+  --display:"Readex Pro","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --body:"IBM Plex Sans Arabic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#0f1513; --surface:#17201c; --ink:#e6eeea; --muted:#9aa9a3; --line:#2a3631;
+  --accent:#4fbfa8; --accent-soft:#1c2f29; --mark:#e9b949; --mark-ink:#241a00; --warn:#ff8f8f; --warn-soft:#3a1f1f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1513; --surface:#17201c; --ink:#e6eeea; --muted:#9aa9a3; --line:#2a3631;
+  --accent:#4fbfa8; --accent-soft:#1c2f29; --mark:#e9b949; --mark-ink:#241a00; --warn:#ff8f8f; --warn-soft:#3a1f1f; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16.5px;line-height:1.8;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+main{max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:36px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;line-height:1.35}
+h1{font-size:2rem} h2{font-size:1.35rem} h3{font-size:1.05rem}
+p{margin:0}
+section{display:flex;flex-direction:column;gap:14px}
+.lead{font-size:1.08rem;color:var(--muted)}
+.notice{border:1px dashed var(--muted);border-radius:12px;padding:12px 14px;font-size:.92rem;color:var(--muted)}
+.verdict{background:var(--accent);color:var(--surface);border-radius:18px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.verdict h2{color:inherit}
+.verdict p{opacity:.95}
+.verdict .big{font-family:var(--display);font-size:1.25rem;font-weight:700;line-height:1.5}
+ul,ol{margin:0;padding-inline-start:22px;display:flex;flex-direction:column;gap:6px}
+.members{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.m{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.m header{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.m header b{font-family:var(--display)}
+.m header span{font-size:.82rem;color:var(--muted)}
+.score{margin-inline-start:auto;font-family:var(--display);font-weight:700;font-variant-numeric:tabular-nums;font-size:.9rem;border-radius:99px;padding:0 10px;background:var(--accent-soft);color:var(--accent)}
+.score.low{background:var(--warn-soft);color:var(--warn)}
+.m q{display:block;font-size:.95rem;quotes:"«" "»"}
+.m .k{font-size:.86rem;color:var(--muted)}
+.m .k b{color:var(--ink);font-weight:600}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.row{display:grid;grid-template-columns:minmax(0,9.5em) 1fr 2.2em;gap:10px;align-items:center;font-size:.85rem}
+.row .bar{height:12px;background:var(--line);border-radius:99px;overflow:hidden}
+.row .bar i{display:block;height:100%;background:var(--accent);border-radius:99px}
+.row .bar i.low{background:var(--warn)}
+.row .v{font-variant-numeric:tabular-nums;font-weight:600;text-align:end}
+.axis{display:grid;grid-template-columns:minmax(0,9.5em) 1fr 2.2em;gap:10px;font-size:.72rem;color:var(--muted)}
+.axis div{display:flex;justify-content:space-between}
+.theme{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.theme .who{font-size:.82rem;color:var(--muted)}
+.theme .fix{border-inline-start:3px solid var(--accent);padding-inline-start:10px}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;min-width:560px;font-size:.9rem}
+th,td{text-align:start;vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--line)}
+th{font-family:var(--display);font-weight:700;font-size:.85rem;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+.rec{outline:2px solid var(--accent);outline-offset:-2px;background:var(--accent-soft)}
+.pill{display:inline-block;font-size:.75rem;font-weight:600;border-radius:99px;padding:0 9px;background:var(--mark);color:var(--mark-ink)}
+.risk{background:var(--warn-soft);border:1px solid var(--warn);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.risk h3{color:var(--warn)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:12px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.src{font-size:.85rem;color:var(--muted)}
+</style>
+
+<main dir="rtl">
+<header style="display:flex;flex-direction:column;gap:10px">
+  <h1>دراسة لجنة التقييم: هل فكرة موقع التقارير صحيحة؟</h1>
+  <p class="lead">لجنة من ١٣ عضوًا: معلمين ومعلمات من مواد ومراحل مختلفة، ومشرف تربوي، ومديرة، ووكيلة، وخبير تقويم مدرسي. قيّموا نموذج التقرير، وناقشوا الفكرة، وهذي خلاصة آرائهم ودراستها.</p>
+  <p class="notice">هذي لجنة محاكاة: الآراء كتبها Claude بناءً على دليل الأداء الوظيفي للوزارة، ودليل التقويم المدرسي للهيئة، وجولة البحث عن النماذج المنشورة، وطبيعة كل دور. الأسماء افتراضية. الدراسة تحدد الأسئلة الصعبة، وما تغني عن الجولة الحقيقية مع معلمين حقيقيين.</p>
+</header>
+
+<section class="verdict" aria-labelledby="v">
+  <h2 id="v">الخلاصة</h2>
+  <p class="big">المشكلة حقيقية والسرعة ممتازة، لكن «العقيدة» الحالية تحتاج تتغير: من «تقرير جميل بأقل ضغطات» إلى «شاهد حقيقي بأقل جهد».</p>
+  <p>متوسط تقييم اللجنة للتقرير: ٣٫٤ من ٥. المعلمون أعطوا أعلى الدرجات للسرعة، وأقل الدرجات جات من المقيّمين أنفسهم: المشرف، والمديرة، وخبير التقويم. خوفهم واحد: الأداة ممكن تزيد «تضخم الشواهد»، يعني ملفات مليانة تقارير متشابهة وما وراها أثر. والدليل نفسه يعطي المستويات العالية (٤ و٥) على الأثر والمبادرة ونقل الخبرة، مو على عدد التقارير.</p>
+  <p><b>التوصية:</b> نحوّل المشروع إلى <b>«ملف الشواهد الحي»</b>: يلتقط المعلم الشاهد لحظة حدوثه، والنظام يرتبه حسب العناصر والمؤشرات، ويطلع التقرير منه عند الحاجة، ويوجهه للأثر والجودة بدل الكمية. نفس التقنية اللي بنيناها تقريبًا، بس الهدف مختلف.</p>
+</section>
+
+<section aria-labelledby="h-panel">
+  <h2 id="h-panel">أعضاء اللجنة وتقييمهم للتقرير</h2>
+  <p>كل عضو جرّب إنشاء تقرير «استراتيجية تدريس» من النموذج، وأجاب: هل تقبله شاهدًا؟ وش أكبر قلق؟ وش تقترح؟</p>
+  <div class="members">
+    <article class="m"><header><b>أ. منيرة</b><span>لغتي، ابتدائي، ١٨ سنة</span><span class="score">٤</span></header>
+      <q>أسرع شي شفته. بس لو كل معلمات المدرسة طلّعوا «سعيًا لتنويع أساليب التعلم»، المديرة بتعرف إنه مكتوب بآلة.</q>
+      <p class="k"><b>تقترح:</b> سطر واحد اختياري «وش صار فعلًا؟» ينحط في التقرير كما هو، وصورة لعمل الطالبات.</p></article>
+    <article class="m"><header><b>أ. سلطان</b><span>رياضيات، متوسط</span><span class="score">٣</span></header>
+      <q>شواهد الرياضيات أرقام. قياس الأثر أهم شي في الموقع عندي، والباقي كلام.</q>
+      <p class="k"><b>يقترح:</b> استيراد الدرجات من ملف مدرستي أو نور بدل كتابتها، وتحليل تلقائي قبلي وبعدي.</p></article>
+    <article class="m"><header><b>أ. هيفاء</b><span>كيمياء، ثانوي</span><span class="score">٣</span></header>
+      <q>نص شغلي في المختبر: تجارب وسلامة. ما لقيت نوع «تجربة عملية» أصلًا.</q>
+      <p class="k"><b>تقترح:</b> أنواع أنشطة لكل مادة، مو ١١ نوع عام للجميع.</p></article>
+    <article class="m"><header><b>أ. عبدالرحمن</b><span>قرآن ودراسات إسلامية</span><span class="score">٤</span></header>
+      <q>الخيارات ناسبتني، التلقين والتسميع. بس أقوى شاهد عندي سجل الحفظ الأسبوعي، مو تقرير.</q>
+      <p class="k"><b>يقترح:</b> متابعة بسيطة للحفظ تطلع منها شواهد «تحسين النتائج» تلقائيًا.</p></article>
+    <article class="m"><header><b>أ. فهد</b><span>تربية بدنية</span><span class="score low">٢</span></header>
+      <q>التقرير مصمم لمعلم الفصل. أنا شغلي بالساحة: دوري، يوم رياضي، قياس لياقة. «الصف الرابع (١)» ما يمثلني.</q>
+      <p class="k"><b>يقترح:</b> أنشطة الساحة والفعاليات المدرسية، ومستفيدين من أكثر من فصل.</p></article>
+    <article class="m"><header><b>أ. ريم</b><span>إنجليزي، ابتدائي</span><span class="score">٤</span></header>
+      <q>حبيت إن الخيارات بمادتي. الشاهد عندي عمل الطالبات نفسه: كتابة، مشروع، تسجيل قراءة.</q>
+      <p class="k"><b>تقترح:</b> نوع شاهد «عيّنة من عمل الطلاب» مع إخفاء الأسماء.</p></article>
+    <article class="m"><header><b>أ. ماجد</b><span>مهارات رقمية</span><span class="score">٤</span></header>
+      <q>الفكرة ممتازة تقنيًا. بس الحفظ في المتصفح بس؟ أول ما يتغير الجوال، يروح ملف سنة كاملة.</q>
+      <p class="k"><b>يقترح:</b> تصدير لـ Drive وiCloud بأسماء ملفات مرتبة، ونسخة احتياطية تلقائية تذكّر المعلم.</p></article>
+    <article class="m"><header><b>أ. نوف</b><span>معلمة جديدة، سنة أولى</span><span class="score">٥</span></header>
+      <q>أنا ما أعرف وش الشاهد المقبول أصلًا. «لوحتي» و«عشان توصل ٤» أنقذتني.</q>
+      <p class="k"><b>تقترح:</b> أمثلة على شاهد قوي وشاهد ضعيف لكل عنصر.</p></article>
+    <article class="m"><header><b>أ. خالد</b><span>مشرف تربوي</span><span class="score low">٢</span></header>
+      <q>عندنا مشكلة اسمها تضخم الشواهد: ملفات من ٢٠٠ صفحة وما فيها أثر. أداتكم تسهّل إنتاج تقارير أكثر، وهذا عكس المطلوب.</q>
+      <p class="k"><b>يقترح:</b> «أقوى ٣ شواهد لكل عنصر» بدل التكديس، وربط الشواهد بخطة التطوير الفردية وأهداف مرحلة التخطيط.</p></article>
+    <article class="m"><header><b>أ. لطيفة</b><span>مديرة مدرسة، هي المقيّمة</span><span class="score">٣</span></header>
+      <q>أنا اللي أحط الدرجة. أبي قبل لقاء التقييم أشوف شواهد كل معلمة مرتبة حسب العناصر، وأتأكد إنها حقيقية: متى انصوّرت، وأي فصل.</q>
+      <p class="k"><b>تقترح:</b> «ملف التقييم» يرسله المعلم للمدير برابط أو PDF واحد مرتب، مع تاريخ الصور.</p></article>
+    <article class="m"><header><b>د. عادل</b><span>خبير تقويم مدرسي، فريق خارجي سابق</span><span class="score">٣</span></header>
+      <q>الفريق الخارجي يقارن الوثائق بالملاحظة الصفية والمقابلات والاستبانات. الربط بالمؤشرات مفيد للجنة التميز، بس لو الصياغة متطابقة بين المعلمين، ينقلب ضد المدرسة.</q>
+      <p class="k"><b>يقترح:</b> تجميع على مستوى المدرسة: كم شاهد لكل مؤشر، ومن أي معلمين.</p></article>
+    <article class="m"><header><b>أ. سارة</b><span>وكيلة شؤون تعليمية</span><span class="score">٤</span></header>
+      <q>لو أعرف أي معلم ناقصه أي عنصر قبل نهاية الفصل، أقدر أخطط زيارات ودروس تطبيقية.</q>
+      <p class="k"><b>تقترح:</b> لوحة للمدرسة، ولو بسيطة، بعد ما تنجح نسخة المعلم.</p></article>
+    <article class="m"><header><b>أ. ناصر</b><span>تربية خاصة وموهوبين</span><span class="score">٣</span></header>
+      <q>طلابي صورهم وبياناتهم حساسة جدًا. ما أرفع صورة طالب بوجهه، ولا اسمه.</q>
+      <p class="k"><b>يقترح:</b> تمويه الوجوه بلمسة، ومنع الأسماء، وأنواع «خطة فردية» و«برنامج إثرائي».</p></article>
+  </div>
+</section>
+
+<section aria-labelledby="h-chart">
+  <h2 id="h-chart">هل يقبلون التقرير شاهدًا؟</h2>
+  <div class="chart" role="img" aria-label="تقييم كل عضو من ١ إلى ٥، المتوسط ٣٫٤">
+    <div class="axis"><span></span><div><span>١</span><span>٢</span><span>٣</span><span>٤</span><span>٥</span></div><span></span></div>
+    <div class="row"><span>معلمة جديدة</span><div class="bar"><i style="width:100%"></i></div><span class="v">٥</span></div>
+    <div class="row"><span>لغتي</span><div class="bar"><i style="width:80%"></i></div><span class="v">٤</span></div>
+    <div class="row"><span>قرآن</span><div class="bar"><i style="width:80%"></i></div><span class="v">٤</span></div>
+    <div class="row"><span>إنجليزي</span><div class="bar"><i style="width:80%"></i></div><span class="v">٤</span></div>
+    <div class="row"><span>مهارات رقمية</span><div class="bar"><i style="width:80%"></i></div><span class="v">٤</span></div>
+    <div class="row"><span>وكيلة</span><div class="bar"><i style="width:80%"></i></div><span class="v">٤</span></div>
+    <div class="row"><span>رياضيات</span><div class="bar"><i style="width:60%"></i></div><span class="v">٣</span></div>
+    <div class="row"><span>كيمياء</span><div class="bar"><i style="width:60%"></i></div><span class="v">٣</span></div>
+    <div class="row"><span>تربية خاصة</span><div class="bar"><i style="width:60%"></i></div><span class="v">٣</span></div>
+    <div class="row"><span>مديرة (المقيّمة)</span><div class="bar"><i style="width:60%"></i></div><span class="v">٣</span></div>
+    <div class="row"><span>خبير تقويم</span><div class="bar"><i style="width:60%"></i></div><span class="v">٣</span></div>
+    <div class="row"><span>تربية بدنية</span><div class="bar"><i class="low" style="width:40%"></i></div><span class="v">٢</span></div>
+    <div class="row"><span>مشرف تربوي</span><div class="bar"><i class="low" style="width:40%"></i></div><span class="v">٢</span></div>
+  </div>
+  <p>النمط واضح: <b>كل ما قرب العضو من كرسي المقيّم، نزلت الدرجة.</b> المعلم يشوف أداة توفر وقته. المقيّم يشوف أداة ممكن تغرقه بتقارير متشابهة.</p>
+</section>
+
+<section aria-labelledby="h-themes">
+  <h2 id="h-themes">ثمانية محاور طلعت من النقاش</h2>
+
+  <div class="theme"><h3>١. النص المولّد سلاح بحدين</h3><span class="who">أثاره ٩ من ١٣، أقواها: المديرة، والخبير، ومعلمة لغتي</span>
+    <p>السرعة ممتازة، لكن الجمل العامة («سعيًا لتنويع أساليب التعلم») تنكشف بسرعة، خصوصًا لما تتكرر بين معلمي المدرسة الواحدة. والصياغات المتعددة تخفف التكرار، لكنها ما تحل أصل المشكلة: النص ما فيه حقيقة جديدة.</p>
+    <p class="fix">التغيير: أقل إنشاء، أكثر حقائق. التقرير يتبنى على اللي اختاره المعلم فعلًا (الدرس، العدد، الأداة، الملاحظة، الأرقام)، وسطر «وش صار فعلًا؟» بكلامه. نحذف الجمل اللي ما تضيف معلومة.</p></div>
+
+  <div class="theme"><h3>٢. الجودة قبل الكمية</h3><span class="who">المشرف، والمديرة، والخبير، ويؤكده سلّم الدليل نفسه</span>
+    <p>في دليل الوزارة، المستوى ٣ «يستخدم استراتيجيات مناسبة بانتظام»، والمستوى ٤ يضيف «يشارك زملاءه أفضل الممارسات»، والمستوى ٥ «يبتكر… تُعتمد نموذجًا». يعني الدرجة العالية تجي من الأثر والمشاركة والمبادرة. أداة تشجع على ١٠ تقارير «استراتيجية» تبقي المعلم في المستوى ٣.</p>
+    <p class="fix">التغيير: «أقوى ٣ شواهد لكل عنصر» بدل العدّ. واللوحة تقيس جودة الشواهد: هل فيه قياس أثر؟ هل فيه نقل خبرة لزملاء؟ هل فيه مبادرة؟</p></div>
+
+  <div class="theme"><h3>٣. الشاهد لازم يكون قابل للتحقق</h3><span class="who">المديرة، والخبير</span>
+    <p>المقيّم يحتاج يثق إن الشاهد حقيقي: متى صار، وفي أي فصل، ومين المستفيد. التقرير الجميل بدون هذي التفاصيل أضعف من صورة واحدة مؤرخة.</p>
+    <p class="fix">التغيير: نقرأ تاريخ التصوير من الصورة نفسها ونطبعه تحتها. وتاريخ إنشاء التقرير ثابت ما يتعدل.</p></div>
+
+  <div class="theme"><h3>٤. الأنشطة لازم تكون حسب المادة والدور</h3><span class="who">البدنية، والكيمياء، والتربية الخاصة، والقرآن</span>
+    <p>الأنواع الحالية مبنية على معلم الفصل. معلم البدنية شغله فعاليات وقياس لياقة، ومعلمة الكيمياء مختبر وسلامة، ومعلم التربية الخاصة خطط فردية.</p>
+    <p class="fix">التغيير: لكل مادة أنواعها الخاصة فوق الأنواع المشتركة: «تجربة مختبر»، «دوري وفعالية رياضية»، «سجل حفظ»، «خطة فردية»، «عيّنة من عمل الطلاب».</p></div>
+
+  <div class="theme"><h3>٥. التوثيق لحظة الحدث، مو آخر الفصل</h3><span class="who">لغتي، والإنجليزي، والمعلمة الجديدة، والمشرف</span>
+    <p>أكبر سبب لضعف الشواهد إن المعلم يتذكرها متأخر، فيكتب من الذاكرة ويدوّر صور. وأقوى شاهد صورة أثناء التنفيذ، مثل ما ينصح موقع النماذج نفسه.</p>
+    <p class="fix">التغيير: زر «التقط شاهد» يفتح الكاميرا مباشرة: صورة + ضغطتين (النشاط والفصل) وخلاص. التقرير يكتمل لاحقًا أو تلقائيًا.</p></div>
+
+  <div class="theme"><h3>٦. البيانات والحفظ</h3><span class="who">الرياضيات، والمهارات الرقمية</span>
+    <p>كتابة الدرجات يدويًا ثقيلة، والحفظ في المتصفح بس مخاطرة لملف سنة كاملة.</p>
+    <p class="fix">التغيير: لصق الدرجات من ملف، وتذكير دوري بالنسخة الاحتياطية، وتصدير منظم إلى Drive أو iCloud.</p></div>
+
+  <div class="theme"><h3>٧. قيمة المدرسة أكبر من قيمة المعلم الواحد</h3><span class="who">المديرة، والوكيلة، والخبير</span>
+    <p>المدير هو اللي يقيّم، ولجنة التميز هي اللي تجهز للتقويم الخارجي. الاثنين يحتاجون صورة مجمعة.</p>
+    <p class="fix">التغيير (لاحقًا): «ملف التقييم» يرسله المعلم للمدير أولًا. وبعد ما تنجح نسخة المعلم، لوحة مدرسة تجمع الشواهد حسب العناصر والمؤشرات.</p></div>
+
+  <div class="theme"><h3>٨. الخصوصية مو خيار إضافي</h3><span class="who">التربية الخاصة، والمهارات الرقمية، والمديرة</span>
+    <p>صور الطلاب وأسماؤهم بيانات شخصية. أي تسريب يضر المعلم والمدرسة والموقع.</p>
+    <p class="fix">التغيير: تمويه الوجوه بلمسة، وتنبيه عند ظهور أسماء، والحفظ على الجهاز افتراضيًا.</p></div>
+</section>
+
+<section aria-labelledby="h-conf">
+  <h2 id="h-conf">نقاط الخلاف داخل اللجنة</h2>
+  <div class="cols">
+    <div class="box"><h3>السرعة أو المصداقية؟</h3><p>المعلمون يبون أقل ضغطات. المقيّمون يبون تفاصيل حقيقية. الحل الوسط: التفاصيل تنجمع <b>من الصورة والاختيارات</b>، مو بالكتابة.</p></div>
+    <div class="box"><h3>للمعلم أو للمدرسة؟</h3><p>المعلمون يبونه أداتهم الخاصة. الإدارة تبي لوحة مدرسة. اتفقوا: المعلم أولًا، والمشاركة مع المدير باختياره.</p></div>
+    <div class="box"><h3>على الجهاز أو سحابي؟</h3><p>معلم التقنية يبي سحابة. معلم التربية الخاصة يخاف عليها. الوسط: الجهاز افتراضيًا، والسحابة اختيارية لاحقًا.</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="h-opt">
+  <h2 id="h-opt">الخيارات الثلاثة للمشروع</h2>
+  <div class="tbl"><table>
+    <thead><tr><th>الخيار</th><th>وش يعني</th><th>المكسب</th><th>المخاطرة</th></tr></thead>
+    <tbody>
+      <tr><td><b>أ) نكمل كما هو</b><br>مولّد تقارير</td><td>نحسّن النصوص ونضيف أنواع لكل مادة</td><td>أسرع للإطلاق، والنموذج جاهز</td><td>ينافس مواقع النماذج المجانية، وينتقد من المشرفين كأداة «تضخم شواهد»</td></tr>
+      <tr class="rec"><td><b>ب) ملف الشواهد الحي</b> <span class="pill">التوصية</span></td><td>التقاط لحظي ← ترتيب تلقائي حسب العناصر والمؤشرات ← تقرير وملف تقييم عند الحاجة ← توجيه للأثر والجودة</td><td>يحل ألم المعلم والمقيّم معًا، ويتميز فعلًا عن كل الموجود، ويستخدم ٨٠٪ مما بنيناه</td><td>يغيّر رسالة الموقع، ويحتاج إقناع المعلم إن «أقل وأقوى» أفضل من «أكثر»</td></tr>
+      <tr><td><b>ج) منصة مدرسة</b></td><td>المدير ولجنة التميز هم العميل، والمعلمون يساهمون</td><td>أعلى قيمة، وفيها دخل محتمل من المدارس</td><td>حسابات وسحابة وخصوصية وبيع لإدارات، وثقيلة جدًا كبداية</td></tr>
+    </tbody>
+  </table></div>
+  <p><b>ليش (ب)؟</b> لأنها تصحح الخلل اللي اتفق عليه المقيّمون بدون ما تخسر اللي حبه المعلمون. وتنبني بحيث تكبر لاحقًا إلى (ج): «ملف التقييم» اللي يرسله المعلم للمدير هو أول خطوة نحو لوحة المدرسة.</p>
+</section>
+
+<section aria-labelledby="h-const">
+  <h2 id="h-const">التعديل المقترح على الدستور</h2>
+  <p>المبادئ الحالية ممتازة. اللجنة تقترح إضافة خمسة مبادئ فوقها:</p>
+  <ol>
+    <li><b>الحقيقة قبل الصياغة:</b> ما تنكتب جملة في التقرير ما وراها معلومة اختارها أو قدّمها المعلم.</li>
+    <li><b>أقل نص، أكثر دليل:</b> الصورة المؤرخة والرقم وعيّنة العمل أقوى من فقرة إنشائية.</li>
+    <li><b>الجودة لا الكثرة:</b> النظام يشجع «أقوى شاهد» لكل عنصر، ويوجّه للأثر ونقل الخبرة.</li>
+    <li><b>الخصوصية افتراضيًا:</b> لا وجوه واضحة ولا أسماء طلاب إلا باختيار صريح.</li>
+    <li><b>قابل للتحقق:</b> كل شاهد يحمل تاريخه وفصله، وما يتعدل بعد اعتماده.</li>
+  </ol>
+</section>
+
+<section aria-labelledby="h-change">
+  <h2 id="h-change">وش يتغير في النموذج ووش يبقى</h2>
+  <div class="cols">
+    <div class="box"><h3>يبقى</h3><ul>
+      <li>«وش سوّيت؟» والأيقونات والضغطات القليلة</li>
+      <li>الخيارات حسب المادة وإعداد أول مرة</li>
+      <li>جدول «يدعم / يرتبط» بالعناصر والمؤشرات</li>
+      <li>قياس الأثر القبلي والبعدي</li>
+      <li>«لوحتي» والتقدير الذاتي بمعادلة الوزارة وتنبيه الصدق</li>
+      <li>معاينة A4 وإعدادات الطباعة</li>
+    </ul></div>
+    <div class="box"><h3>يتغير أو ينضاف</h3><ul>
+      <li>زر «التقط شاهد» على الصفحة الرئيسية</li>
+      <li>سطر «وش صار فعلًا؟» بكلام المعلم</li>
+      <li>نصوص أقصر مبنية على الحقائق، بدون حشو</li>
+      <li>تاريخ التصوير تحت كل صورة، وتمويه الوجوه</li>
+      <li>أنواع أنشطة خاصة لكل مادة ودور</li>
+      <li>«أقوى ٣ شواهد» لكل عنصر في اللوحة، ومؤشر جودة لكل شاهد</li>
+      <li>«ملف التقييم»: PDF واحد مرتب يرسله المعلم للمدير</li>
+    </ul></div>
+  </div>
+</section>
+
+<section class="risk" aria-labelledby="h-risk">
+  <h3 id="h-risk">أكبر خطر إذا ما غيّرنا شي</h3>
+  <p>ينتشر الموقع بين معلمي مدرسة وحدة، فتتشابه تقاريرهم، والمديرة أو فريق التقويم الخارجي يلاحظ. هنا يصير الموقع سمعة سلبية: «موقع يطلع شواهد جاهزة». الخيار (ب) يقلب هذا: الموقع يصير «موقع يخلي شواهدك حقيقية وقوية».</p>
+</section>
+
+<section aria-labelledby="h-next">
+  <h2 id="h-next">وش نتأكد منه في الجولة الحقيقية</h2>
+  <p>اللجنة محاكاة، فهذي الأسئلة اللي لازم يجاوبها معلمون ومديرون حقيقيون قبل ما نعتمد التحول:</p>
+  <ol>
+    <li>هل المديرين الحقيقيين لاحظوا فعلًا تشابه التقارير وتضخم الشواهد؟ وهل يرفضونها؟</li>
+    <li>هل المعلم يستخدم «التقط شاهد» داخل الحصة، أو هذا عبء إضافي؟</li>
+    <li>هل «أقوى ٣ شواهد» يقنع المعلم، أو يحس إنه خسر؟</li>
+    <li>هل المدير يبي يستلم «ملف التقييم» من المعلم؟ وبأي شكل؟</li>
+    <li>وش الأنشطة الخاصة اللي تحتاجها كل مادة؟</li>
+  </ol>
+  <p>أقدر أضيف هذي الأسئلة لصفحة الجولة اللي جهزناها.</p>
+</section>
+
+<footer class="src">
+  <p>المصادر: الدليل الإرشادي لإدارة الأداء الوظيفي لشاغلي الوظائف التعليمية (وزارة التعليم، الإصدار الثاني: عناصر التقييم والأوزان ص١٤، سلالم التقدير ص١٩–٢٣، آلية الاحتساب ص٦٢)؛ الدليل الإجرائي للتقويم المدرسي الخارجي (هيئة تقويم التعليم والتدريب، الإصدار الثالث ١٤٤٨هـ: أدوات التقويم ص٨، الملحق أ ص٢٢–٢٦)؛ جولة البحث في موقع edu-forms.com وتقارير صحفية عن دورة الأداء ١٤٤٧هـ.</p>
+</footer>
+</main>
