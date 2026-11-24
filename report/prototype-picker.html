@@ -186,6 +186,7 @@ svg.ic{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;str
 .reps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
 .reps li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:.9rem}
 .reps svg.ic{width:20px;height:20px;color:var(--accent)}
+.setup{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
 .linkbtn{border:0;background:transparent;color:var(--accent);font-weight:600;padding:4px 0;align-self:flex-start}
 
 /* ---------- prototype chrome (not part of the design) ---------- */
@@ -339,10 +340,40 @@ const ACTS=[
    s2:["للتحقق من فاعلية الإجراء المنفذ،","لتوجيه قرارات التدريس بالبيانات،","لتحديد مدى التحسن في المهارة المستهدفة،"],
    goals:["قياس أثر الإجراء المنفذ على تعلم {ST}","مقارنة الأداء قبل التنفيذ وبعده","توظيف النتائج في تحسين التدريس"]}}
 ];
+// Subject-specific options for strategy / contest / remedial steps.
 const SUBJ={
- "لغتي":{strategy:["القراءة الجهرية","التعلم التعاوني","لعب الأدوار","خرائط المفاهيم","العصف الذهني"],contest:["القراءة","الإملاء","الخط العربي","الإلقاء"],remedial:["القراءة","الكتابة الإملائية","الفهم القرائي","الخط"]},
- "الرياضيات":{strategy:["التعلم بالاكتشاف","حل المشكلات","التعلم التعاوني","المحسوسات","الألعاب التعليمية"],contest:["الحساب الذهني","حل المسائل","جدول الضرب","الألغاز الرياضية"],remedial:["العمليات الحسابية","الكسور","المسائل اللفظية","جدول الضرب"]}
+ "لغتي":{strategy:["القراءة الجهرية","لعب الأدوار","القصة التعليمية","خرائط المفاهيم","التعلم التعاوني"],contest:["القراءة","الإملاء","الخط العربي","الإلقاء"],remedial:["القراءة","الكتابة الإملائية","الفهم القرائي","الخط"]},
+ "لغتي الخالدة":{strategy:["القراءة الموجهة","لعب الأدوار","خرائط المفاهيم","فكر - زاوج - شارك","التعلم التعاوني"],contest:["القراءة","الإلقاء","الإملاء","كتابة القصة"],remedial:["الفهم القرائي","الإملاء","القواعد النحوية","التعبير الكتابي"]},
+ "اللغة العربية":{strategy:["الحوار والمناقشة","خرائط المفاهيم","التعلم التعاوني","قراءة النص وتحليله","التدريس التبادلي"],contest:["الإلقاء","كتابة المقال","النحو","الشعر"],remedial:["النحو","الإملاء","الفهم القرائي","التعبير الكتابي"]},
+ "الرياضيات":{strategy:["التعلم بالاكتشاف","حل المشكلات","المحسوسات","الألعاب التعليمية","التعلم التعاوني"],contest:["الحساب الذهني","حل المسائل","جدول الضرب","الألغاز الرياضية"],remedial:["العمليات الحسابية","الكسور","المسائل اللفظية","جدول الضرب"]},
+ "العلوم":{strategy:["التعلم بالتجربة","دورة التعلم الخماسية","الاستقصاء الموجه","خرائط المفاهيم","التعلم التعاوني"],contest:["التجارب العلمية","المعلومات العلمية","تصميم نموذج علمي","البحث العلمي"],remedial:["المفاهيم العلمية","المصطلحات العلمية","قراءة الرسوم البيانية","حل المسائل العلمية"]},
+ "الفيزياء":{strategy:["الاستقصاء الموجه","التعلم بالتجربة","حل المشكلات","المحاكاة الرقمية","خرائط المفاهيم"],contest:["حل المسائل الفيزيائية","التجارب العملية","تصميم نموذج","المعلومات العلمية"],remedial:["القوانين والرموز","حل المسائل","الوحدات والتحويلات","قراءة الرسوم البيانية"]},
+ "الكيمياء":{strategy:["التعلم بالتجربة","الاستقصاء الموجه","النماذج الجزيئية","خرائط المفاهيم","التعلم التعاوني"],contest:["الجدول الدوري","التجارب العملية","موازنة المعادلات","المعلومات العلمية"],remedial:["موازنة المعادلات","الحسابات الكيميائية","الرموز والصيغ","الجدول الدوري"]},
+ "الأحياء":{strategy:["الاستقصاء الموجه","المحطات التعليمية","خرائط المفاهيم","التعلم بالتجربة","مخطط فن"],contest:["المعلومات الحيوية","الرسم العلمي","التجارب العملية","البحث العلمي"],remedial:["المصطلحات الحيوية","تفسير الأشكال","المفاهيم الأساسية","قراءة البيانات"]},
+ "الدراسات الإسلامية":{strategy:["القصة التعليمية","الحوار والمناقشة","لعب الأدوار","خرائط المفاهيم","التعلم التعاوني"],contest:["الحديث الشريف","السيرة النبوية","الفقه الميسر","الأذكار"],remedial:["حفظ الأحاديث","الأحكام الفقهية","المفاهيم العقدية","آداب الإسلام"]},
+ "القرآن الكريم":{strategy:["التلقين والتكرار","الاستماع والمحاكاة","التسميع المتبادل","تعلم الأقران","التعلم التعاوني"],contest:["حفظ القرآن","التلاوة والتجويد","الترتيل","تفسير المفردات"],remedial:["التلاوة","أحكام التجويد","الحفظ","مخارج الحروف"]},
+ "الدراسات الاجتماعية":{strategy:["الخرائط الذهنية","قراءة الصورة","القصة التعليمية","لعب الأدوار","التعلم التعاوني"],contest:["المعلومات الوطنية","الخرائط والجغرافيا","التاريخ السعودي","المواطنة"],remedial:["قراءة الخريطة","التسلسل الزمني","المفاهيم الجغرافية","المصطلحات"]},
+ "اللغة الإنجليزية":{strategy:["لعب الأدوار","الألعاب التعليمية","القصة التعليمية","البطاقات التعليمية","فكر - زاوج - شارك"],contest:["التهجئة (Spelling Bee)","القراءة","المحادثة","الكتابة"],remedial:["الأصوات والحروف (Phonics)","المفردات","القراءة","القواعد"]},
+ "المهارات الرقمية":{strategy:["التعلم بالممارسة","التعلم القائم على المشاريع","الصف المقلوب","تعلم الأقران","حل المشكلات"],contest:["البرمجة","التصميم الرقمي","الروبوت","الأمن الرقمي"],remedial:["أساسيات الحاسب","البرمجة","الكتابة على لوحة المفاتيح","التطبيقات المكتبية"]},
+ "التقنية الرقمية":{strategy:["التعلم القائم على المشاريع","الصف المقلوب","التعلم بالممارسة","حل المشكلات","تعلم الأقران"],contest:["البرمجة","الذكاء الاصطناعي","الأمن السيبراني","تصميم التطبيقات"],remedial:["أساسيات البرمجة","قواعد البيانات","الشبكات","الخوارزميات"]},
+ "التربية الفنية":{strategy:["التعلم بالممارسة","العروض العملية","التعلم القائم على المشاريع","العصف الذهني","النقد الفني"],contest:["الرسم","الخط العربي","الأعمال اليدوية","التصميم"],remedial:["أساسيات الرسم","الألوان","الأعمال اليدوية","التشكيل"]},
+ "التربية البدنية":{strategy:["الأسلوب التدريبي","الاكتشاف الموجه","التطبيق الذاتي","الألعاب الصغيرة","التعلم التعاوني"],contest:["كرة القدم","الجري","كرة الطائرة","اللياقة البدنية"],remedial:["المهارات الحركية الأساسية","اللياقة البدنية","المهارات الكروية","التوازن والتوافق"]},
+ "المهارات الحياتية والأسرية":{strategy:["التعلم بالممارسة","لعب الأدوار","العروض العملية","حل المشكلات","التعلم التعاوني"],contest:["المهارات الحياتية","التغذية الصحية","إدارة المال","السلامة المنزلية"],remedial:["المهارات الحياتية الأساسية","التغذية الصحية","السلامة","إدارة الوقت"]},
+ "التفكير الناقد":{strategy:["الحوار السقراطي","قبعات التفكير الست","حل المشكلات","سكامبر","عظم السمكة"],contest:["المناظرة","الألغاز المنطقية","حل المشكلات","التفكير الإبداعي"],remedial:["تحليل الحجج","التمييز بين الحقيقة والرأي","الاستنتاج","طرح الأسئلة"]}
 };
+const STAGES={
+ "ابتدائي":{subj:["لغتي","الرياضيات","العلوم","الدراسات الإسلامية","القرآن الكريم","الدراسات الاجتماعية","اللغة الإنجليزية","المهارات الرقمية","التربية الفنية","التربية البدنية","المهارات الحياتية والأسرية"],
+   classes:[["4","الرابع"],["5","الخامس"],["6","السادس"]],suf:"",school:"الابتدائية (مثال)"},
+ "متوسط":{subj:["لغتي الخالدة","الرياضيات","العلوم","الدراسات الإسلامية","القرآن الكريم","الدراسات الاجتماعية","اللغة الإنجليزية","المهارات الرقمية","التربية الفنية","التربية البدنية","التفكير الناقد"],
+   classes:[["1","الأول"],["2","الثاني"],["3","الثالث"]],suf:" المتوسط",school:"المتوسطة (مثال)"},
+ "ثانوي":{subj:["اللغة العربية","الرياضيات","الفيزياء","الكيمياء","الأحياء","الدراسات الإسلامية","القرآن الكريم","الدراسات الاجتماعية","اللغة الإنجليزية","التقنية الرقمية","التفكير الناقد","التربية البدنية"],
+   classes:[["1","الأول"],["2","الثاني"],["3","الثالث"]],suf:" الثانوي",school:"الثانوية (مثال)"}
+};
+let SETUP={g:null,stage:null,subj:null};
+function makeMe(){const st=STAGES[SETUP.stage];
+  PROF.me={name:SETUP.g==='f'?"(اسم المعلمة)":"(اسم المعلم)",ini:SETUP.g==='f'?"م":"م",g:SETUP.g,subj:SETUP.subj,school:st.school,
+   classes:st.classes.map(([k,n])=>({k:k+"-1",l:n+st.suf.replace(' المتوسط',' م').replace(' الثانوي',' ث')+"/1",t:"الصف "+n+st.suf+" (1)"})),use:{},last:null};
+  SAVED.me=SAVED.me||[]; SELF.me=SELF.me||{};}
 const PROF={
  noura:{name:"أ. نورة العتيبي",ini:"ن",g:"f",subj:"لغتي",school:"الابتدائية العاشرة (مثال)",
   classes:[{k:"5-1",l:"خامس/1",t:"الصف الخامس (1)"},{k:"5-2",l:"خامس/2",t:"الصف الخامس (2)"},{k:"6-1",l:"سادس/1",t:"الصف السادس (1)"}],
@@ -397,7 +428,7 @@ const support=a=>`<div class="support"><span class="lbl">يدعم من الأد�
 const chips=a=>`<div class="chips">${optsOf(a).map(o=>`<button type="button" class="chip" data-opt="${o}" aria-pressed="${S.opt===o}">${o}</button>`).join('')}</div>`;
 const state=()=>`<div class="state"><span>حالة النموذج: النشاط = ${act()?act().n:'—'} | التفصيل = ${S.opt||'—'} | الضغطات = ${S.taps}</span>
   <span>جرّب بمعلم ثاني عشان تشوف كيف تتغيّر الخيارات والنصوص:</span>
-  <div class="chips">${Object.entries(PROF).map(([k,p])=>`<button type="button" class="chip" data-prof="${k}" aria-pressed="${S.prof===k}">${p.name} (${p.subj})</button>`).join('')}</div></div>`;
+  <div class="chips">${Object.entries(PROF).map(([k,p])=>`<button type="button" class="chip" data-prof="${k}" aria-pressed="${S.prof===k}">${k==='me'?'أنت':p.name} (${p.subj})</button>`).join('')}<button type="button" class="chip" data-setup="1">+ جرّب بمادتك</button></div></div>`;
 
 function A(){const a=act();
   return `${teacher()}<h1>وش سوّيت؟</h1>
@@ -489,7 +520,19 @@ const inClass=a=>a&&(a.place==='class'||a.place==='students');
 const placeV=a=>S.place??(inClass(a)?"الفصل":null);
 const durV=a=>S.dur??(inClass(a)?"حصة واحدة":null);
 function qrSvg(url){try{if(typeof qrcode!=='function')return null;const q=qrcode(0,'M');q.addData(url);q.make();return q.createSvgTag({cellSize:3,margin:0,scalable:true});}catch(e){return null}}
+function setup(){
+  const chipsOf=(arr,key,sel,lab=x=>x)=>`<div class="chips">${arr.map(o=>`<button type="button" class="chip" data-${key}="${o}" aria-pressed="${sel===o}">${lab(o)}</button>`).join('')}</div>`;
+  const st=SETUP.stage&&STAGES[SETUP.stage];
+  return `<h1>خلّنا نعرفك</h1><p class="note">مرة وحدة بس. بعدها كل الخيارات والنصوص تناسب مادتك.</p>
+   <div class="setup">
+    <span class="lbl">أنا</span>${chipsOf(['m','f'],'sg',SETUP.g,x=>x==='m'?'معلم':'معلمة')}
+    <span class="lbl">المرحلة</span>${chipsOf(Object.keys(STAGES),'sst',SETUP.stage)}
+    ${st?`<span class="lbl">المادة</span>${chipsOf(st.subj,'ssu',SETUP.subj)}`:''}
+    <button type="button" class="primary" data-sgo="1" ${SETUP.g&&SETUP.stage&&SETUP.subj&&st.subj.includes(SETUP.subj)?'':'disabled'}>ابدأ</button>
+   </div>${state()}`;
+}
 function D(){
+  if(S.view==='setup') return setup();
   if(S.view==='cover') return cover();
   const p=P(),a=act(),cls=p.classes.find(c=>c.k===S.cls)||p.classes[0],g=G[p.g];
   const step=!a?1:!S.opt?2:!S.clsOk?3:!S.obsOk?4:5;
@@ -524,11 +567,11 @@ function D(){
 
   let body='';
   const ranked=[...ACTS].sort((x,y)=>(p.use[y.id]||0)-(p.use[x.id]||0));
-  const top=S.more?ranked:ranked.slice(0,4), last=ACTS.find(x=>x.id===p.last.act), lastCls=p.classes.find(c=>c.k===p.last.cls);
+  const top=S.more?ranked:ranked.slice(0,4), last=p.last&&ACTS.find(x=>x.id===p.last.act), lastCls=p.last&&p.classes.find(c=>c.k===p.last.cls);
   const doneN=new Set(SAVED[S.prof].flatMap(r=>ACTS.find(x=>x.id===r.act).el)).size;
   const chipRow=(arr,key,sel,multi)=>`<div class="chips">${arr.map(o=>`<button type="button" class="chip sm" data-${key}="${o}" aria-pressed="${multi?sel.includes(o):sel===o}">${o}</button>`).join('')}</div>`;
-  if(step===1) body=`<button type="button" class="linkbtn" data-view="cover">لوحتي: شواهدك في ${N(doneN)} من ${N(11)} عنصر</button><button type="button" class="repeat" data-repeat="1">${ic('redo')}<span><b>كرّر آخر تقرير مع فصل ثاني</b><small>${last.n}: ${p.last.opt}، ${lastCls.l}</small></span></button>
-    <div class="gridD">${top.map((x,i)=>`<button type="button" class="tileD" data-act="${x.id}">${!S.more&&i<2?'<span class="hot">الأكثر</span>':''}${ic(x.ic)}<span>${x.n}</span></button>`).join('')}</div>
+  if(step===1) body=`<button type="button" class="linkbtn" data-view="cover">لوحتي: شواهدك في ${N(doneN)} من ${N(11)} عنصر</button>${last?`<button type="button" class="repeat" data-repeat="1">${ic('redo')}<span><b>كرّر آخر تقرير مع فصل ثاني</b><small>${last.n}: ${p.last.opt}، ${lastCls.l}</small></span></button>`:''}
+    <div class="gridD">${top.map((x,i)=>`<button type="button" class="tileD" data-act="${x.id}">${!S.more&&i<2&&p.use[x.id]?'<span class="hot">الأكثر</span>':''}${ic(x.ic)}<span>${x.n}</span></button>`).join('')}</div>
     <button type="button" class="more" data-more="1">${S.more?'أقل':'كل الأنشطة ('+N(ACTS.length)+')'}</button>`;
   if(step===2){
     if(a.subj==='strategy'&&S.allStrat){
@@ -563,6 +606,7 @@ function D(){
 const R={d:D,a:A,b:B,c:C};
 const keys=Object.keys(R);
 const cur=()=>{const h=location.hash.slice(1);return R[h]?h:'d'};
+const startHash=()=>location.hash==='#start';
 function render(){const v=cur();const ae=document.activeElement&&document.activeElement.id,ss=ae&&document.activeElement.selectionStart;document.body.classList.toggle('d',v==='d'&&S.view!=='cover');app.innerHTML=R[v]();
   if(ae&&ae!=='ph'){const el=document.getElementById(ae);if(el){el.focus();try{el.setSelectionRange(ss,ss)}catch(e){}}}
   const fit=document.getElementById('fit'),rp=document.getElementById('rep'),wr=document.getElementById('a4wrap');if(wr&&rp){const k=wr.clientWidth/794;rp.style.transform=`scale(${k})`;wr.style.height=(1123*k)+'px';}if(fit&&rp){const over=rp.scrollHeight>rp.clientHeight+2;fit.className='fit '+(over?'over':'ok');fit.textContent=over?'أطول من صفحة A4: قلّل الصور أو الملاحظات.':'يتسع في صفحة A4 واحدة.';}
@@ -586,6 +630,11 @@ app.addEventListener('click',e=>{
   else if(d.more){ S.more=!S.more; }
   else if(d.repeat){ const l=P().last; S.act=l.act; S.opt=l.opt; S.cls=P().classes.find(c=>c.k!==l.cls).k; S.clsOk=false; tap(); }
   else if(d.back){ if(S.obsOk){S.obsOk=false}else if(S.clsOk&&cur()==='d'){S.clsOk=false}else if(S.opt){S.opt=null}else{S.act=null} }
+  else if(d.sg){ SETUP.g=d.sg; }
+  else if(d.sst){ SETUP.stage=d.sst; if(SETUP.subj&&!STAGES[d.sst].subj.includes(SETUP.subj))SETUP.subj=null; }
+  else if(d.ssu){ SETUP.subj=d.ssu; }
+  else if(d.sgo){ makeMe(); profKeep='me'; S=fresh0(); tap(); scrollTo(0,0); }
+  else if(d.setup){ S=fresh0(); S.view='setup'; scrollTo(0,0); }
   else if(d.openel){ openEl=openEl===d.openel?null:d.openel; }
   else if(d.lvl){ SELF[S.prof][d.el]=+d.lvl; tap(); }
   else if(d.place){ S.place=d.place; tap(); }
@@ -617,6 +666,7 @@ function go(dir){const i=(keys.indexOf(cur())+dir+keys.length)%keys.length;S=fre
 document.getElementById('prev').onclick=()=>go(-1);
 document.getElementById('next').onclick=()=>go(1);
 addEventListener('keydown',e=>{if(e.target.closest('input,textarea,[contenteditable]'))return;if(e.key==='ArrowLeft')go(-1);if(e.key==='ArrowRight')go(1);});
-addEventListener('hashchange',()=>{S=fresh0();render();});
+addEventListener('hashchange',()=>{S=fresh0();if(startHash())S.view='setup';render();});
+if(startHash())S.view='setup';
 render();
 </script>

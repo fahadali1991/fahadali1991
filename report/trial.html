@@ -1,0 +1,190 @@
+<title>جولة تجربة التقارير</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
+<style>
+/* Layout: one reading column — intro, open the prototype, tasks, then the feedback form. */
+:root{
+  --paper:#f6f8f6; --surface:#ffffff; --ink:#18231f; --muted:#5d6b66; --line:#dbe3df;
+  --accent:#0f6b5c; --accent-soft:#e2f0ec; --mark:#f2c14e; --mark-ink:#3d2e00; --bad:#b4232a;
+  --display:"Readex Pro","IBM Plex Sans Arabic",system-ui,sans-serif;
+  --body:"IBM Plex Sans Arabic",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#101614; --surface:#18201d; --ink:#e7eeeb; --muted:#9aa8a2; --line:#2b3632;
+  --accent:#4fbfa8; --accent-soft:#1d2f2a; --mark:#e9b949; --mark-ink:#241a00; --bad:#ff8a8a; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#101614; --surface:#18201d; --ink:#e7eeeb; --muted:#9aa8a2; --line:#2b3632;
+  --accent:#4fbfa8; --accent-soft:#1d2f2a; --mark:#e9b949; --mark-ink:#241a00; --bad:#ff8a8a; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+main{max-width:620px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+h1,h2{font-family:var(--display);margin:0;text-wrap:balance}
+h1{font-size:1.8rem;line-height:1.3} h2{font-size:1.15rem}
+p{margin:0}
+.lead{color:var(--muted)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.open{display:flex;align-items:center;justify-content:center;gap:10px;background:var(--accent);color:var(--surface);text-decoration:none;font-weight:600;border-radius:12px;padding:14px;font-size:1.05rem}
+.open:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+.note{font-size:.85rem;color:var(--muted)}
+ol.tasks{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;counter-reset:t}
+ol.tasks li{counter-increment:t}
+ol.tasks label{display:flex;gap:12px;align-items:flex-start;cursor:pointer}
+ol.tasks label::before{content:counter(t, arabic-indic);font-family:var(--display);font-weight:700;color:var(--accent);min-width:1.2em}
+ol.tasks input{margin-top:6px;width:18px;height:18px;accent-color:var(--accent);flex:none}
+ol.tasks input:checked+span{color:var(--muted);text-decoration:line-through}
+.field{display:flex;flex-direction:column;gap:6px}
+.field>span{font-weight:600}
+.field small{color:var(--muted);font-weight:400}
+textarea,select,input[type=text]{font:inherit;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;width:100%}
+textarea{min-height:76px;resize:vertical}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chips label{cursor:pointer}
+.chips input{position:absolute;opacity:0;width:1px;height:1px}
+.chips span{display:inline-block;border:1.5px solid var(--line);background:var(--surface);border-radius:99px;padding:7px 14px}
+.chips input:checked+span{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.chips input:focus-visible+span{outline:3px solid var(--mark);outline-offset:2px}
+.only-principal[hidden]{display:none}
+.send{background:var(--accent);color:var(--surface);border:0;border-radius:12px;padding:14px;font-weight:600;font-size:1.05rem;width:100%;cursor:pointer}
+.send:disabled{opacity:.5;cursor:default}
+.ghostbtn{background:transparent;color:var(--accent);border:1.5px solid var(--accent);border-radius:12px;padding:12px;font-weight:600;width:100%;cursor:pointer;font:inherit}
+.status{border-radius:12px;padding:12px 14px;font-size:.95rem}
+.status.ok{background:var(--accent-soft);color:var(--ink);border:1px solid var(--accent)}
+.status.warn{background:color-mix(in srgb,var(--mark) 22%,var(--surface));border:1px solid var(--mark)}
+pre.copy{white-space:pre-wrap;word-break:break-word;background:var(--paper);border:1px dashed var(--line);border-radius:12px;padding:12px;font:inherit;font-size:.88rem;margin:0;max-height:260px;overflow:auto}
+.resp{display:flex;flex-direction:column;gap:10px}
+.resp article{border:1px solid var(--line);border-radius:12px;padding:12px;font-size:.9rem;display:flex;flex-direction:column;gap:4px}
+.resp b{font-family:var(--display)}
+.meta{color:var(--muted);font-size:.8rem}
+</style>
+
+<main dir="rtl">
+  <header style="display:flex;flex-direction:column;gap:8px">
+    <h1>جولة تجربة: تقارير الشواهد</h1>
+    <p class="lead">نجرّب نموذج موقع يكتب للمعلم تقرير الشاهد بأقل ضغطات، ويربطه بعناصر الأداء الوظيفي ومؤشرات دليل الهيئة. التجربة تاخذ ١٠ دقائق تقريبًا، ورأيك يحدد شكل الموقع النهائي.</p>
+  </header>
+
+  <section class="card">
+    <h2>افتح النموذج</h2>
+    <p>أول شاشة تسألك: معلم أو معلمة، والمرحلة، والمادة. بعدها كل الخيارات تناسب مادتك.</p>
+    <a class="open" href="https://claude.ai/artifact/4LAMyQxeUPbMq8Y5QPP4T8#start" target="_blank" rel="noopener">افتح النموذج</a>
+    <p class="note">هذا نموذج تجريبي: ما يحفظ ولا يطبع فعليًا، والبيانات اللي فيه أمثلة.</p>
+  </section>
+
+  <section class="card">
+    <h2>المهام</h2>
+    <p class="note">حاول تسويها بدون ما أحد يساعدك. علّم على كل مهمة تخلصها.</p>
+    <ol class="tasks">
+      <li><label for="t1"><input id="t1" type="checkbox"><span>سوّ تقرير عن آخر استراتيجية طبقتها في حصتك.</span></label></li>
+      <li><label for="t2"><input id="t2" type="checkbox"><span>اضغط على جملة ما عجبتك في الوصف وغيّرها.</span></label></li>
+      <li><label for="t3"><input id="t3" type="checkbox"><span>احفظ التقرير، وافتح «لوحتي» وقدّر نفسك في عنصرين.</span></label></li>
+      <li><label for="t4"><input id="t4" type="checkbox"><span>ابدأ تقرير لعنصر ناقص عندك من «لوحتي».</span></label></li>
+    </ol>
+  </section>
+
+  <form class="card" id="form" novalidate>
+    <h2>رأيك</h2>
+    <div class="field"><span>أنت</span>
+      <div class="chips" role="radiogroup" aria-label="الدور">
+        <label for="r1"><input id="r1" type="radio" name="role" value="معلم"><span>معلم</span></label>
+        <label for="r2"><input id="r2" type="radio" name="role" value="معلمة"><span>معلمة</span></label>
+        <label for="r3"><input id="r3" type="radio" name="role" value="مدير/مديرة"><span>مدير أو مديرة</span></label>
+        <label for="r4"><input id="r4" type="radio" name="role" value="وكيل/وكيلة"><span>وكيل أو وكيلة</span></label>
+      </div></div>
+    <div class="field"><span>المادة والمرحلة <small>(اختياري)</small></span><input id="subject" type="text" placeholder="مثال: علوم، متوسط"></div>
+    <div class="field"><span>١. وين وقفت أو ترددت؟</span><textarea id="q1" placeholder="مثال: ما عرفت وين أغيّر الفصل"></textarea></div>
+    <div class="field"><span>٢. فيه نشاط تسويه وما لقيته في القائمة؟</span><textarea id="q2" placeholder="مثال: الإذاعة الصباحية، الطابور، المناوبة"></textarea></div>
+    <div class="field"><span>٣. هل يُقبل هذا التقرير كشاهد؟</span>
+      <div class="chips" role="radiogroup" aria-label="قبول التقرير">
+        <label for="a1"><input id="a1" type="radio" name="accept" value="نعم كما هو"><span>نعم كما هو</span></label>
+        <label for="a2"><input id="a2" type="radio" name="accept" value="نعم بعد تعديل"><span>نعم بعد تعديل</span></label>
+        <label for="a3"><input id="a3" type="radio" name="accept" value="لا"><span>لا</span></label>
+      </div>
+      <textarea id="q3" placeholder="وش ناقصه أو وش تغيّر فيه؟"></textarea>
+      <small class="note only-principal" id="pnote" hidden>رأيك كمدير هو الأهم هنا: هل تعتمد هذا التقرير شاهدًا لمعلميك؟</small></div>
+    <div class="field"><span>٤. «لوحتي» فادتك أو أربكتك؟</span>
+      <div class="chips" role="radiogroup" aria-label="رأيك في اللوحة">
+        <label for="d1"><input id="d1" type="radio" name="dash" value="فادتني"><span>فادتني</span></label>
+        <label for="d2"><input id="d2" type="radio" name="dash" value="عادية"><span>عادية</span></label>
+        <label for="d3"><input id="d3" type="radio" name="dash" value="أربكتني"><span>أربكتني</span></label>
+      </div>
+      <textarea id="q4" placeholder="ليش؟"></textarea></div>
+    <div class="field"><span>٥. تستخدم الموقع لو كان جاهز؟</span>
+      <div class="chips" role="radiogroup" aria-label="الاستخدام">
+        <label for="u1"><input id="u1" type="radio" name="use" value="أكيد"><span>أكيد</span></label>
+        <label for="u2"><input id="u2" type="radio" name="use" value="ربما"><span>ربما</span></label>
+        <label for="u3"><input id="u3" type="radio" name="use" value="لا"><span>لا</span></label>
+      </div>
+      <textarea id="q5" placeholder="ليش؟"></textarea></div>
+    <div class="field"><span>أي ملاحظة ثانية <small>(اختياري)</small></span><textarea id="q6"></textarea></div>
+    <button class="send" id="send" type="submit">أرسل رأيك</button>
+    <div id="result" hidden></div>
+  </form>
+
+  <section class="card" id="owner" hidden>
+    <h2>الردود <span id="count"></span></h2>
+    <p class="note">تظهر لك أنت بس.</p>
+    <div class="resp" id="resp"></div>
+  </section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const FIELDS=["subject","q1","q2","q3","q4","q5","q6"], RADIOS=["role","accept","dash","use"];
+const radio=n=>{const el=document.querySelector(`input[name="${n}"]:checked`);return el?el.value:""};
+function collect(){const o={};FIELDS.forEach(f=>o[f]=$(f).value.trim());RADIOS.forEach(r=>o[r]=radio(r));
+  o.tasks=[1,2,3,4].filter(i=>$("t"+i).checked).length;return o;}
+// unsent draft stays on this device only
+const KEY="trial-draft";
+try{const d=JSON.parse(localStorage.getItem(KEY)||"null");if(d){FIELDS.forEach(f=>{if(d[f])$(f).value=d[f]});RADIOS.forEach(r=>{const el=d[r]&&document.querySelector(`input[name="${r}"][value="${CSS.escape(d[r])}"]`);if(el)el.checked=true});}}catch(e){}
+const saveDraft=()=>{try{localStorage.setItem(KEY,JSON.stringify(collect()))}catch(e){}};
+$("form").addEventListener("input",()=>{saveDraft();$("pnote").hidden=!radio("role").startsWith("مدير")});
+$("pnote").hidden=!radio("role").startsWith("مدير");
+
+function asText(o){return ["رأيي في نموذج تقارير الشواهد",
+  "الدور: "+(o.role||"-")+(o.subject?" | "+o.subject:""),"المهام المنجزة: "+o.tasks+" من 4",
+  "1) وين وقفت: "+(o.q1||"-"),"2) نشاط ناقص: "+(o.q2||"-"),"3) يقبل كشاهد: "+(o.accept||"-")+(o.q3?" — "+o.q3:""),
+  "4) لوحتي: "+(o.dash||"-")+(o.q4?" — "+o.q4:""),"5) أستخدمه: "+(o.use||"-")+(o.q5?" — "+o.q5:""),"ملاحظات: "+(o.q6||"-")].join("\n");}
+function showCopy(o,why){
+  const r=$("result");r.hidden=false;r.className="status warn";r.textContent="";
+  const p=document.createElement("p");p.textContent=why+" انسخ إجاباتك وأرسلها لصاحب التجربة بالواتساب:";
+  const pre=document.createElement("pre");pre.className="copy";pre.textContent=asText(o);
+  const b=document.createElement("button");b.type="button";b.className="ghostbtn";b.textContent="انسخ الإجابات";
+  b.onclick=()=>{navigator.clipboard.writeText(pre.textContent).then(()=>{b.textContent="تم النسخ"}).catch(()=>{const s=getSelection(),rg=document.createRange();rg.selectNodeContents(pre);s.removeAllRanges();s.addRange(rg);b.textContent="حدّد النص وانسخه"})};
+  r.append(p,pre,b);
+}
+let db=null,user=null;
+$("form").addEventListener("submit",async e=>{
+  e.preventDefault();const o=collect();
+  if(!o.role){const r=$("result");r.hidden=false;r.className="status warn";r.textContent="اختر «أنت» في أول سؤال.";return}
+  const btn=$("send");btn.disabled=true;btn.textContent="جارٍ الإرسال…";
+  try{
+    const id=user&&await user.id();
+    if(!db||!id) throw {code:"no_db"};
+    await db.doc("feedback/"+id).set({...o,at:new Date().toISOString()});
+    const r=$("result");r.hidden=false;r.className="status ok";r.textContent="وصل رأيك، شكرًا لك. تقدر تعدّل وترسل مرة ثانية، وبيتحدث ردك.";
+    try{localStorage.removeItem(KEY)}catch(e){}
+  }catch(err){showCopy(o,"ما قدرنا نحفظ الإجابات هنا.");}
+  btn.disabled=false;btn.textContent="أرسل رأيك";
+});
+
+function renderResp(docs){
+  $("owner").hidden=false;$("count").textContent="("+docs.length+")";const box=$("resp");box.textContent="";
+  if(!docs.length){const p=document.createElement("p");p.className="note";p.textContent="ما وصلت ردود للحين. أول ما يرسل أحد، يظهر هنا.";box.append(p);return}
+  docs.sort((a,b)=>String(b.at).localeCompare(String(a.at))).forEach(d=>{
+    const a=document.createElement("article");const h=document.createElement("b");h.textContent=(d.role||"-")+(d.subject?"، "+d.subject:"");
+    const m=document.createElement("span");m.className="meta";m.textContent=(d.at?new Date(d.at).toLocaleString("ar-SA"):"")+" | المهام: "+(d.tasks??"-")+" من 4";
+    const t=document.createElement("p");t.style.whiteSpace="pre-wrap";t.textContent=asText(d).split("\n").slice(3).join("\n");
+    a.append(h,m,t);box.append(a);});
+}
+(async()=>{
+  if(!window.claude||!claude.use) return;
+  [db,user]=await Promise.all([claude.use("db"),claude.use("user")]);
+  if(db&&user&&await user.isOwner()){
+    const timer=setTimeout(()=>{$("owner").hidden=false;$("resp").textContent="تعذّر تحميل الردود الحين."},10000);
+    db.collection("feedback").onSnapshot(s=>{clearTimeout(timer);renderResp(s.docs.map(x=>x.data()))},()=>{clearTimeout(timer)});
+  }
+})();
+</script>
