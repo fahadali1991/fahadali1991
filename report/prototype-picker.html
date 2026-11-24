@@ -142,6 +142,27 @@ svg.ic{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;str
 .upload input{position:absolute;opacity:0;width:1px;height:1px}
 .note{font-size:.78rem;color:var(--muted)}
 
+.part{display:inline;border:0;background:transparent;padding:0 1px;font:inherit;text-align:start;color:inherit;border-radius:4px;cursor:pointer}
+.part:hover{background:var(--accent-soft)}
+.hint{font-size:.72rem;color:var(--muted)}
+.obsNote{font-size:.72rem;color:var(--muted)}
+.covTop{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.covTop .big{font-family:var(--display);font-size:1.9rem;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1}
+.bar{height:10px;border-radius:99px;background:var(--ghost);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--accent)}
+.covList{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.covRow{display:flex;gap:10px;padding:12px 14px;border-bottom:1px solid var(--line);align-items:flex-start}
+.covRow:last-child{border-bottom:0}
+.covRow .nm{flex:1;min-width:0}
+.covRow .w{font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.covRow small{display:block;color:var(--muted);font-size:.78rem}
+.dot{width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:.7rem;font-weight:700;margin-top:2px}
+.dot.ok{background:var(--accent);color:var(--surface)}
+.dot.no{border:1.5px dashed var(--muted)}
+.go{border:0;background:transparent;color:var(--accent);padding:0;font-size:.8rem;text-decoration:underline;text-underline-offset:3px}
+.newb{background:var(--mark);color:var(--mark-ink);font-size:.65rem;border-radius:99px;padding:0 6px;margin-inline-start:6px;vertical-align:middle}
+.linkbtn{border:0;background:transparent;color:var(--accent);font-weight:600;padding:4px 0;align-self:flex-start}
+
 /* ---------- prototype chrome (not part of the design) ---------- */
 .state{font-size:.75rem;color:var(--muted);border:1px dashed var(--line);border-radius:10px;padding:8px 10px;font-variant-numeric:tabular-nums;display:flex;flex-direction:column;gap:6px}
 .state .chips{gap:6px} .state .chip{padding:3px 10px;font-size:.75rem}
@@ -199,7 +220,7 @@ const IND={
 const S3=["مع متابعة الأداء وتقديم التغذية الراجعة أثناء التنفيذ.","وتم توثيق التنفيذ بالصور والشواهد المرفقة.","وجرى رصد تفاعل {ST} من خلال الملاحظة المباشرة."];
 const ACTS=[
  {id:"lesson",n:"درس تطبيقي",ic:"lesson",place:"class",q:"وش نوع الدرس؟",opts:["درس نموذجي","درس بتقنية رقمية","درس في مركز مصادر التعلم","درس تطبيقي عملي"],
-  el:["إعداد وتنفيذ خطة التعلم","التنويع في استراتيجيات التدريس","توظيف تقنيات ووسائل التعلم"],ind:["2-1-1-2","2-1-1-3","2-1-1-4"],
+  el:["إعداد وتنفيذ خطة التعلم","توظيف تقنيات ووسائل التعلم","الإدارة الصفية"],ind:["2-1-1-2","2-1-1-3","2-1-1-4"],
   t:{title:["{opt} في مادة {SUBJ}","تنفيذ {opt} لـ{CLS}"],s1:["تم تنفيذ {opt} في مادة {SUBJ} مع {ST} {CLS}","نُفّذ {opt} ضمن خطة مادة {SUBJ} لـ{ST} {CLS}"],
    s2:["بهدف تقديم المحتوى بأسلوب يربط المعرفة بالتطبيق،","لتقديم نموذج عملي لتدريس المهارة المستهدفة،","سعيًا لتنويع طرائق عرض الدرس ورفع تفاعل {ST}،"],
    goals:["إعداد درس وفق خطة تعلم واضحة الأهداف","توظيف وسائل تعليمية مناسبة لموضوع الدرس","ربط المحتوى بخبرات {ST} السابقة","تقويم تعلم {ST} أثناء الحصة"]}},
@@ -266,7 +287,17 @@ const G={f:{T:"المعلمة",USED:"وظّفت",ST:"طالبات"},m:{T:"الم
 const PLACES=[["class","داخل الفصل"],["students","مع الطلاب"],["family","مع الأسرة"],["growth","نموّي المهني"]];
 const VARIANTS={d:"التقرير يتكوّن",a:"شبكة أيقونات",b:"محادثة",c:"حسب المكان"};
 
-const fresh0=()=>({act:null,opt:null,taps:0,tab:"class",cls:null,clsOk:false,more:false,seed:0,photos:[],prof:S0prof(),seen:{}});
+// What the teacher observed: they pick only what really happened; the text never invents results.
+const OBS={def:["تفاعل واضح من {ST}","مشاركة أغلب {ST}","إنجاز المهمة في الوقت المحدد","ظهور منتجات وأعمال لـ{ST}","حاجة بعض {ST} إلى دعم إضافي"],
+ parents:["حضور جيد من أولياء الأمور","الاتفاق على خطة متابعة مشتركة","تفاعل أولياء الأمور مع المقترحات"],
+ results:["تحديد مستويات {ST} بوضوح","رصد مهارات تحتاج إلى دعم","تحسن ملحوظ مقارنة بالتقويم السابق"],
+ growth:["الاطلاع على ممارسات جديدة","نية نقل الأثر إلى الصف","تبادل أدوات ومواد مع الزملاء"]};
+const obsOf=a=>a.id==='parents'?OBS.parents:a.id==='results'?OBS.results:a.place==='growth'?OBS.growth:OBS.def;
+// Reports already saved per teacher (sample history so the evidence file isn't empty). In memory only.
+const SAVED={noura:[{act:"strategy",opt:"القراءة الجهرية"},{act:"contest",opt:"القراءة"},{act:"parents",opt:"اجتماع أولياء أمور"}],
+ khaled:[{act:"results",opt:"اختبار تشخيصي"},{act:"remedial",opt:"الكسور"}]};
+let lastNew=[];
+const fresh0=()=>({act:null,opt:null,taps:0,tab:"class",cls:null,clsOk:false,obs:[],obsOk:false,more:false,seed:0,ps:{1:0,2:0,3:0},photos:[],prof:S0prof(),seen:{},view:"build"});
 let profKeep="noura"; const S0prof=()=>profKeep;
 let S=fresh0();
 const app=document.getElementById('app');
@@ -282,9 +313,11 @@ function fill(s,a,cls){const p=P(),g=G[p.g];return s.replaceAll("{opt}",S.opt).r
 function gen(a,cls){
   const k=[S.prof,a.id,S.opt,cls.k,S.seed].join("|"), t=a.t;
   const goals=[...t.goals].sort((x,y)=>hash(k+x)-hash(k+y)).slice(0,3);
-  return {title:fill(pick(t.title,k+"t"),a,cls),
-    desc:fill(pick(t.s1,k+"1")+" "+pick(t.s2,k+"2")+" "+pick(S3,k+"3"),a,cls),
-    goals:goals.map(x=>fill(x,a,cls))};
+  const parts=[fill(pick(t.s1,k+"1"+S.ps[1]),a,cls),fill(pick(t.s2,k+"2"+S.ps[2]),a,cls),fill(pick(S3,k+"3"+S.ps[3]),a,cls)];
+  const obs=S.obs.map(o=>fill(o,a,cls));
+  return {title:fill(pick(t.title,k+"t"),a,cls),parts,desc:parts.join(" "),
+    goals:goals.map(x=>fill(x,a,cls)),
+    obs:obs.length?pick(["ولوحظ أثناء التنفيذ ","وأظهرت الملاحظة المباشرة "],k+"o")+obs.join("، و")+".":null};
 }
 
 /* ---------- shared bits for A/B/C ---------- */
@@ -318,9 +351,27 @@ function C(){const a=act(),list=ACTS.filter(x=>x.place===S.tab);
   <div class="dock"><div class="in"><span>${a?`اختيارك يدعم <b>${a.el.length}</b> من عناصر الأداء`:'اختر نشاط من القائمة'}</span><button type="button" ${a&&S.opt?'':'disabled'}>التالي</button></div></div>`}
 
 /* ---------- D: the report builds itself while the teacher taps ---------- */
+function cover(){
+  const p=P(),done=SAVED[S.prof],count={};
+  done.forEach(r=>ACTS.find(x=>x.id===r.act).el.forEach(e=>count[e]=(count[e]||0)+1));
+  const els=Object.keys(W),got=els.filter(e=>count[e]),wsum=got.reduce((s,e)=>s+W[e],0);
+  const rows=[...els].sort((x,y)=>(count[x]?1:0)-(count[y]?1:0)).map(e=>{
+    const helpers=ACTS.filter(x=>x.el.includes(e)).slice(0,2);
+    return `<div class="covRow"><span class="dot ${count[e]?'ok':'no'}">${count[e]||''}</span>
+      <div class="nm"><b>${e}</b>${lastNew.includes(e)?'<span class="newb">جديد</span>':''}
+      ${count[e]?`<small>${count[e]===1?'تقرير واحد':count[e]+' تقارير'}</small>`:`<small>ناقص. تقدر تغطيه بـ: ${helpers.map(h=>`<button type="button" class="go" data-start="${h.id}">${h.n}</button>`).join('، ')}</small>`}</div>
+      <span class="w">${W[e]}%</span></div>`}).join('');
+  return `${teacher()}<h1>ملف شواهدي</h1>
+   <div class="covTop"><div><span class="big">${got.length}</span> من 11 عنصر عليها شواهد</div>
+    <div class="bar" role="img" aria-label="${wsum}% من وزن التقييم"><i style="width:${wsum}%"></i></div>
+    <span class="lbl">تغطي ${wsum}% من وزن نموذج تقييم الأداء الوظيفي. التقييم نفسه قرار المقيّم.</span></div>
+   <div class="covList">${rows}</div>
+   <button type="button" class="primary" data-new="1">تقرير جديد</button>${state()}`;
+}
 function D(){
+  if(S.view==='cover') return cover();
   const p=P(),a=act(),cls=p.classes.find(c=>c.k===S.cls)||p.classes[0];
-  const step=!a?1:!S.opt?2:!S.clsOk?3:4;
+  const step=!a?1:!S.opt?2:!S.clsOk?3:!S.obsOk?4:5;
   const txt=a&&S.opt?gen(a,cls):null;
   const fr=k=>{if(S.seen[k])return'';S.seen[k]=1;return' fresh'};
   const ghost=n=>Array.from({length:n},(_,i)=>`<div class="ghostline${i===n-1?' s':''}"></div>`).join('');
@@ -330,8 +381,10 @@ function D(){
    <h2 class="repTitle${txt?fr('t'+txt.title):' ghost'}">${txt?txt.title:'العنوان يظهر هنا بعد اختيارك'}</h2>
    <dl class="meta"><div><dt>${G[p.g].T}:</dt><dd>${p.name}</dd></div><div><dt>المادة:</dt><dd>${p.subj}</dd></div>
      <div><dt>الصف:</dt><dd class="${S.clsOk?fr('c'+cls.k):''}">${cls.t}</dd></div><div><dt>التاريخ:</dt><dd>${date}</dd></div></dl>
-   <section class="sec"><h3>الوصف</h3>${txt?`<p class="${fr('d'+txt.desc)}">${txt.desc}</p><button type="button" class="again" data-again="1">${ic('redo')}صياغة أخرى</button>`:ghost(3)}</section>
+   <section class="sec"><h3>الوصف</h3>${txt?`<p class="${fr('d'+txt.desc)}">${txt.parts.map((x,i)=>`<button type="button" class="part" data-part="${i+1}" aria-label="غيّر هذه الجملة">${x}</button>`).join(' ')}</p>
+     <span class="hint">اضغط على أي جملة لتغييرها، أو غيّر الوصف كامل:</span><button type="button" class="again" data-again="1">${ic('redo')}صياغة أخرى</button>`:ghost(3)}</section>
    <section class="sec"><h3>الأهداف</h3>${txt?`<ul class="${fr('g'+txt.goals.join())}">${txt.goals.map(g=>`<li>${g}</li>`).join('')}</ul>`:ghost(3)}</section>
+   <section class="sec"><h3>الملاحظات أثناء التنفيذ</h3>${txt&&txt.obs?`<p class="${fr('o'+txt.obs)}">${txt.obs}</p><span class="obsNote">حسب ملاحظة ${G[p.g].T}.</span>`:S.obsOk?'<p class="ghost">لم تُضف ملاحظات.</p>':ghost(2)}</section>
    <section class="sec"><h3>ما يدعمه هذا التقرير</h3>${a?`<table class="tbl${fr('s'+a.id)}"><thead><tr><th>عناصر الأداء الوظيفي</th><th>مؤشرات دليل الهيئة</th></tr></thead>
      <tbody><tr><td>${a.el.map(e=>`<div>${e} (${W[e]}%)</div>`).join('')}</td><td>${a.ind.map(c=>`<div><span class="code">${c}</span>${IND[c]}</div>`).join('')}</td></tr></tbody></table>`:ghost(2)}</section>
    <section class="sec"><h3>الشواهد</h3><div class="photos">${[0,1,2,3].map(i=>`<div class="slot">${S.photos[i]?`<img src="${S.photos[i]}" alt="صورة ${i+1}">`:`صورة ${i+1}`}</div>`).join('')}</div></section>
@@ -341,18 +394,22 @@ function D(){
   let body='';
   const ranked=[...ACTS].sort((x,y)=>(p.use[y.id]||0)-(p.use[x.id]||0));
   const top=S.more?ranked:ranked.slice(0,4), last=ACTS.find(x=>x.id===p.last.act), lastCls=p.classes.find(c=>c.k===p.last.cls);
-  if(step===1) body=`<button type="button" class="repeat" data-repeat="1">${ic('redo')}<span><b>كرّر آخر تقرير مع فصل ثاني</b><small>${last.n}: ${p.last.opt}، ${lastCls.l}</small></span></button>
+  const doneN=new Set(SAVED[S.prof].flatMap(r=>ACTS.find(x=>x.id===r.act).el)).size;
+  if(step===1) body=`<button type="button" class="linkbtn" data-view="cover">ملف شواهدي: ${doneN} من 11 عنصر</button><button type="button" class="repeat" data-repeat="1">${ic('redo')}<span><b>كرّر آخر تقرير مع فصل ثاني</b><small>${last.n}: ${p.last.opt}، ${lastCls.l}</small></span></button>
     <div class="gridD">${top.map((x,i)=>`<button type="button" class="tileD" data-act="${x.id}">${!S.more&&i<2?'<span class="hot">الأكثر</span>':''}${ic(x.ic)}<span>${x.n}</span></button>`).join('')}</div>
     <button type="button" class="more" data-more="1">${S.more?'أقل':'كل الأنشطة ('+ACTS.length+')'}</button>`;
   if(step===2) body=`${chips(a)}<p class="note">الخيارات مرتّبة حسب مادة ${p.subj}.</p>`;
   if(step===3) body=`<div class="chips">${p.classes.map(c=>`<button type="button" class="chip" data-cls="${c.k}" aria-pressed="${cls.k===c.k}">${c.l}</button>`).join('')}</div>
     <button type="button" class="primary" data-clsok="1">صحيح، التالي</button>`;
-  if(step===4) body=`<label class="upload" for="ph">${ic('camera')}<span>${S.photos.length?'أضف صور ('+S.photos.length+' من 4)':'أرفق صور الشاهد'}</span><input id="ph" type="file" accept="image/*" multiple></label>
-    <button type="button" class="primary" disabled>جاهز للطباعة (في النسخة الحقيقية)</button>`;
-  const heads=["وش سوّيت؟",a?a.q:"","لأي فصل؟","الصور"];
+  if(step===4) body=`<div class="chips">${obsOf(a).map(o=>{const v=fill(o,a,cls);return `<button type="button" class="chip" data-obs="${o}" aria-pressed="${S.obs.includes(o)}">${v}</button>`}).join('')}</div>
+    <p class="note">اختياري. اختر اللي لاحظته فعلاً بس، والنظام ما يضيف نتائج من عنده.</p>
+    <button type="button" class="primary" data-obsok="1">${S.obs.length?'التالي':'تخطي'}</button>`;
+  if(step===5) body=`<label class="upload" for="ph">${ic('camera')}<span>${S.photos.length?'أضف صور ('+S.photos.length+' من 4)':'أرفق صور الشاهد'}</span><input id="ph" type="file" accept="image/*" multiple></label>
+    <button type="button" class="primary" data-save="1">احفظ التقرير</button>`;
+  const heads=["وش سوّيت؟",a?a.q:"","لأي فصل؟","وش لاحظت؟","الصور والحفظ"];
   const panel=`<div class="panel"><div class="in">
-    <div class="steps" aria-hidden="true">${[1,2,3,4].map(i=>`<i class="${i<=step?'on':''}"></i>`).join('')}</div>
-    <div class="phead"><h2>${heads[step-1]}</h2><span class="n">الخطوة ${step} من 4</span>${step>1?'<button type="button" class="back" data-back="1">رجوع</button>':''}</div>
+    <div class="steps" aria-hidden="true">${[1,2,3,4,5].map(i=>`<i class="${i<=step?'on':''}"></i>`).join('')}</div>
+    <div class="phead"><h2>${heads[step-1]}</h2><span class="n">الخطوة ${step} من 5</span>${step>1?'<button type="button" class="back" data-back="1">رجوع</button>':''}</div>
     ${body}</div></div>`;
   return rep+state()+panel;
 }
@@ -360,7 +417,7 @@ function D(){
 const R={d:D,a:A,b:B,c:C};
 const keys=Object.keys(R);
 const cur=()=>{const h=location.hash.slice(1);return R[h]?h:'d'};
-function render(){const v=cur();document.body.classList.toggle('d',v==='d');app.innerHTML=R[v]();document.getElementById('vlabel').textContent=`${v.toUpperCase()} (${VARIANTS[v]})`;}
+function render(){const v=cur();document.body.classList.toggle('d',v==='d'&&S.view!=='cover');app.innerHTML=R[v]();document.getElementById('vlabel').textContent=`${v.toUpperCase()} (${VARIANTS[v]})`;}
 app.addEventListener('click',e=>{
   const t=e.target.closest('button'); if(!t) return; const d=t.dataset;
   if(d.act){ if(S.act!==d.act){S.opt=null;S.clsOk=false;} S.act=d.act; tap(); }
@@ -369,9 +426,17 @@ app.addEventListener('click',e=>{
   else if(d.cls){ S.cls=d.cls; tap(); }
   else if(d.clsok){ S.clsOk=true; tap(); }
   else if(d.again){ S.seed++; tap(); }
+  else if(d.part){ S.ps[d.part]++; tap(); }
+  else if(d.obs){ S.obs=S.obs.includes(d.obs)?S.obs.filter(x=>x!==d.obs):[...S.obs,d.obs]; tap(); }
+  else if(d.obsok){ S.obsOk=true; tap(); }
+  else if(d.save){ const before=new Set(SAVED[S.prof].flatMap(r=>ACTS.find(x=>x.id===r.act).el));
+    SAVED[S.prof].push({act:S.act,opt:S.opt}); lastNew=act().el.filter(e=>!before.has(e)); S.view='cover'; tap(); scrollTo(0,0); }
+  else if(d.view){ lastNew=[]; S.view=d.view; scrollTo(0,0); }
+  else if(d.new){ lastNew=[]; S=fresh0(); scrollTo(0,0); }
+  else if(d.start){ lastNew=[]; S=fresh0(); S.act=d.start; scrollTo(0,0); }
   else if(d.more){ S.more=!S.more; }
   else if(d.repeat){ const l=P().last; S.act=l.act; S.opt=l.opt; S.cls=P().classes.find(c=>c.k!==l.cls).k; S.clsOk=false; tap(); }
-  else if(d.back){ if(S.clsOk&&cur()==='d'){S.clsOk=false}else if(S.opt){S.opt=null}else{S.act=null} }
+  else if(d.back){ if(S.obsOk){S.obsOk=false}else if(S.clsOk&&cur()==='d'){S.clsOk=false}else if(S.opt){S.opt=null}else{S.act=null} }
   else if(d.prof){ profKeep=d.prof; S=fresh0(); }
   else if(d.reset){ S=fresh0(); }
   else return;
