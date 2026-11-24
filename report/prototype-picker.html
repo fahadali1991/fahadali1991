@@ -2,43 +2,43 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>شاشة وش سويت</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<!-- PROTOTYPE — throwaway. Question: what should the teacher's "وش سوّيت؟" picker look like?
-     Three structurally different variants, switched via #a / #b / #c and the floating bar.
-     Mapping data below is a draft for the prototype only; it gets reviewed against the guides before real use. -->
+<!-- PROTOTYPE — throwaway. Question: what should the teacher's "وش سوّيت؟" flow look like?
+     D (default) builds the report live while the teacher taps; A/B/C are the first-round variants.
+     Switch with #d / #a / #b / #c and the floating bar. Texts and mappings are drafts for review. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Readex+Pro:wght@500;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap">
 <style>
-/* Layout: one narrow phone column; each variant owns its own structure below a shared teacher strip. */
+/* Layout: one narrow phone column. D = live report on top, fixed step panel at the bottom. */
 :root{
   --paper:#f6f8f6; --surface:#ffffff; --ink:#18231f; --muted:#5d6b66; --line:#dbe3df;
-  --accent:#0f6b5c; --accent-soft:#e2f0ec; --mark:#f2c14e; --mark-ink:#3d2e00;
+  --accent:#0f6b5c; --accent-soft:#e2f0ec; --mark:#f2c14e; --mark-ink:#3d2e00; --ghost:#e9eeeb;
   --display:"Readex Pro","IBM Plex Sans Arabic",system-ui,sans-serif;
   --body:"IBM Plex Sans Arabic",system-ui,sans-serif;
   --r:14px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --paper:#101614; --surface:#18201d; --ink:#e7eeeb; --muted:#9aa8a2; --line:#2b3632;
-  --accent:#4fbfa8; --accent-soft:#1d2f2a; --mark:#e9b949; --mark-ink:#241a00; color-scheme:dark}}
+  --accent:#4fbfa8; --accent-soft:#1d2f2a; --mark:#e9b949; --mark-ink:#241a00; --ghost:#26302c; color-scheme:dark}}
 :root[data-theme="dark"]{
   --paper:#101614; --surface:#18201d; --ink:#e7eeeb; --muted:#9aa8a2; --line:#2b3632;
-  --accent:#4fbfa8; --accent-soft:#1d2f2a; --mark:#e9b949; --mark-ink:#241a00; color-scheme:dark}
+  --accent:#4fbfa8; --accent-soft:#1d2f2a; --mark:#e9b949; --mark-ink:#241a00; --ghost:#26302c; color-scheme:dark}
 *{box-sizing:border-box}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;
   padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 120px}
+body.d{padding-bottom:62vh}
 .wrap{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:16px}
-h1,h2{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance}
+h1,h2,h3{font-family:var(--display);font-weight:700;margin:0;text-wrap:balance}
 h1{font-size:1.6rem;line-height:1.3} h2{font-size:1.1rem}
 p{margin:0}
 button{font:inherit;color:inherit;cursor:pointer}
-button:focus-visible{outline:3px solid var(--mark);outline-offset:2px}
+button:focus-visible,label:focus-within{outline:3px solid var(--mark);outline-offset:2px}
 svg.ic{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
 
 .teacher{display:flex;align-items:center;gap:12px;font-size:.9rem;color:var(--muted)}
 .teacher b{color:var(--ink);font-weight:600}
 .teacher .tag{margin-inline-start:auto;font-size:.75rem;border:1px dashed var(--line);border-radius:99px;padding:2px 10px}
 .avatar{width:38px;height:38px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font-family:var(--display);font-weight:700}
-
 .support{display:flex;flex-direction:column;gap:8px}
 .support .row{display:flex;flex-wrap:wrap;gap:6px}
 .pill{font-size:.8rem;border-radius:8px;padding:3px 9px;background:var(--accent-soft);color:var(--accent);font-weight:500}
@@ -50,7 +50,7 @@ svg.ic{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;str
 .primary{background:var(--accent);color:var(--surface);border:0;border-radius:12px;padding:14px;font-weight:600;font-size:1rem;width:100%}
 .primary:disabled{opacity:.35;cursor:default}
 
-/* ---------- A: icon grid + bottom sheet ---------- */
+/* ---------- A ---------- */
 .gridA{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .tileA{background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:16px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;font-weight:500;min-height:108px;justify-content:center}
 .tileA svg.ic{width:36px;height:36px;color:var(--accent)}
@@ -61,8 +61,7 @@ svg.ic{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;str
 .sheet.open{transform:none}
 .sheet .in{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:14px}
 .grab{width:40px;height:4px;border-radius:4px;background:var(--line);margin:0 auto}
-
-/* ---------- B: conversation ---------- */
+/* ---------- B ---------- */
 .chat{display:flex;flex-direction:column;gap:12px}
 .bub{max-width:88%;padding:12px 14px;border-radius:16px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
 .bub.sys{align-self:flex-start;border-start-start-radius:4px}
@@ -72,8 +71,7 @@ svg.ic{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;str
 .optB{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);background:var(--paper);border-radius:12px;padding:10px 12px;text-align:start}
 .optB svg.ic{color:var(--accent)}
 .summary{border-inline-start:4px solid var(--mark);padding-inline-start:12px}
-
-/* ---------- C: grouped by place, linkage-first list ---------- */
+/* ---------- C ---------- */
 .tabs{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px}
 .tab{white-space:nowrap;border:0;background:transparent;padding:8px 12px;border-radius:10px;color:var(--muted);font-weight:500}
 .tab[aria-selected="true"]{background:var(--ink);color:var(--paper)}
@@ -93,13 +91,65 @@ svg.ic{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;str
 .dock button{margin-inline-start:auto;background:var(--mark);color:var(--mark-ink);border:0;border-radius:10px;padding:8px 14px;font-weight:600}
 .dock button:disabled{opacity:.4}
 
+/* ---------- D: live report ---------- */
+.rep{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px 16px;display:flex;flex-direction:column;gap:14px;
+  box-shadow:0 1px 0 var(--line),0 10px 24px rgb(0 0 0 / .06);font-size:.9rem}
+.repHead{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--accent);padding-bottom:8px;font-size:.78rem;color:var(--muted)}
+.repHead b{font-family:var(--display);color:var(--accent);font-size:.95rem}
+.repTitle{font-size:1.2rem;line-height:1.4}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 12px;margin:0;font-size:.8rem}
+.meta div{display:flex;gap:6px;min-width:0} .meta dt{color:var(--muted)} .meta dd{margin:0;font-weight:500}
+.sec{display:flex;flex-direction:column;gap:6px}
+.sec h3{font-size:.85rem;color:var(--accent)}
+.sec ul{margin:0;padding-inline-start:18px;display:flex;flex-direction:column;gap:2px}
+.ghostline{height:10px;border-radius:5px;background:var(--ghost)}
+.ghostline.s{width:60%}
+.ghost{color:var(--muted);font-weight:500}
+.again{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:transparent;border-radius:99px;padding:3px 12px;font-size:.78rem;color:var(--accent)}
+.again svg.ic{width:16px;height:16px}
+.tbl{width:100%;border-collapse:collapse;font-size:.78rem}
+.tbl th{text-align:start;font-weight:600;color:var(--muted);padding:6px;border-bottom:1px solid var(--line);width:50%}
+.tbl td{vertical-align:top;padding:6px;border-bottom:1px solid var(--line)}
+.tbl td div+div{margin-top:6px}
+.tbl .code{display:inline-block;direction:ltr;font-variant-numeric:tabular-nums;color:var(--muted);margin-inline-end:4px}
+.photos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.slot{aspect-ratio:4/3;max-width:100%;border:1.5px dashed var(--line);border-radius:8px;display:grid;place-items:center;color:var(--muted);font-size:.75rem;overflow:hidden}
+.slot img{width:100%;height:100%;object-fit:cover}
+.sign{display:flex;justify-content:space-between;gap:12px;font-size:.78rem;color:var(--muted);border-top:1px solid var(--line);padding-top:10px}
+.fresh{animation:fresh 1.2s ease}
+@keyframes fresh{0%{background:color-mix(in srgb,var(--mark) 45%,transparent)}100%{background:transparent}}
+
+.panel{position:fixed;inset:auto 0 0 0;background:var(--surface);border-top:1px solid var(--line);border-radius:20px 20px 0 0;
+  box-shadow:0 -10px 30px rgb(0 0 0 / .14);max-height:58vh;overflow:auto;
+  padding:12px max(16px,env(safe-area-inset-right,0px)) calc(70px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+.panel .in{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+.steps{display:flex;gap:6px}
+.steps i{flex:1;height:4px;border-radius:4px;background:var(--line)}
+.steps i.on{background:var(--accent)}
+.phead{display:flex;align-items:baseline;gap:8px}
+.phead h2{font-size:1.15rem}
+.phead .n{font-size:.78rem;color:var(--muted)}
+.phead .back{margin-inline-start:auto;border:0;background:transparent;color:var(--accent);font-size:.85rem;padding:4px}
+.repeat{display:flex;align-items:center;gap:10px;border:1.5px dashed var(--accent);background:var(--accent-soft);border-radius:12px;padding:10px 12px;text-align:start;width:100%}
+.repeat svg.ic{color:var(--accent);width:24px;height:24px}
+.repeat small{display:block;color:var(--muted);font-size:.78rem}
+.gridD{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.tileD{display:flex;flex-direction:column;align-items:center;gap:4px;border:1.5px solid var(--line);background:var(--paper);border-radius:12px;padding:10px 4px;font-size:.74rem;line-height:1.3;text-align:center;font-weight:500;position:relative}
+.tileD svg.ic{color:var(--accent)}
+.tileD .hot{position:absolute;top:-7px;inset-inline-start:-4px;background:var(--mark);color:var(--mark-ink);font-size:.62rem;border-radius:99px;padding:0 6px}
+.more{border:0;background:transparent;color:var(--accent);font-size:.85rem;padding:4px;align-self:flex-start}
+.upload{display:flex;align-items:center;justify-content:center;gap:8px;border:1.5px dashed var(--accent);border-radius:12px;padding:14px;color:var(--accent);font-weight:600;cursor:pointer}
+.upload input{position:absolute;opacity:0;width:1px;height:1px}
+.note{font-size:.78rem;color:var(--muted)}
+
 /* ---------- prototype chrome (not part of the design) ---------- */
-.state{font-size:.75rem;color:var(--muted);border:1px dashed var(--line);border-radius:10px;padding:8px 10px;font-variant-numeric:tabular-nums}
+.state{font-size:.75rem;color:var(--muted);border:1px dashed var(--line);border-radius:10px;padding:8px 10px;font-variant-numeric:tabular-nums;display:flex;flex-direction:column;gap:6px}
+.state .chips{gap:6px} .state .chip{padding:3px 10px;font-size:.75rem}
 .switch{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:50;
   display:flex;align-items:center;gap:4px;background:#111;color:#fff;border-radius:99px;padding:4px;box-shadow:0 6px 20px rgb(0 0 0 / .35);font-size:.85rem;white-space:nowrap}
 .switch button{background:#2a2a2a;color:#fff;border:0;border-radius:99px;width:38px;height:38px;font-size:1.1rem}
 .switch span{padding:0 10px}
-@media (prefers-reduced-motion:reduce){.sheet{transition:none}}
+@media (prefers-reduced-motion:reduce){.sheet{transition:none}.fresh{animation:none}}
 </style>
 
 <div class="wrap" id="app" dir="rtl"></div>
@@ -120,92 +170,223 @@ const I={
  plus:'<circle cx="12" cy="12" r="9"/><path d="M12 8v8M8 12h8"/>',
  star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
  swap:'<path d="M7 7h11l-3-3M17 17H6l3 3"/>',
- cap:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/>'
+ cap:'<path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c0 1.5 3 3 6 3s6-1.5 6-3v-5"/>',
+ redo:'<path d="M20 11a8 8 0 1 0-2.3 5.7M20 4v7h-7"/>',
+ camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>'
 };
 const ic=k=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${I[k]}</svg>`;
-// Element weights come from the MoE teacher evaluation form; indicator codes from the ETEC guide (appendix A).
+
+// Weights: MoE teacher evaluation form. Codes and wording: ETEC guide, appendix A (domain-standard-1-indicator).
 const W={"أداء الواجبات الوظيفية":10,"التفاعل مع المجتمع المهني":10,"التفاعل مع أولياء الأمور":10,"التنويع في استراتيجيات التدريس":10,"تحسين نتائج المتعلمين":10,"إعداد وتنفيذ خطة التعلم":10,"توظيف تقنيات ووسائل التعلم":10,"تهيئة بيئة تعليمية":5,"الإدارة الصفية":5,"تحليل نتائج المتعلمين":10,"تنوع أساليب التقويم":10};
+const IND={
+ "2-1-1-1":"توفر المدرسة فرصًا متكافئة للتعلم تلبي احتياجات المتعلمين",
+ "2-1-1-2":"تدعم المدرسة تنفيذ المناهج بما يحقق نواتج التعلم المستهدفة",
+ "2-1-1-3":"تنوع المدرسة في استراتيجيات التعليم والتعلم",
+ "2-1-1-4":"تفعّل المدرسة التقنية الرقمية لدعم تعلم المتعلمين",
+ "2-1-1-5":"تنفذ المدرسة أنشطة تعلم تطبيقية ترتبط بحياة المتعلمين",
+ "2-1-1-6":"تنمي المدرسة المهارات القرائية والعددية الأساسية",
+ "2-1-1-7":"تنمي المدرسة مهارات التفكير والبحث والابتكار",
+ "2-1-1-9":"تعزز المدرسة دافعية المتعلمين للتعلم",
+ "2-2-1-1":"تطبق المدرسة أساليب وأدوات تقويم متنوعة للكشف عن مستويات المتعلمين",
+ "2-2-1-3":"تحلل المدرسة نتائج التقويم وتوظفها في تحسين التعليم والتعلم",
+ "2-2-1-4":"تقدم المدرسة التغذية الراجعة للمتعلمين وأولياء أمورهم",
+ "1-2-1-4":"تنفذ المدرسة برامج وأنشطة تربوية داعمة للسلوك الإيجابي",
+ "1-2-1-5":"تنفذ المدرسة برامج وأنشطة إثرائية لتطوير مواهب المتعلمين",
+ "1-3-1-2":"تعزز المدرسة مشاركة الأسرة في تعلم أبنائها",
+ "1-4-1-4":"تدعم المدرسة منسوبيها للحصول على الرخصة المهنية",
+ "1-4-1-5":"تدعم المدرسة التطوير المهني لمنسوبيها وفقًا لنتائج التقويم"
+};
+const S3=["مع متابعة الأداء وتقديم التغذية الراجعة أثناء التنفيذ.","وتم توثيق التنفيذ بالصور والشواهد المرفقة.","وجرى رصد تفاعل {ST} من خلال الملاحظة المباشرة."];
 const ACTS=[
- {id:"lesson",n:"درس تطبيقي",ic:"lesson",place:"class",q:"وش نوع الدرس؟",opts:["درس نموذجي","درس بتقنية رقمية","درس في مصادر التعلم","درس تطبيقي عملي"],el:["إعداد وتنفيذ خطة التعلم","التنويع في استراتيجيات التدريس","توظيف تقنيات ووسائل التعلم"],ind:["2-1-1-2","2-1-1-3","2-1-1-4"]},
- {id:"strategy",n:"استراتيجية تدريس",ic:"bulb",place:"class",q:"أي استراتيجية؟",opts:["التعلم التعاوني","العصف الذهني","الصف المقلوب","لعب الأدوار","خرائط المفاهيم"],el:["التنويع في استراتيجيات التدريس","تهيئة بيئة تعليمية"],ind:["2-1-1-3","2-1-1-7"]},
- {id:"contest",n:"مسابقة",ic:"trophy",place:"students",q:"وش مجال المسابقة؟",opts:["قراءة","حفظ وتلاوة","رياضيات ذهنية","علوم وتجارب","مسابقة صفية سريعة"],el:["تهيئة بيئة تعليمية","تحسين نتائج المتعلمين"],ind:["2-1-1-9","1-1-2-5"]},
- {id:"workshop",n:"ورشة أو برنامج",ic:"gear",place:"students",q:"لمن الورشة؟",opts:["للطلاب","للمعلمين","لأولياء الأمور"],el:["أداء الواجبات الوظيفية","تهيئة بيئة تعليمية"],ind:["2-1-1-5","1-1-2-4"]},
- {id:"parents",n:"تواصل مع أولياء الأمور",ic:"family",place:"family",q:"كيف كان التواصل؟",opts:["اجتماع أولياء أمور","رسائل وتقارير دورية","اتصال فردي","زيارة للمدرسة"],el:["التفاعل مع أولياء الأمور"],ind:["1-1-3-2","2-1-2-4"]},
- {id:"results",n:"اختبار وتحليل نتائج",ic:"chart",place:"class",q:"وش نوع التقويم؟",opts:["تشخيصي","تكويني","ختامي","تحليل نتائج نافس"],el:["تحليل نتائج المتعلمين","تنوع أساليب التقويم"],ind:["2-1-2-1","2-1-2-3"]},
- {id:"remedial",n:"خطة علاجية",ic:"plus",place:"students",q:"وش المهارة المستهدفة؟",opts:["القراءة","الكتابة","العمليات الحسابية","الفهم القرائي"],el:["تحسين نتائج المتعلمين","تحليل نتائج المتعلمين"],ind:["2-1-1-1","2-1-1-6"]},
- {id:"gifted",n:"إثراء للموهوبين",ic:"star",place:"students",q:"وش نوع الإثراء؟",opts:["مشروع بحثي","مسابقة خارجية","برنامج إثرائي","نادي"],el:["تحسين نتائج المتعلمين","التنويع في استراتيجيات التدريس"],ind:["1-1-2-5","2-1-1-1"]},
- {id:"visits",n:"تبادل زيارات أو مجتمع مهني",ic:"swap",place:"growth",q:"وش النشاط؟",opts:["زيارة صفية متبادلة","مجتمع تعلم مهني","درس تطبيقي للزملاء"],el:["التفاعل مع المجتمع المهني"],ind:["1-1-4-5"]},
- {id:"course",n:"دورة أو تطوير مهني",ic:"cap",place:"growth",q:"وش نوع التطوير؟",opts:["دورة تدريبية","ورشة حضورية","شهادة مهنية","قراءة وبحث"],el:["التفاعل مع المجتمع المهني"],ind:["1-1-4-5","1-1-4-4"]}
+ {id:"lesson",n:"درس تطبيقي",ic:"lesson",place:"class",q:"وش نوع الدرس؟",opts:["درس نموذجي","درس بتقنية رقمية","درس في مركز مصادر التعلم","درس تطبيقي عملي"],
+  el:["إعداد وتنفيذ خطة التعلم","التنويع في استراتيجيات التدريس","توظيف تقنيات ووسائل التعلم"],ind:["2-1-1-2","2-1-1-3","2-1-1-4"],
+  t:{title:["{opt} في مادة {SUBJ}","تنفيذ {opt} لـ{CLS}"],s1:["تم تنفيذ {opt} في مادة {SUBJ} مع {ST} {CLS}","نُفّذ {opt} ضمن خطة مادة {SUBJ} لـ{ST} {CLS}"],
+   s2:["بهدف تقديم المحتوى بأسلوب يربط المعرفة بالتطبيق،","لتقديم نموذج عملي لتدريس المهارة المستهدفة،","سعيًا لتنويع طرائق عرض الدرس ورفع تفاعل {ST}،"],
+   goals:["إعداد درس وفق خطة تعلم واضحة الأهداف","توظيف وسائل تعليمية مناسبة لموضوع الدرس","ربط المحتوى بخبرات {ST} السابقة","تقويم تعلم {ST} أثناء الحصة"]}},
+ {id:"strategy",n:"استراتيجية تدريس",ic:"bulb",place:"class",q:"أي استراتيجية؟",subj:"strategy",
+  el:["التنويع في استراتيجيات التدريس","تهيئة بيئة تعليمية"],ind:["2-1-1-3","2-1-1-7"],
+  t:{title:["توظيف استراتيجية {opt} في {SUBJ}","استراتيجية {opt} في حصة {SUBJ}","تطبيق استراتيجية {opt} مع {CLS}"],
+   s1:["{USED} {T} استراتيجية {opt} في حصة {SUBJ} مع {ST} {CLS}","طُبّقت استراتيجية {opt} في درس {SUBJ} لـ{ST} {CLS}","تم توظيف استراتيجية {opt} خلال حصة {SUBJ} مع {ST} {CLS}"],
+   s2:["بهدف إشراك {ST} بفاعلية في بناء المعرفة،","لتعزيز المشاركة والتفاعل داخل الحصة،","سعيًا لتنويع أساليب التعلم ومراعاة الفروق الفردية،"],
+   goals:["تنمية مهارات التفكير لدى {ST}","رفع مستوى مشاركة {ST} في الحصة","تعزيز العمل الجماعي وتبادل الأفكار","ربط محتوى الدرس بمواقف حياتية","مراعاة الفروق الفردية بين {ST}"]}},
+ {id:"contest",n:"مسابقة",ic:"trophy",place:"students",q:"وش مجال المسابقة؟",subj:"contest",
+  el:["تهيئة بيئة تعليمية","تحسين نتائج المتعلمين"],ind:["2-1-1-9","1-2-1-5"],
+  t:{title:["مسابقة {opt} لـ{CLS}","مسابقة في {opt}"],s1:["نُظّمت مسابقة في {opt} لـ{ST} {CLS}","أُقيمت مسابقة {opt} بمشاركة {ST} {CLS}"],
+   s2:["لإثارة دافعية {ST} نحو التعلم،","لتعزيز روح التنافس الإيجابي،","لتحفيز {ST} على إتقان المهارة،"],
+   goals:["إثارة الدافعية نحو التعلم","تعزيز التنافس الإيجابي بين {ST}","اكتشاف المتميزين وتشجيعهم","تثبيت المهارة بطريقة ممتعة"]}},
+ {id:"workshop",n:"ورشة أو برنامج",ic:"gear",place:"students",q:"لمن الورشة؟",opts:["للطلاب","للمعلمين","لأولياء الأمور"],
+  el:["أداء الواجبات الوظيفية","تهيئة بيئة تعليمية"],ind:["2-1-1-5","1-2-1-4"],
+  t:{title:["ورشة عمل {opt}","برنامج تدريبي {opt}"],s1:["نُفّذت ورشة عمل {opt} في {SCHOOL}","أُقيم برنامج تدريبي {opt} في {SCHOOL}"],
+   s2:["لتنمية مهارات عملية ترتبط بالحياة اليومية،","لتبادل الخبرات وبناء المهارات،","لنشر ممارسات إيجابية داخل المدرسة،"],
+   goals:["تنمية مهارات عملية لدى المشاركين","تبادل الخبرات والتجارب","تعزيز السلوك الإيجابي","ربط التعلم بمواقف حياتية"]}},
+ {id:"parents",n:"تواصل مع أولياء الأمور",ic:"family",place:"family",q:"كيف كان التواصل؟",opts:["اجتماع أولياء أمور","رسائل وتقارير دورية","اتصال فردي","زيارة للمدرسة"],
+  el:["التفاعل مع أولياء الأمور"],ind:["1-3-1-2","2-2-1-4"],
+  t:{title:["{opt} لأولياء أمور {CLS}","التواصل مع أولياء الأمور: {opt}"],s1:["تم التواصل مع أولياء أمور {ST} {CLS} من خلال {opt}","جرى تفعيل التواصل مع أسر {ST} {CLS} عبر {opt}"],
+   s2:["لإطلاعهم على مستوى أبنائهم ومناقشة سبل دعمهم،","لتعزيز الشراكة بين المدرسة والأسرة،","لمتابعة التقدم في مادة {SUBJ}،"],
+   goals:["تعزيز الشراكة بين المدرسة والأسرة","إطلاع أولياء الأمور على مستوى أبنائهم","الاتفاق على إجراءات دعم مشتركة","إشراك الأسرة في متابعة الواجبات"]}},
+ {id:"results",n:"اختبار وتحليل نتائج",ic:"chart",place:"class",q:"وش نوع التقويم؟",opts:["اختبار تشخيصي","تقويم تكويني","اختبار ختامي","تحليل نتائج نافس"],
+  el:["تحليل نتائج المتعلمين","تنوع أساليب التقويم"],ind:["2-2-1-1","2-2-1-3"],
+  t:{title:["{opt} في مادة {SUBJ} لـ{CLS}","{opt}: {SUBJ}"],s1:["تم إجراء {opt} في مادة {SUBJ} لـ{ST} {CLS}","أُجري {opt} لـ{ST} {CLS} في مادة {SUBJ}"],
+   s2:["وتحليل النتائج لتحديد مستويات {ST}،","للوقوف على جوانب القوة والاحتياج،","لتوجيه قرارات التدريس بناءً على البيانات،"],
+   goals:["تشخيص مستويات {ST} بدقة","تحديد المهارات التي تحتاج إلى دعم","استخدام النتائج في تحسين التدريس","تقديم تغذية راجعة لـ{ST} وأولياء الأمور"]}},
+ {id:"remedial",n:"خطة علاجية",ic:"plus",place:"students",q:"وش المهارة المستهدفة؟",subj:"remedial",
+  el:["تحسين نتائج المتعلمين","تحليل نتائج المتعلمين"],ind:["2-1-1-1","2-1-1-6"],
+  t:{title:["خطة علاجية لمهارة {opt}","علاج مهارة {opt} لـ{CLS}"],s1:["نُفّذت خطة علاجية لمهارة {opt} مع {ST} {CLS}","طُبّقت خطة علاجية في مهارة {opt} لـ{ST} {CLS}"],
+   s2:["بناءً على نتائج التقويم وتحديد الاحتياج،","لدعم من يحتاج إلى تعزيز في المهارة،","وفق خطة زمنية ومتابعة دورية،"],
+   goals:["معالجة الفاقد في مهارة {opt}","تقديم دعم يناسب احتياج كل متعلم","متابعة التقدم بشكل دوري","رفع مستوى الإتقان في المهارة"]}},
+ {id:"gifted",n:"إثراء للموهوبين",ic:"star",place:"students",q:"وش نوع الإثراء؟",opts:["مشروع بحثي","مسابقة خارجية","برنامج إثرائي","نادٍ علمي"],
+  el:["تحسين نتائج المتعلمين","التنويع في استراتيجيات التدريس"],ind:["1-2-1-5","2-1-1-1"],
+  t:{title:["{opt} للموهوبين في {SUBJ}","إثراء الموهوبين: {opt}"],s1:["نُفّذ {opt} لفئة الموهوبين من {ST} {CLS}","قُدّم {opt} لفئة الموهوبين في مادة {SUBJ}"],
+   s2:["لتنمية القدرات والمواهب،","لتوسيع خبرات التعلم خارج المقرر،","لتشجيع الإبداع والابتكار،"],
+   goals:["تنمية القدرات الإبداعية","تقديم خبرات تعلم أعمق","تشجيع البحث والاكتشاف"]}},
+ {id:"visits",n:"تبادل زيارات أو مجتمع مهني",ic:"swap",place:"growth",q:"وش النشاط؟",opts:["زيارة صفية متبادلة","مجتمع تعلم مهني","درس تطبيقي للزملاء"],
+  el:["التفاعل مع المجتمع المهني"],ind:["1-4-1-5"],
+  t:{title:["{opt} في مادة {SUBJ}","{opt}"],s1:["تمت المشاركة في {opt} مع زملاء التخصص في {SCHOOL}","جرى تنفيذ {opt} بمشاركة معلمي {SUBJ}"],
+   s2:["لتبادل الخبرات والممارسات التدريسية،","لتحسين الممارسات الصفية،","لبناء مجتمع تعلم مهني داعم،"],
+   goals:["تبادل الخبرات والممارسات التدريسية","تحسين الممارسات الصفية","بناء مجتمع تعلم مهني داعم"]}},
+ {id:"course",n:"دورة أو تطوير مهني",ic:"cap",place:"growth",q:"وش نوع التطوير؟",opts:["دورة تدريبية","ورشة حضورية","برنامج تدريبي عن بُعد","لقاء مهني"],
+  el:["التفاعل مع المجتمع المهني"],ind:["1-4-1-5","1-4-1-4"],
+  t:{title:["{opt} في التطوير المهني","المشاركة في {opt}"],s1:["تمت المشاركة في {opt} ضمن خطة التطوير المهني الفردية","حضور {opt} ضمن خطة التطوير المهني"],
+   s2:["لتطوير الممارسات التدريسية،","لمواكبة المستجدات التربوية،","لتنمية الكفايات المهنية،"],
+   goals:["تطوير الممارسات التدريسية","مواكبة المستجدات التربوية","نقل أثر التدريب إلى الصف"]}}
 ];
+const SUBJ={
+ "لغتي":{strategy:["القراءة الجهرية","التعلم التعاوني","لعب الأدوار","خرائط المفاهيم","العصف الذهني"],contest:["القراءة","الإملاء","الخط العربي","الإلقاء"],remedial:["القراءة","الكتابة الإملائية","الفهم القرائي","الخط"]},
+ "الرياضيات":{strategy:["التعلم بالاكتشاف","حل المشكلات","التعلم التعاوني","المحسوسات","الألعاب التعليمية"],contest:["الحساب الذهني","حل المسائل","جدول الضرب","الألغاز الرياضية"],remedial:["العمليات الحسابية","الكسور","المسائل اللفظية","جدول الضرب"]}
+};
+const PROF={
+ noura:{name:"أ. نورة العتيبي",ini:"ن",g:"f",subj:"لغتي",school:"الابتدائية العاشرة (مثال)",
+  classes:[{k:"5-1",l:"خامس/1",t:"الصف الخامس (1)"},{k:"5-2",l:"خامس/2",t:"الصف الخامس (2)"},{k:"6-1",l:"سادس/1",t:"الصف السادس (1)"}],
+  use:{strategy:9,contest:5,parents:4,remedial:3,lesson:2,results:2},last:{act:"strategy",opt:"القراءة الجهرية",cls:"5-1"}},
+ khaled:{name:"أ. خالد الشهري",ini:"خ",g:"m",subj:"الرياضيات",school:"متوسطة الفيصلية (مثال)",
+  classes:[{k:"1-2",l:"أول م/2",t:"الصف الأول المتوسط (2)"},{k:"2-3",l:"ثاني م/3",t:"الصف الثاني المتوسط (3)"},{k:"3-1",l:"ثالث م/1",t:"الصف الثالث المتوسط (1)"}],
+  use:{results:8,remedial:6,strategy:4,lesson:3,contest:1},last:{act:"remedial",opt:"الكسور",cls:"2-3"}}
+};
+const G={f:{T:"المعلمة",USED:"وظّفت",ST:"طالبات"},m:{T:"المعلم",USED:"وظّف",ST:"طلاب"}};
 const PLACES=[["class","داخل الفصل"],["students","مع الطلاب"],["family","مع الأسرة"],["growth","نموّي المهني"]];
-const VARIANTS={a:"شبكة أيقونات",b:"محادثة",c:"حسب المكان"};
-let S={act:null,opt:null,taps:0,tab:"class"};
+const VARIANTS={d:"التقرير يتكوّن",a:"شبكة أيقونات",b:"محادثة",c:"حسب المكان"};
+
+const fresh0=()=>({act:null,opt:null,taps:0,tab:"class",cls:null,clsOk:false,more:false,seed:0,photos:[],prof:S0prof(),seen:{}});
+let profKeep="noura"; const S0prof=()=>profKeep;
+let S=fresh0();
 const app=document.getElementById('app');
+const P=()=>PROF[S.prof];
 const act=()=>ACTS.find(a=>a.id===S.act);
+const optsOf=a=>a.subj?SUBJ[P().subj][a.subj]:a.opts;
 const tap=()=>{S.taps++};
 
-const teacher=`<div class="teacher"><div class="avatar">ن</div><div><b>أ. نورة العتيبي</b><br>لغتي، الصف الخامس</div><span class="tag">بيانات مثال</span></div>`;
-const support=a=>`<div class="support">
-  <span class="lbl">يدعم من الأداء الوظيفي</span>
+// deterministic choice per teacher + report + "صياغة أخرى" count, so two teachers get different texts
+function hash(s){let h=2166136261;for(const c of s){h^=c.codePointAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function pick(arr,key){return arr[hash(key)%arr.length]}
+function fill(s,a,cls){const p=P(),g=G[p.g];return s.replaceAll("{opt}",S.opt).replaceAll("{SUBJ}",p.subj).replaceAll("لـ{ST} {CLS}","ل"+g.ST+" "+cls.t).replaceAll("{ST} {CLS}",g.ST+" "+cls.t).replaceAll("لـ{ST}","لل"+g.ST).replaceAll("{ST}","ال"+g.ST).replaceAll("لـ{CLS}","لل"+cls.t.slice(2)).replaceAll("{CLS}",cls.t).replaceAll("{T}",g.T).replaceAll("{USED}",g.USED).replaceAll("{SCHOOL}","مدرسة "+p.school)}
+function gen(a,cls){
+  const k=[S.prof,a.id,S.opt,cls.k,S.seed].join("|"), t=a.t;
+  const goals=[...t.goals].sort((x,y)=>hash(k+x)-hash(k+y)).slice(0,3);
+  return {title:fill(pick(t.title,k+"t"),a,cls),
+    desc:fill(pick(t.s1,k+"1")+" "+pick(t.s2,k+"2")+" "+pick(S3,k+"3"),a,cls),
+    goals:goals.map(x=>fill(x,a,cls))};
+}
+
+/* ---------- shared bits for A/B/C ---------- */
+const teacher=()=>`<div class="teacher"><div class="avatar">${P().ini}</div><div><b>${P().name}</b><br>${P().subj}</div><span class="tag">بيانات مثال</span></div>`;
+const support=a=>`<div class="support"><span class="lbl">يدعم من الأداء الوظيفي</span>
   <div class="row">${a.el.map(e=>`<span class="pill">${e} (${W[e]}%)</span>`).join('')}</div>
   <span class="lbl">يرتبط بمؤشرات دليل الهيئة</span>
   <div class="row">${a.ind.map(c=>`<span class="pill code">${c}</span>`).join('')}</div></div>`;
-const chips=a=>`<div class="chips">${a.opts.map(o=>`<button type="button" class="chip" data-opt="${o}" aria-pressed="${S.opt===o}">${o}</button>`).join('')}</div>`;
-const state=()=>`<div class="state">حالة النموذج: النشاط = ${act()?act().n:'—'} | التفصيل = ${S.opt||'—'} | الضغطات حتى الآن = ${S.taps}</div>`;
+const chips=a=>`<div class="chips">${optsOf(a).map(o=>`<button type="button" class="chip" data-opt="${o}" aria-pressed="${S.opt===o}">${o}</button>`).join('')}</div>`;
+const state=()=>`<div class="state"><span>حالة النموذج: النشاط = ${act()?act().n:'—'} | التفصيل = ${S.opt||'—'} | الضغطات = ${S.taps}</span>
+  <span>جرّب بمعلم ثاني عشان تشوف كيف تتغيّر الخيارات والنصوص:</span>
+  <div class="chips">${Object.entries(PROF).map(([k,p])=>`<button type="button" class="chip" data-prof="${k}" aria-pressed="${S.prof===k}">${p.name} (${p.subj})</button>`).join('')}</div></div>`;
 
-function A(){
-  const a=act();
-  return `${teacher}<h1>وش سوّيت؟</h1>
-  <div class="gridA">${ACTS.map(x=>`<button type="button" class="tileA" data-act="${x.id}" aria-pressed="${S.act===x.id}">${ic(x.ic)}<span>${x.n}</span></button>`).join('')}</div>
-  ${state()}
-  <div class="sheet ${a?'open':''}" role="dialog" aria-label="تفاصيل النشاط"><div class="in">
-   <div class="grab"></div>
-   ${a?`<h2>${a.q}</h2>${chips(a)}${support(a)}<button type="button" class="primary" ${S.opt?'':'disabled'}>التالي: الصور</button>`:''}
-  </div></div>`;
-}
-function B(){
-  const a=act();
-  let h=`${teacher}<div class="chat">
-   <div class="bub sys"><p>هلا أ. نورة، وش سوّيتي اليوم؟</p>
+function A(){const a=act();
+  return `${teacher()}<h1>وش سوّيت؟</h1>
+  <div class="gridA">${ACTS.map(x=>`<button type="button" class="tileA" data-act="${x.id}" aria-pressed="${S.act===x.id}">${ic(x.ic)}<span>${x.n}</span></button>`).join('')}</div>${state()}
+  <div class="sheet ${a?'open':''}" role="dialog" aria-label="تفاصيل النشاط"><div class="in"><div class="grab"></div>
+   ${a?`<h2>${a.q}</h2>${chips(a)}${support(a)}<button type="button" class="primary" ${S.opt?'':'disabled'}>التالي: الصور</button>`:''}</div></div>`}
+function B(){const a=act();
+  let h=`${teacher()}<div class="chat"><div class="bub sys"><p>هلا ${P().name}، وش سوّيت اليوم؟</p>
     ${a?'':`<div class="optsB">${ACTS.map(x=>`<button type="button" class="optB" data-act="${x.id}">${ic(x.ic)}<span>${x.n}</span></button>`).join('')}</div>`}</div>`;
-  if(a){
-    h+=`<div class="bub me">${ic(a.ic)}<span>${a.n}</span></div>
-     <div class="bub sys"><p>${a.q}</p>${S.opt?'':chips(a)}</div>`;
-    if(S.opt){
-      h+=`<div class="bub me"><span>${S.opt}</span></div>
-       <div class="bub sys"><div class="summary"><p><b>تمام.</b> بجهّز تقرير «${a.n}: ${S.opt}» للصف الخامس.</p></div>${support(a)}
-       <button type="button" class="primary">أرفق الصور</button>
-       <button type="button" class="chip" data-reset="1">ابدأ من جديد</button></div>`;
-    }
-  }
-  return h+`</div>${state()}`;
-}
-function C(){
-  const a=act(), list=ACTS.filter(x=>x.place===S.tab);
-  return `${teacher}<h1>وش سوّيت؟</h1>
+  if(a){h+=`<div class="bub me">${ic(a.ic)}<span>${a.n}</span></div><div class="bub sys"><p>${a.q}</p>${S.opt?'':chips(a)}</div>`;
+    if(S.opt)h+=`<div class="bub me"><span>${S.opt}</span></div><div class="bub sys"><div class="summary"><p><b>تمام.</b> بجهّز تقرير «${a.n}: ${S.opt}».</p></div>${support(a)}
+       <button type="button" class="primary">أرفق الصور</button><button type="button" class="chip" data-reset="1">ابدأ من جديد</button></div>`;}
+  return h+`</div>${state()}`}
+function C(){const a=act(),list=ACTS.filter(x=>x.place===S.tab);
+  return `${teacher()}<h1>وش سوّيت؟</h1>
   <div class="tabs" role="tablist">${PLACES.map(([k,v])=>`<button type="button" class="tab" role="tab" data-tab="${k}" aria-selected="${S.tab===k}">${v}</button>`).join('')}</div>
   <div class="listC">${list.map(x=>`<button type="button" class="rowC" data-act="${x.id}" aria-pressed="${S.act===x.id}">${ic(x.ic)}<div><div class="t">${x.n}</div><div class="s">${x.el.map(e=>`<span>${e}</span>`).join('')}</div></div></button>`).join('')}</div>
-  ${a&&a.place===S.tab?`<div class="detailC"><h2>${a.q}</h2>${chips(a)}${support(a)}</div>`:''}
-  ${state()}
-  <div class="dock"><div class="in"><span>${a?`اختيارك يدعم <b>${a.el.length}</b> من عناصر الأداء`:'اختر نشاط من القائمة'}</span><button type="button" ${a&&S.opt?'':'disabled'}>التالي</button></div></div>`;
+  ${a&&a.place===S.tab?`<div class="detailC"><h2>${a.q}</h2>${chips(a)}${support(a)}</div>`:''}${state()}
+  <div class="dock"><div class="in"><span>${a?`اختيارك يدعم <b>${a.el.length}</b> من عناصر الأداء`:'اختر نشاط من القائمة'}</span><button type="button" ${a&&S.opt?'':'disabled'}>التالي</button></div></div>`}
+
+/* ---------- D: the report builds itself while the teacher taps ---------- */
+function D(){
+  const p=P(),a=act(),cls=p.classes.find(c=>c.k===S.cls)||p.classes[0];
+  const step=!a?1:!S.opt?2:!S.clsOk?3:4;
+  const txt=a&&S.opt?gen(a,cls):null;
+  const fr=k=>{if(S.seen[k])return'';S.seen[k]=1;return' fresh'};
+  const ghost=n=>Array.from({length:n},(_,i)=>`<div class="ghostline${i===n-1?' s':''}"></div>`).join('');
+  const date=new Intl.DateTimeFormat('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'}).format(new Date());
+  const rep=`<article class="rep" aria-label="معاينة التقرير">
+   <div class="repHead"><b>تقرير شاهد</b><span>مدرسة ${p.school}</span></div>
+   <h2 class="repTitle${txt?fr('t'+txt.title):' ghost'}">${txt?txt.title:'العنوان يظهر هنا بعد اختيارك'}</h2>
+   <dl class="meta"><div><dt>${G[p.g].T}:</dt><dd>${p.name}</dd></div><div><dt>المادة:</dt><dd>${p.subj}</dd></div>
+     <div><dt>الصف:</dt><dd class="${S.clsOk?fr('c'+cls.k):''}">${cls.t}</dd></div><div><dt>التاريخ:</dt><dd>${date}</dd></div></dl>
+   <section class="sec"><h3>الوصف</h3>${txt?`<p class="${fr('d'+txt.desc)}">${txt.desc}</p><button type="button" class="again" data-again="1">${ic('redo')}صياغة أخرى</button>`:ghost(3)}</section>
+   <section class="sec"><h3>الأهداف</h3>${txt?`<ul class="${fr('g'+txt.goals.join())}">${txt.goals.map(g=>`<li>${g}</li>`).join('')}</ul>`:ghost(3)}</section>
+   <section class="sec"><h3>ما يدعمه هذا التقرير</h3>${a?`<table class="tbl${fr('s'+a.id)}"><thead><tr><th>عناصر الأداء الوظيفي</th><th>مؤشرات دليل الهيئة</th></tr></thead>
+     <tbody><tr><td>${a.el.map(e=>`<div>${e} (${W[e]}%)</div>`).join('')}</td><td>${a.ind.map(c=>`<div><span class="code">${c}</span>${IND[c]}</div>`).join('')}</td></tr></tbody></table>`:ghost(2)}</section>
+   <section class="sec"><h3>الشواهد</h3><div class="photos">${[0,1,2,3].map(i=>`<div class="slot">${S.photos[i]?`<img src="${S.photos[i]}" alt="صورة ${i+1}">`:`صورة ${i+1}`}</div>`).join('')}</div></section>
+   <div class="sign"><span>${G[p.g].T}: ${p.name}</span><span>مدير المدرسة: ............</span></div>
+  </article>`;
+
+  let body='';
+  const ranked=[...ACTS].sort((x,y)=>(p.use[y.id]||0)-(p.use[x.id]||0));
+  const top=S.more?ranked:ranked.slice(0,4), last=ACTS.find(x=>x.id===p.last.act), lastCls=p.classes.find(c=>c.k===p.last.cls);
+  if(step===1) body=`<button type="button" class="repeat" data-repeat="1">${ic('redo')}<span><b>كرّر آخر تقرير مع فصل ثاني</b><small>${last.n}: ${p.last.opt}، ${lastCls.l}</small></span></button>
+    <div class="gridD">${top.map((x,i)=>`<button type="button" class="tileD" data-act="${x.id}">${!S.more&&i<2?'<span class="hot">الأكثر</span>':''}${ic(x.ic)}<span>${x.n}</span></button>`).join('')}</div>
+    <button type="button" class="more" data-more="1">${S.more?'أقل':'كل الأنشطة ('+ACTS.length+')'}</button>`;
+  if(step===2) body=`${chips(a)}<p class="note">الخيارات مرتّبة حسب مادة ${p.subj}.</p>`;
+  if(step===3) body=`<div class="chips">${p.classes.map(c=>`<button type="button" class="chip" data-cls="${c.k}" aria-pressed="${cls.k===c.k}">${c.l}</button>`).join('')}</div>
+    <button type="button" class="primary" data-clsok="1">صحيح، التالي</button>`;
+  if(step===4) body=`<label class="upload" for="ph">${ic('camera')}<span>${S.photos.length?'أضف صور ('+S.photos.length+' من 4)':'أرفق صور الشاهد'}</span><input id="ph" type="file" accept="image/*" multiple></label>
+    <button type="button" class="primary" disabled>جاهز للطباعة (في النسخة الحقيقية)</button>`;
+  const heads=["وش سوّيت؟",a?a.q:"","لأي فصل؟","الصور"];
+  const panel=`<div class="panel"><div class="in">
+    <div class="steps" aria-hidden="true">${[1,2,3,4].map(i=>`<i class="${i<=step?'on':''}"></i>`).join('')}</div>
+    <div class="phead"><h2>${heads[step-1]}</h2><span class="n">الخطوة ${step} من 4</span>${step>1?'<button type="button" class="back" data-back="1">رجوع</button>':''}</div>
+    ${body}</div></div>`;
+  return rep+state()+panel;
 }
-const R={a:A,b:B,c:C};
-const cur=()=>{const h=location.hash.slice(1);return R[h]?h:'a'};
-function render(){const v=cur();app.innerHTML=R[v]();document.getElementById('vlabel').textContent=`${v.toUpperCase()} (${VARIANTS[v]})`;}
+
+const R={d:D,a:A,b:B,c:C};
+const keys=Object.keys(R);
+const cur=()=>{const h=location.hash.slice(1);return R[h]?h:'d'};
+function render(){const v=cur();document.body.classList.toggle('d',v==='d');app.innerHTML=R[v]();document.getElementById('vlabel').textContent=`${v.toUpperCase()} (${VARIANTS[v]})`;}
 app.addEventListener('click',e=>{
-  const t=e.target.closest('button'); if(!t) return;
-  if(t.dataset.act){ if(S.act!==t.dataset.act){S.opt=null;} S.act=t.dataset.act; tap(); }
-  else if(t.dataset.opt){ S.opt=t.dataset.opt; tap(); }
-  else if(t.dataset.tab){ S.tab=t.dataset.tab; tap(); }
-  else if(t.dataset.reset){ S={act:null,opt:null,taps:0,tab:"class"}; }
+  const t=e.target.closest('button'); if(!t) return; const d=t.dataset;
+  if(d.act){ if(S.act!==d.act){S.opt=null;S.clsOk=false;} S.act=d.act; tap(); }
+  else if(d.opt){ S.opt=d.opt; tap(); }
+  else if(d.tab){ S.tab=d.tab; tap(); }
+  else if(d.cls){ S.cls=d.cls; tap(); }
+  else if(d.clsok){ S.clsOk=true; tap(); }
+  else if(d.again){ S.seed++; tap(); }
+  else if(d.more){ S.more=!S.more; }
+  else if(d.repeat){ const l=P().last; S.act=l.act; S.opt=l.opt; S.cls=P().classes.find(c=>c.k!==l.cls).k; S.clsOk=false; tap(); }
+  else if(d.back){ if(S.clsOk&&cur()==='d'){S.clsOk=false}else if(S.opt){S.opt=null}else{S.act=null} }
+  else if(d.prof){ profKeep=d.prof; S=fresh0(); }
+  else if(d.reset){ S=fresh0(); }
   else return;
   render();
 });
-const keys=Object.keys(R);
-function go(d){const i=(keys.indexOf(cur())+d+keys.length)%keys.length;S={act:null,opt:null,taps:0,tab:"class"};location.hash=keys[i];}
+app.addEventListener('change',e=>{
+  if(e.target.id!=='ph')return;
+  const files=[...e.target.files].slice(0,4-S.photos.length); if(!files.length)return; tap();
+  Promise.all(files.map(f=>new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.onerror=()=>r(null);fr.readAsDataURL(f)})))
+    .then(urls=>{S.photos.push(...urls.filter(Boolean));render();});
+});
+function go(dir){const i=(keys.indexOf(cur())+dir+keys.length)%keys.length;S=fresh0();location.hash=keys[i];}
 document.getElementById('prev').onclick=()=>go(-1);
 document.getElementById('next').onclick=()=>go(1);
 addEventListener('keydown',e=>{if(e.target.closest('input,textarea,[contenteditable]'))return;if(e.key==='ArrowLeft')go(-1);if(e.key==='ArrowRight')go(1);});
-addEventListener('hashchange',()=>{S={act:null,opt:null,taps:0,tab:"class"};render();});
+addEventListener('hashchange',()=>{S=fresh0();render();});
 render();
 </script>
