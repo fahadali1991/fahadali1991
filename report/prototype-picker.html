@@ -161,6 +161,31 @@ svg.ic{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;str
 .dot.no{border:1.5px dashed var(--muted)}
 .go{border:0;background:transparent;color:var(--accent);padding:0;font-size:.8rem;text-decoration:underline;text-underline-offset:3px}
 .newb{background:var(--mark);color:var(--mark-ink);font-size:.65rem;border-radius:99px;padding:0 6px;margin-inline-start:6px;vertical-align:middle}
+.kpis{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.kpi.main{grid-column:1/-1;background:var(--accent);color:var(--surface);border-color:var(--accent)}
+.kpi.main .lbl,.kpi.main .mini,.kpi.main .of{color:inherit;opacity:.85}
+.kpi .big{font-family:var(--display);font-size:2.2rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.kpi.main .big{font-size:3rem}
+.kpi .of{font-size:.85rem;color:var(--muted)}
+.kpi .lv{font-family:var(--display);font-weight:700;font-size:1.1rem}
+.kpi .mini{font-size:.72rem;color:var(--muted)}
+.disclaim{font-size:.78rem;color:var(--muted)}
+.alert{background:color-mix(in srgb,var(--mark) 25%,var(--surface));border:1px solid var(--mark);border-radius:12px;padding:10px 12px;font-size:.88rem}
+.warnT{color:#b4232a;font-weight:600}
+.dRow{border-bottom:1px solid var(--line)} .dRow:last-child{border-bottom:0}
+.dHead{display:flex;gap:10px;align-items:flex-start;width:100%;border:0;background:transparent;padding:12px 14px;text-align:start}
+.dHead .nm{flex:1;min-width:0} .dHead small{display:block;color:var(--muted);font-size:.78rem}
+.dHead .w{font-size:.75rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.dRow.open{background:var(--accent-soft)}
+.dBody{padding:0 14px 14px;display:flex;flex-direction:column;gap:8px}
+.lvls{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.lvl{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 0;font-weight:700;font-family:var(--display)}
+.lvl[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--surface)}
+.desc{font-size:.85rem} .desc.next{border-inline-start:3px solid var(--mark);padding-inline-start:8px}
+.reps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:6px}
+.reps li{display:flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:.9rem}
+.reps svg.ic{width:20px;height:20px;color:var(--accent)}
 .linkbtn{border:0;background:transparent;color:var(--accent);font-weight:600;padding:4px 0;align-self:flex-start}
 
 /* ---------- prototype chrome (not part of the design) ---------- */
@@ -394,29 +419,72 @@ function C(){const a=act(),list=ACTS.filter(x=>x.place===S.tab);
   <div class="dock"><div class="in"><span>${a?`اختيارك يدعم <b>${a.el.length}</b> من عناصر الأداء`:'اختر نشاط من القائمة'}</span><button type="button" ${a&&S.opt?'':'disabled'}>التالي</button></div></div>`}
 
 /* ---------- D: the report builds itself while the teacher taps ---------- */
+// Level descriptors 1..5, shortened from the MoE guide's rating scales (pp. 19-23).
+const RUB={
+"أداء الواجبات الوظيفية":["يُظهر الحد الأدنى للواجبات ويتأخر أو يتغيب دون مبرر","يُظهر التزامًا محدودًا ويحتاج إلى توجيه مستمر","يلتزم بمتطلبات الواجبات الأساسية ويحافظ على المواعيد","يلتزم التزامًا كاملًا ويبادر بتحمل المسؤوليات ويدعم زملاءه","يمثل قدوة في الالتزام ويبتكر ممارسات تُتبنى نموذجًا"],
+"التفاعل مع المجتمع المهني":["مشاركة محدودة جدًا في الأنشطة المهنية","يشارك أحيانًا دون فاعلية كبيرة","يشارك بانتظام ويتعاون مع الزملاء عند الحاجة","يشارك بفاعلية في مجتمعات التعلم وينقل خبراته لزملائه","يقود مبادرات نوعية (ورش، بحوث، شبكات تعلم) تُتبنى على نطاق أوسع"],
+"التفاعل مع أولياء الأمور":["يتواصل بشكل محدود جدًا وعند الضرورة فقط","يتواصل بشكل متقطع بمعلومات غير كافية","يتواصل عند الحاجة بانتظام ويقدم معلومات واضحة","يحافظ على تواصل مستمر ويشرك أولياء الأمور في متابعة تعلم أبنائهم","يقود مبادرات ابتكارية للتواصل وشراكة مستدامة ذات أثر ملموس"],
+"التنويع في استراتيجيات التدريس":["يعتمد على طرق التدريس التقليدية المباشرة","يستخدم طرقًا تقليدية مع استخدام محدود للطرق الحديثة","يستخدم استراتيجيات مناسبة ومتنوعة بشكل منتظم","يوظف استراتيجيات متنوعة تراعي الفروق الفردية ويشارك زملاءه أفضل الممارسات","يبتكر استراتيجيات مبنية على البحوث تُعتمد نموذجًا متميزًا"],
+"تحسين نتائج المتعلمين":["نادرًا ما يوفر دعمًا للمتعلمين الذين يواجهون صعوبات","يوفر بعض الدعم لكنه غير كافٍ لتحسين الأداء بشكل ملموس","يقدم دعمًا إضافيًا لذوي الأداء الضعيف ويضع أهدافًا تسهم في التحسين","يشخّص مواطن الضعف ويطبق خططًا علاجية ويُظهر تحسنًا ملحوظًا","يقود برامج نوعية لرفع نتائج التعلم ويحقق أثرًا مستدامًا"],
+"إعداد وتنفيذ خطة التعلم":["نادرًا ما يعد خطة التعلم ويعتمد على التدريس المباشر","يعد خطة بأهداف غير واضحة ويعتمد على المواد الجاهزة","يعد خطة بأهداف واضحة ومحددة تراعي الفروق الفردية","يضع خطة متكاملة ويطورها بناءً على تحليل أداء الطلاب","يبتكر خطط تعلم مرنة تُعتمد نموذجًا يُحتذى به"],
+"توظيف تقنيات ووسائل التعلم":["نادرًا ما يستخدم التقنيات والوسائل المناسبة","يستخدم التقنيات بشكل محدود لا يتناسب دائمًا مع المحتوى","يستخدم أغلب التقنيات والوسائل المناسبة بشكل منتظم","يوظف التقنيات بفاعلية عالية ويدرب زملاءه عليها","يبتكر أدوات رقمية ويقود مبادرات تقنية ذات أثر"],
+"تهيئة بيئة تعليمية":["نادرًا ما يخلق بيئة محفزة أو داعمة للتعلم النشط","يبني بيئة تعزز فهم الطالب بشكل جزئي","يبني بيئة تعليمية تعزز الفهم وتراعي الفروق الفردية","يبني بيئة صفية آمنة ومحفزة تشجع التعاون والعمل الجماعي","يبتكر بيئات تعليمية إبداعية تُتبنى نموذجًا"],
+"الإدارة الصفية":["نادرًا ما يدير الصف بفاعلية","يدير الصف دون مراعاة القوانين والتعليمات الصفية","يدير الصف بفاعلية ويوجه المتعلمين لتطبيق التعليمات","يشرك المتعلمين في وضع قوانين الصف لتعزيز الانضباط الذاتي","يبتكر نماذج إدارة صفية تُعتمد على مستوى المدرسة"],
+"تحليل نتائج المتعلمين":["نادرًا ما يحلل نتائج المتعلمين بشكل منهجي","يجري تحليلًا محدودًا للنتائج دون أدوات دقيقة","يجري تحليلًا أساسيًا للنتائج بالأدوات المتاحة","يجمع بيانات متنوعة ويحللها ويصدر تقارير تشخيصية عملية","يبتكر أدوات تحليل متقدمة ويحول البيانات إلى رؤى استراتيجية"],
+"تنوع أساليب التقويم":["نادرًا ما يستخدم أساليب تقويم مناسبة","يعتمد على نوع واحد من أساليب التقويم","يستخدم أساليب تقويم مناسبة ومتنوعة حسب الأهداف","يستخدم أدوات متنوعة ويقترح تحسينات في التدريس بناءً على نتائجها","يطور أدوات تقويم مبتكرة ويوظف نتائجها لتحسين جودة التعليم"]};
+const LEVEL=["غير مرضٍ","بحاجة إلى تطوير","وافق التوقعات","تخطى التوقعات","مثالي"];
+// Teacher's own self-ratings (sample). In memory only.
+const SELF={noura:{"التنويع في استراتيجيات التدريس":4,"التفاعل مع أولياء الأمور":3,"تهيئة بيئة تعليمية":4,"أداء الواجبات الوظيفية":4,"الإدارة الصفية":3},
+ khaled:{"تحليل نتائج المتعلمين":4,"تحسين نتائج المتعلمين":3,"تنوع أساليب التقويم":3}};
+let openEl=null;
 function cover(){
-  const p=P(),done=SAVED[S.prof],count={};
+  const p=P(),done=SAVED[S.prof],self=SELF[S.prof],count={};
   done.forEach(r=>ACTS.find(x=>x.id===r.act).el.forEach(e=>count[e]=(count[e]||0)+1));
   const els=Object.keys(W),got=els.filter(e=>count[e]),wsum=got.reduce((s,e)=>s+W[e],0);
-  const rows=[...els].sort((x,y)=>(count[x]?1:0)-(count[y]?1:0)).map(e=>{
-    const helpers=ACTS.filter(x=>x.el.includes(e)).slice(0,2);
-    return `<div class="covRow"><span class="dot ${count[e]?'ok':'no'}">${count[e]||''}</span>
-      <div class="nm"><b>${e}</b>${lastNew.includes(e)?'<span class="newb">جديد</span>':''}
-      ${count[e]?`<small>${count[e]===1?'تقرير واحد':count[e]+' تقارير'}</small>`:`<small>ناقص. تقدر تغطيه بـ: ${helpers.map(h=>`<button type="button" class="go" data-start="${h.id}">${h.n}</button>`).join('، ')}</small>`}</div>
-      <span class="w">${W[e]}%</span></div>`}).join('');
-  return `${teacher()}<h1>ملف شواهدي</h1>
-   <div class="covTop"><div><span class="big">${got.length}</span> من 11 عنصر عليها شواهد</div>
-    <div class="bar" role="img" aria-label="${wsum}% من وزن التقييم"><i style="width:${wsum}%"></i></div>
-    <span class="lbl">تغطي ${wsum}% من وزن نموذج تقييم الأداء الوظيفي. التقييم نفسه قرار المقيّم.</span></div>
+  const rated=els.filter(e=>self[e]),rw=rated.reduce((s,e)=>s+W[e],0);
+  const score=rw?rated.reduce((s,e)=>s+self[e]*W[e],0)/rw:0, sc=Math.round(score*10)/10;
+  const allInd=[...new Set(ACTS.flatMap(x=>x.ind))], gotInd=new Set(done.flatMap(r=>ACTS.find(x=>x.id===r.act).ind));
+  const warn=els.filter(e=>self[e]>=4&&!count[e]);
+  const rows=els.map(e=>{
+    const lv=self[e]||0, helpers=ACTS.filter(x=>x.el.includes(e)).slice(0,2), open=openEl===e;
+    return `<div class="dRow${open?' open':''}">
+      <button type="button" class="dHead" data-openel="${e}" aria-expanded="${open}">
+        <span class="dot ${count[e]?'ok':'no'}" title="عدد التقارير">${count[e]?N(count[e]):''}</span>
+        <span class="nm"><b>${e}</b>${lastNew.includes(e)?'<span class="newb">جديد</span>':''}<small>${lv?`تقديرك: ${N(lv)} (${LEVEL[lv-1]})`:'لم تقدّره بعد'}${self[e]>=4&&!count[e]?' · <span class="warnT">بدون شواهد</span>':''}</small></span>
+        <span class="w">${N(W[e])}%</span></button>
+      ${open?`<div class="dBody">
+        <span class="lbl">اختر المستوى الأقرب لك حسب سلّم الدليل:</span>
+        <div class="lvls">${[1,2,3,4,5].map(n=>`<button type="button" class="lvl" data-lvl="${n}" data-el="${e}" aria-pressed="${lv===n}">${N(n)}</button>`).join('')}</div>
+        ${lv?`<p class="desc"><b>مستواك ${N(lv)}:</b> ${RUB[e][lv-1]}.</p>`:''}
+        ${lv&&lv<5?`<p class="desc next"><b>عشان توصل ${N(lv+1)}:</b> ${RUB[e][lv]}.</p>`:''}
+        ${count[e]?`<p class="desc">عندك ${count[e]===1?'تقرير واحد':N(count[e])+' تقارير'} يدعم هذا العنصر.</p>`:`<p class="desc warnT">ما عندك شاهد لهذا العنصر.</p>`}
+        <div class="chips">${helpers.map(h=>`<button type="button" class="chip sm" data-start="${h.id}">+ تقرير ${h.n}</button>`).join('')}</div>
+      </div>`:''}</div>`}).join('');
+  const list=done.slice().reverse().map(r=>{const x=ACTS.find(a=>a.id===r.act);return `<li>${ic(x.ic)}<span>${x.n}: ${r.opt}</span></li>`}).join('');
+  return `${teacher()}<h1>لوحتي</h1>
+   <div class="kpis">
+    <div class="kpi main"><span class="lbl">تقديرك الذاتي</span>
+      ${rated.length?`<span class="big">${N(sc)}</span><span class="of">من ${N(5)}</span><span class="lv">${LEVEL[Math.min(4,Math.max(0,Math.round(score)-1))]}</span>`:'<span class="of">قدّر نفسك في العناصر تحت</span>'}
+      <span class="mini">${rated.length<11?`مؤقت: قدّرت ${N(rated.length)} من ${N(11)} عنصر`:'محسوب بأوزان نموذج الوزارة'}</span></div>
+    <div class="kpi"><span class="lbl">جاهزية الشواهد</span><span class="big">${N(got.length)}</span><span class="of">من ${N(11)} عنصر</span>
+      <div class="bar"><i style="width:${wsum}%"></i></div><span class="mini">تغطي ${N(wsum)}% من الوزن</span></div>
+    <div class="kpi"><span class="lbl">مؤشرات دليل الهيئة</span><span class="big">${N(gotInd.size)}</span><span class="of">من ${N(allInd.length)} مؤشر</span>
+      <div class="bar"><i style="width:${Math.round(gotInd.size/allInd.length*100)}%"></i></div><span class="mini">يقدر المعلم يدعمها</span></div>
+   </div>
+   <p class="disclaim">التقدير الذاتي للاستعداد فقط، والتقييم الرسمي قرار المدير. الدرجة = مجموع (مستواك × وزن العنصر) مثل آلية الاحتساب في دليل الوزارة.</p>
+   ${warn.length?`<div class="alert"><b>تنبيه:</b> قدّرت نفسك ${N(4)} أو أعلى في ${warn.map(e=>`«${e}»`).join(' و')} بدون أي شاهد. المدير يحتاج شواهد تدعم هذا المستوى.</div>`:''}
+   <h2>العناصر</h2><p class="note">اضغط على العنصر عشان تقدّر مستواك وتشوف وش ينقصك.</p>
    <div class="covList">${rows}</div>
+   <h2>تقاريري (${N(done.length)})</h2><ul class="reps">${list}</ul>
    <button type="button" class="primary" data-new="1">تقرير جديد</button>${state()}`;
 }
+
 const TOOLS=["جهاز عرض","سبورة ذكية","سبورة تقليدية","أوراق عمل","بطاقات تعليمية","عرض تقديمي","كتاب","مواد محسوسة"];
 const PLACE_OPTS=["الفصل","مركز مصادر التعلم","المختبر","المسرح المدرسي","الساحة","عن بُعد"];
 const DUR_OPTS=["حصة واحدة","حصتان","يوم دراسي","أسبوع"];
 const CAPS=["أثناء التنفيذ","مشاركة "+"{ST}","منتجات التعلم","التكريم","لقطة عامة"];
 const ALL_STRAT=["التعلم التعاوني","العصف الذهني","الصف المقلوب","لعب الأدوار","خرائط المفاهيم","الخرائط الذهنية","فكر - زاوج - شارك","الجيكسو","حوض السمك","كرة الثلج","التدريس التبادلي","تعلم الأقران","الاستقصاء الموجه","التعلم بالاكتشاف","حل المشكلات","القصة التعليمية","البطاقات الملونة","الرؤوس المرقمة","قراءة الصورة","السبب والنتيجة","عظم السمكة","مخطط فن","الدقيقة الواحدة","المعلم الصغير","الكلمات المتقاطعة","سكامبر","نموذج فراير","التعلم باللعب","المحطات التعليمية","القراءة الجهرية","المحسوسات","الألعاب التعليمية"];
-const N=s=>S.ar?String(s).replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]):String(s);
+const N=s=>S.ar?String(s).replace(/(\d)\.(\d)/g,'$1٫$2').replace(/[0-9]/g,d=>'٠١٢٣٤٥٦٧٨٩'[d]):String(s);
 const inClass=a=>a&&(a.place==='class'||a.place==='students');
 const placeV=a=>S.place??(inClass(a)?"الفصل":null);
 const durV=a=>S.dur??(inClass(a)?"حصة واحدة":null);
@@ -459,7 +527,7 @@ function D(){
   const top=S.more?ranked:ranked.slice(0,4), last=ACTS.find(x=>x.id===p.last.act), lastCls=p.classes.find(c=>c.k===p.last.cls);
   const doneN=new Set(SAVED[S.prof].flatMap(r=>ACTS.find(x=>x.id===r.act).el)).size;
   const chipRow=(arr,key,sel,multi)=>`<div class="chips">${arr.map(o=>`<button type="button" class="chip sm" data-${key}="${o}" aria-pressed="${multi?sel.includes(o):sel===o}">${o}</button>`).join('')}</div>`;
-  if(step===1) body=`<button type="button" class="linkbtn" data-view="cover">ملف شواهدي: ${N(doneN)} من ${N(11)} عنصر</button><button type="button" class="repeat" data-repeat="1">${ic('redo')}<span><b>كرّر آخر تقرير مع فصل ثاني</b><small>${last.n}: ${p.last.opt}، ${lastCls.l}</small></span></button>
+  if(step===1) body=`<button type="button" class="linkbtn" data-view="cover">لوحتي: شواهدك في ${N(doneN)} من ${N(11)} عنصر</button><button type="button" class="repeat" data-repeat="1">${ic('redo')}<span><b>كرّر آخر تقرير مع فصل ثاني</b><small>${last.n}: ${p.last.opt}، ${lastCls.l}</small></span></button>
     <div class="gridD">${top.map((x,i)=>`<button type="button" class="tileD" data-act="${x.id}">${!S.more&&i<2?'<span class="hot">الأكثر</span>':''}${ic(x.ic)}<span>${x.n}</span></button>`).join('')}</div>
     <button type="button" class="more" data-more="1">${S.more?'أقل':'كل الأنشطة ('+N(ACTS.length)+')'}</button>`;
   if(step===2){
@@ -518,6 +586,8 @@ app.addEventListener('click',e=>{
   else if(d.more){ S.more=!S.more; }
   else if(d.repeat){ const l=P().last; S.act=l.act; S.opt=l.opt; S.cls=P().classes.find(c=>c.k!==l.cls).k; S.clsOk=false; tap(); }
   else if(d.back){ if(S.obsOk){S.obsOk=false}else if(S.clsOk&&cur()==='d'){S.clsOk=false}else if(S.opt){S.opt=null}else{S.act=null} }
+  else if(d.openel){ openEl=openEl===d.openel?null:d.openel; }
+  else if(d.lvl){ SELF[S.prof][d.el]=+d.lvl; tap(); }
   else if(d.place){ S.place=d.place; tap(); }
   else if(d.dur){ S.dur=d.dur; tap(); }
   else if(d.tool){ S.tools=S.tools.includes(d.tool)?S.tools.filter(x=>x!==d.tool):[...S.tools,d.tool]; tap(); }
